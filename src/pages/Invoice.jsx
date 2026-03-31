@@ -87,11 +87,11 @@ const Invoice = () => {
                         <div className="input-wrapper">
                             <label>Customer Name</label>
                             <div className="input-with-icon">
-                                <input 
-                                    type="text" 
-                                    placeholder="Enter or search customer" 
-                                    value={customerName} 
-                                    onChange={(e) => setCustomerName(e.target.value)} 
+                                <input
+                                    type="text"
+                                    placeholder="Enter or search customer"
+                                    value={customerName}
+                                    onChange={(e) => setCustomerName(e.target.value)}
                                 />
                                 <i className="fa-solid fa-magnifying-glass"></i>
                             </div>
@@ -100,31 +100,31 @@ const Invoice = () => {
                             <div className="input-wrapper">
                                 <label>Phone</label>
                                 <div className="input-with-icon">
-                                    <input 
-                                        type="tel" 
-                                        placeholder="Phone number" 
-                                        value={phone} 
-                                        onChange={(e) => setPhone(e.target.value)} 
+                                    <input
+                                        type="tel"
+                                        placeholder="Phone number"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
                                     />
                                     <i className="fa-solid fa-phone"></i>
                                 </div>
                             </div>
                             <div className="input-wrapper">
                                 <label>GSTIN (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    placeholder="Enter GSTIN" 
-                                    value={gstin} 
-                                    onChange={(e) => setGstin(e.target.value)} 
+                                <input
+                                    type="text"
+                                    placeholder="Enter GSTIN"
+                                    value={gstin}
+                                    onChange={(e) => setGstin(e.target.value)}
                                 />
                             </div>
                         </div>
                         <div className="input-wrapper mt-4">
                             <label>Billing Address</label>
-                            <textarea 
-                                placeholder="Enter full address" 
-                                rows="3" 
-                                value={address} 
+                            <textarea
+                                placeholder="Enter full address"
+                                rows="3"
+                                value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                             ></textarea>
                         </div>

@@ -6,7 +6,7 @@ import '../styles/job-done.css';
 const JobDone = () => {
     const navigate = useNavigate();
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    
+
     // Form state
     const [fromDate, setFromDate] = useState('28-03-2026');
     const [toDate, setToDate] = useState('28-03-2026');
@@ -39,41 +39,41 @@ const JobDone = () => {
                     </button>
                 </div>
             </div>
-            
+
             <div className="jd-empty-state-wrapper">
                 <div className="jd-illustration-container">
                     <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {/* Warm circle background */}
-                        <circle cx="130" cy="130" r="110" fill="#fdf6ee"/>
+                        <circle cx="130" cy="130" r="110" fill="#fdf6ee" />
                         {/* Body */}
-                        <ellipse cx="130" cy="210" rx="42" ry="14" fill="#e2c9a8" opacity="0.5"/>
+                        <ellipse cx="130" cy="210" rx="42" ry="14" fill="#e2c9a8" opacity="0.5" />
                         {/* Shirt */}
-                        <path d="M95 175 Q100 155 130 152 Q160 155 165 175 L168 220 H92 Z" fill="#4b9c9c" opacity="0.95"/>
+                        <path d="M95 175 Q100 155 130 152 Q160 155 165 175 L168 220 H92 Z" fill="#4b9c9c" opacity="0.95" />
                         {/* Arms with hands outwards */}
-                        <path d="M95 175 Q60 190 85 220" stroke="#f5c89a" strokeWidth="14" strokeLinecap="round" fill="none"/>
-                        <path d="M165 175 Q200 190 175 220" stroke="#f5c89a" strokeWidth="14" strokeLinecap="round" fill="none"/>
+                        <path d="M95 175 Q60 190 85 220" stroke="#f5c89a" strokeWidth="14" strokeLinecap="round" fill="none" />
+                        <path d="M165 175 Q200 190 175 220" stroke="#f5c89a" strokeWidth="14" strokeLinecap="round" fill="none" />
                         {/* Hands */}
-                        <circle cx="85" cy="220" r="5" fill="#f5c89a"/>
-                        <circle cx="175" cy="220" r="5" fill="#f5c89a"/>
+                        <circle cx="85" cy="220" r="5" fill="#f5c89a" />
+                        <circle cx="175" cy="220" r="5" fill="#f5c89a" />
                         {/* Neck */}
-                        <rect x="121" y="138" width="18" height="18" rx="4" fill="#f5c89a"/>
+                        <rect x="121" y="138" width="18" height="18" rx="4" fill="#f5c89a" />
                         {/* Head */}
-                        <circle cx="130" cy="122" r="32" fill="#f5c89a"/>
+                        <circle cx="130" cy="122" r="32" fill="#f5c89a" />
                         {/* Eyes */}
-                        <ellipse cx="120" cy="120" rx="4" ry="5" fill="#2d1a0e"/>
-                        <ellipse cx="140" cy="120" rx="4" ry="5" fill="#2d1a0e"/>
+                        <ellipse cx="120" cy="120" rx="4" ry="5" fill="#2d1a0e" />
+                        <ellipse cx="140" cy="120" rx="4" ry="5" fill="#2d1a0e" />
                         {/* Sad/Neutral Mouth */}
-                        <path d="M124 135 H136" stroke="#2d1a0e" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                        <path d="M124 135 H136" stroke="#2d1a0e" strokeWidth="2" fill="none" strokeLinecap="round" />
                         {/* Hair */}
-                        <path d="M100 108 Q102 80 130 76 Q158 80 160 108 Q154 90 130 88 Q106 90 100 108Z" fill="#1a1a2e"/>
-                        <path d="M100 108 Q96 130 98 155 Q106 162 108 155 Q110 130 112 118Z" fill="#1a1a2e"/>
-                        <path d="M160 108 Q164 130 162 155 Q154 162 152 155 Q150 130 148 118Z" fill="#1a1a2e"/>
+                        <path d="M100 108 Q102 80 130 76 Q158 80 160 108 Q154 90 130 88 Q106 90 100 108Z" fill="#1a1a2e" />
+                        <path d="M100 108 Q96 130 98 155 Q106 162 108 155 Q110 130 112 118Z" fill="#1a1a2e" />
+                        <path d="M160 108 Q164 130 162 155 Q154 162 152 155 Q150 130 148 118Z" fill="#1a1a2e" />
                         {/* Badge / ID card on shirt */}
-                        <path d="M125 152 L125 166 L135 166 L135 152" fill="none" stroke="#fff" strokeWidth="1" opacity="0.6"/>
-                        <rect x="123" y="165" width="14" height="18" rx="3" fill="white" opacity="0.9"/>
-                        <circle cx="130" cy="169" r="3" fill="#fbbf24"/>
-                        <rect x="125" y="175" width="10" height="2" rx="1" fill="#94a3b8"/>
-                        <rect x="125" y="179" width="7" height="2" rx="1" fill="#94a3b8"/>
+                        <path d="M125 152 L125 166 L135 166 L135 152" fill="none" stroke="#fff" strokeWidth="1" opacity="0.6" />
+                        <rect x="123" y="165" width="14" height="18" rx="3" fill="white" opacity="0.9" />
+                        <circle cx="130" cy="169" r="3" fill="#fbbf24" />
+                        <rect x="125" y="175" width="10" height="2" rx="1" fill="#94a3b8" />
+                        <rect x="125" y="179" width="7" height="2" rx="1" fill="#94a3b8" />
                     </svg>
                 </div>
                 <h2 className="jd-empty-state-text">Filter to see data</h2>
@@ -87,7 +87,7 @@ const JobDone = () => {
                             <h3>Service List Statement</h3>
                             <i className="fa-regular fa-circle-xmark jd-close-btn" onClick={() => setIsFilterOpen(false)}></i>
                         </div>
-                        
+
                         <div className="jd-modal-body">
                             {/* Dates Row */}
                             <div className="jd-dates-row">
@@ -96,18 +96,18 @@ const JobDone = () => {
                                     <div className="jd-input-content">
                                         <i className="fa-regular fa-calendar jd-icon" style={{ zIndex: 1, pointerEvents: 'none' }}></i>
                                         <span className="jd-divider">|</span>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             className="jd-input"
                                             placeholder="From Date"
-                                            value={formatOrPlaceholder(fromDate)} 
-                                            readOnly 
+                                            value={formatOrPlaceholder(fromDate)}
+                                            readOnly
                                         />
-                                        <input 
-                                            type="date" 
+                                        <input
+                                            type="date"
                                             className="jd-hidden-date"
-                                            value={fromDate} 
-                                            onChange={(e) => setFromDate(e.target.value)} 
+                                            value={fromDate}
+                                            onChange={(e) => setFromDate(e.target.value)}
                                             onClick={(e) => e.target.showPicker?.()}
                                         />
                                     </div>
@@ -115,20 +115,20 @@ const JobDone = () => {
                                 <fieldset className="jd-box jd-date-box">
                                     <legend>To Date</legend>
                                     <div className="jd-input-content">
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             className="jd-input"
                                             placeholder="To Date"
-                                            value={formatOrPlaceholder(toDate)} 
-                                            readOnly 
+                                            value={formatOrPlaceholder(toDate)}
+                                            readOnly
                                         />
                                         <span className="jd-divider">|</span>
                                         <i className="fa-regular fa-calendar jd-icon" style={{ zIndex: 1, pointerEvents: 'none' }}></i>
-                                        <input 
-                                            type="date" 
+                                        <input
+                                            type="date"
                                             className="jd-hidden-date"
-                                            value={toDate} 
-                                            onChange={(e) => setToDate(e.target.value)} 
+                                            value={toDate}
+                                            onChange={(e) => setToDate(e.target.value)}
                                             onClick={(e) => e.target.showPicker?.()}
                                         />
                                     </div>

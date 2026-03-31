@@ -319,7 +319,7 @@
 
 @media (max-width: 1400px) {
   .dashboard-main-split {
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .financial-grid {
@@ -342,10 +342,16 @@
   .dashboard-content.dashboard-page {
     height: auto;
     overflow-y: auto;
+    padding: 20px !important;
   }
 
   .charts-row {
     grid-template-columns: 1fr;
+  }
+
+  .dash-header-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

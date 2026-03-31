@@ -5,14 +5,24 @@ import '../styles/welcome.css';
 export default function Welcome() {
     const navigate = useNavigate();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const handleNavigation = (path) => {
+        navigate(path);
+        setIsMobileMenuOpen(false);
+    };
+
     return (
         <div className="admin-dashboard">
             {/* Decorative ambient background blur */}
             <div className="ambient-glow glow-1"></div>
             <div className="ambient-glow glow-2"></div>
 
+            {/* Side Menu Overlay for Mobile */}
+            {isMobileMenuOpen && <div className="sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
+
             {/* SIDEBAR */}
-            <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+            <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="sidebar-logo">
                     <div className="logo-box">
                         <i className="fa-solid fa-cube"></i>
@@ -26,16 +36,16 @@ export default function Welcome() {
                 <nav className="sidebar-nav">
                     {!isCollapsed && <div className="nav-label">Main Menu</div>}
                     <ul>
-                        <li className="active">
+                        <li className="active" onClick={() => setIsMobileMenuOpen(false)}>
                             <i className="fa-solid fa-house"></i>
                             {!isCollapsed && <span>Home</span>}
                             <div className="active-indicator"></div>
                         </li>
-                        <li onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}>
+                        <li onClick={() => handleNavigation('/dashboard')} style={{ cursor: 'pointer' }}>
                             <i className="fa-solid fa-chart-pie"></i>
                             {!isCollapsed && <span>Dashboard</span>}
                         </li>
-                        <li onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
+                        <li onClick={() => handleNavigation('/profile')} style={{ cursor: 'pointer' }}>
                             <i className="fa-solid fa-user"></i>
                             {!isCollapsed && <span>Profile</span>}
                         </li>
@@ -43,7 +53,7 @@ export default function Welcome() {
                 </nav>
 
                 <div className="sidebar-footer">
-                    <div className="user-profile" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
+                    <div className="user-profile" onClick={() => handleNavigation('/profile')} style={{ cursor: 'pointer' }}>
                         <div className="avatar">
                             <i className="fa-solid fa-user"></i>
                         </div>
@@ -57,10 +67,15 @@ export default function Welcome() {
             <main className="admin-main">
                 {/* TOP NAVBAR */}
                 <header className="admin-topbar">
-                    <div className="search-bar">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search invoices, customers, jobs..." />
-                        <div className="search-shortcut">⌘K</div>
+                    <div className="topbar-left">
+                        <button className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
+                            <i className="fa-solid fa-bars"></i>
+                        </button>
+                        <div className="search-bar">
+                            <i className="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search invoices, customers, jobs..." />
+                            <div className="search-shortcut">⌘K</div>
+                        </div>
                     </div>
                     <div className="topbar-actions">
                         <button className="icon-btn">

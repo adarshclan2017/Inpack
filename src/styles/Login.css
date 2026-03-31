@@ -63,7 +63,7 @@
 .desktop-illustration {
   width: 220px;
   object-fit: contain;
-  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15));
   transition: transform 0.4s ease;
 }
 
@@ -212,11 +212,11 @@
     max-width: 500px;
     margin: 20px 0;
   }
-  
+
   .left-panel {
     padding: 40px 20px;
   }
-  
+
   .desktop-illustration {
     display: none;
   }
@@ -331,7 +331,7 @@
   font-weight: 800;
   color: #10b981;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .otp-digit:hover {
@@ -370,23 +370,51 @@
 
 /* ANIMATIONS */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes pulseShield {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 @keyframes glowScale {
-  0%, 100% { transform: scale(1); opacity: 0.2; }
-  50% { transform: scale(1.4); opacity: 0.4; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: scale(1.4);
+    opacity: 0.4;
+  }
 }
 
 /* RESPONSIVE POPUP */
@@ -394,6 +422,7 @@
   .otp-popup-card {
     padding: 30px 20px;
   }
+
   .otp-digit {
     width: 44px;
     height: 44px;

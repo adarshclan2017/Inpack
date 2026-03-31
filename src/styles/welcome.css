@@ -921,30 +921,213 @@
   background: linear-gradient(90deg, #fb923c, #ea580c);
 }
 
-/* RESPONSIVE DESKTOP ADJUSTMENTS */
-@media (max-width: 1400px) {
-  .dashboard-split {
-    grid-template-columns: 1fr;
-  }
+
+/* --- RESPONSIVE DESIGN --- */
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
 }
 
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #0f172a;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  z-index: 100;
+}
+
+.mobile-menu-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Tablet & Smaller Desktop (up to 1200px) */
 @media (max-width: 1200px) {
   .quick-access-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
+/* Small Desktop / Large Tablet (up to 1024px) */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 85px !important;
+  }
+
+  .admin-sidebar .sidebar-logo h2,
+  .admin-sidebar .nav-label,
+  .admin-sidebar .sidebar-nav span,
+  .sidebar-footer .user-info,
+  .chevron-icon {
+    display: none !important;
+  }
+
+  .sidebar-nav li {
+    justify-content: center !important;
+    padding: 12px 0 !important;
+  }
+
+  .sidebar-logo {
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .sidebar-toggle-btn {
+    display: none !important;
+  }
+
+  .dashboard-content {
+    padding: 30px !important;
+  }
+
+  .dashboard-split {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+}
+
+/* Mobile & Tablet (up to 768px) */
 @media (max-width: 768px) {
-  .admin-dashboard {
-    flex-direction: column;
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+
+  .sidebar-overlay {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(15, 23, 42, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 90 !important;
   }
 
   .admin-sidebar {
-    width: 100%;
-    height: auto;
+    position: fixed !important;
+    left: -280px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    z-index: 100 !important;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    height: 100vh !important;
+    display: flex !important;
+    border-radius: 0 20px 20px 0 !important;
+  }
+
+  .admin-sidebar.mobile-open {
+    transform: translateX(280px) !important;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.2) !important;
+    visibility: visible !important;
+  }
+
+  .admin-sidebar .sidebar-logo h2,
+  .admin-sidebar .nav-label,
+  .admin-sidebar .sidebar-nav span {
+    display: inline-block !important;
+  }
+
+  .sidebar-nav li {
+    justify-content: flex-start !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px !important;
+    justify-content: flex-start !important;
+  }
+
+  .admin-main {
+    width: 100% !important;
+    flex: 1 !important;
+  }
+
+  .admin-topbar {
+    padding: 10px 20px !important;
+    height: auto !important;
+  }
+
+  .search-bar {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 10px 0 !important;
+  }
+
+  .search-shortcut, .header-date, .separator {
+    display: none !important;
   }
 
   .quick-access-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .welcome-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .gradient-text {
+    font-size: 22px !important;
+  }
+
+  .promo-banner-wide {
+    padding: 24px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    min-height: auto !important;
+    gap: 15px !important;
+  }
+
+  .promo-info {
+    max-width: 100% !important;
+    margin-bottom: 20px !important;
+    order: 2 !important;
+  }
+
+  .promo-graphics {
+    margin-right: 0 !important;
+    order: 1 !important;
+    transform: scale(0.7) !important;
+  }
+
+  .promo-btn {
+    margin: 0 auto !important;
+  }
+}
+
+/* Small Mobile (up to 480px) */
+@media (max-width: 480px) {
+  .quick-access-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-content {
+    padding: 15px !important;
+  }
+
+  .action-card {
+    padding: 12px !important;
   }
 }

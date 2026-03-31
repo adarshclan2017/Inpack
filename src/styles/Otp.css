@@ -63,7 +63,7 @@
 .desktop-illustration {
   width: 220px;
   object-fit: contain;
-  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15));
   transition: transform 0.4s ease;
 }
 
@@ -193,11 +193,11 @@
     max-width: 500px;
     margin: 20px 0;
   }
-  
+
   .left-panel {
     padding: 40px 20px;
   }
-  
+
   .desktop-illustration {
     display: none;
   }

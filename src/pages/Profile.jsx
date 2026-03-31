@@ -44,6 +44,7 @@ const Profile = () => {
     const [activeMenu, setActiveMenu] = useState('Follow up');
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const menuItems = [
         { name: 'Home', icon: <Home />, id: 'home', route: '/welcome' },
@@ -62,6 +63,19 @@ const Profile = () => {
 
     const handleLogout = () => {
         navigate('/');
+    };
+
+    const handleMenuNavigation = (item) => {
+        if (item.route) {
+            navigate(item.route);
+            setIsMobileMenuOpen(false);
+        } else if (item.name === 'Logout') {
+            setIsLogoutModalOpen(true);
+            setIsMobileMenuOpen(false);
+        } else {
+            setActiveMenu(item.name);
+            setIsMobileMenuOpen(false);
+        }
     };
 
     const renderContent = () => {
@@ -117,7 +131,10 @@ const Profile = () => {
 
     return (
         <div className="profile-dashboard">
-            <aside className={`profile-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+            {/* Mobile Drawer Overlay */}
+            {isMobileMenuOpen && <div className="profile-sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
+
+            <aside className={`profile-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="sidebar-header">
                     <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
                         <i className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}></i>
@@ -145,15 +162,7 @@ const Profile = () => {
                         <div
                             key={item.id}
                             className={`menu-item ${activeMenu === item.name ? 'active' : ''}`}
-                            onClick={() => {
-                                if (item.route) {
-                                    navigate(item.route);
-                                } else if (item.name === 'Logout') {
-                                    setIsLogoutModalOpen(true);
-                                } else {
-                                    setActiveMenu(item.name);
-                                }
-                            }}
+                            onClick={() => handleMenuNavigation(item)}
                         >
                             <div className="menu-item-icon">
                                 {item.icon}
@@ -167,7 +176,12 @@ const Profile = () => {
 
             <main className="profile-main">
                 <header className="main-header">
-                    <div className="header-title">{activeMenu}</div>
+                    <div className="header-left-section">
+                        <button className="profile-mobile-toggle" onClick={() => setIsMobileMenuOpen(true)}>
+                            <i className="fa-solid fa-bars"></i>
+                        </button>
+                        <div className="header-title">{activeMenu}</div>
+                    </div>
                     <div className="header-actions">
                         {/* Search and Notifications removed */}
                     </div>
@@ -187,7 +201,7 @@ const Profile = () => {
                         </div>
                         <h3 className="profile-logout-title">Logout</h3>
                         <p className="profile-logout-text">Are you want to logout ?</p>
-                        
+                            
                         <div className="profile-logout-actions">
                             <button className="profile-btn-no" onClick={() => setIsLogoutModalOpen(false)}>No</button>
                             <button className="profile-btn-yes" onClick={handleLogout}>Yes</button>

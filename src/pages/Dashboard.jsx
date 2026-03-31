@@ -5,8 +5,8 @@ import '../styles/Dashboard.css';
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const [activeFilter, setActiveFilter] = useState('Today');
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
         <div className="admin-dashboard">
@@ -14,8 +14,11 @@ export default function Dashboard() {
             <div className="ambient-glow glow-1"></div>
             <div className="ambient-glow glow-2"></div>
 
+            {/* Side Menu Overlay for Mobile */}
+            {isMobileMenuOpen && <div className="sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
+
             {/* SIDEBAR */}
-            <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+            <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="sidebar-logo">
                     <div className="logo-box">
                         <i className="fa-solid fa-cube"></i>
@@ -29,16 +32,12 @@ export default function Dashboard() {
                 <nav className="sidebar-nav">
                     {!isCollapsed && <div className="nav-label">Main Menu</div>}
                     <ul>
-                        <li onClick={() => navigate('/welcome')}>
-                            <i className="fa-solid fa-house"></i>
-                            {!isCollapsed && <span>Home</span>}
-                        </li>
-                        <li className="active">
+                        <li className="active" onClick={() => setIsMobileMenuOpen(false)}>
                             <i className="fa-solid fa-chart-pie"></i>
                             {!isCollapsed && <span>Dashboard</span>}
                             <div className="active-indicator"></div>
                         </li>
-                        <li onClick={() => navigate('/profile')}>
+                        <li onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
                             <i className="fa-solid fa-user"></i>
                             {!isCollapsed && <span>Profile</span>}
                         </li>
@@ -59,10 +58,15 @@ export default function Dashboard() {
             <main className="admin-main">
                 {/* TOP NAVBAR */}
                 <header className="admin-topbar">
-                    <div className="search-bar">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search invoices, customers, jobs..." />
-                        <div className="search-shortcut">⌘K</div>
+                    <div className="topbar-left">
+                        <button className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
+                            <i className="fa-solid fa-bars"></i>
+                        </button>
+                        <div className="search-bar">
+                            <i className="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search invoices, customers, jobs..." />
+                            <div className="search-shortcut">⌘K</div>
+                        </div>
                     </div>
                     <div className="topbar-actions">
                         <button className="icon-btn">

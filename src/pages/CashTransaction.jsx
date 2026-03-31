@@ -64,41 +64,41 @@ const CashTransaction = () => {
                     <div className="ct-illustration-wrap">
                         <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
                             {/* Phone body */}
-                            <rect x="70" y="30" width="110" height="180" rx="18" fill="#2dd4bf" opacity="0.15"/>
-                            <rect x="78" y="38" width="94" height="164" rx="14" fill="white" stroke="#2dd4bf" strokeWidth="2"/>
+                            <rect x="70" y="30" width="110" height="180" rx="18" fill="#2dd4bf" opacity="0.15" />
+                            <rect x="78" y="38" width="94" height="164" rx="14" fill="white" stroke="#2dd4bf" strokeWidth="2" />
                             {/* Screen content lines */}
-                            <rect x="90" y="60" width="70" height="8" rx="4" fill="#2dd4bf" opacity="0.5"/>
-                            <rect x="90" y="76" width="50" height="6" rx="3" fill="#e2e8f0"/>
-                            <rect x="90" y="90" width="60" height="6" rx="3" fill="#e2e8f0"/>
-                            <rect x="90" y="104" width="45" height="6" rx="3" fill="#e2e8f0"/>
-                            <rect x="90" y="118" width="55" height="6" rx="3" fill="#e2e8f0"/>
+                            <rect x="90" y="60" width="70" height="8" rx="4" fill="#2dd4bf" opacity="0.5" />
+                            <rect x="90" y="76" width="50" height="6" rx="3" fill="#e2e8f0" />
+                            <rect x="90" y="90" width="60" height="6" rx="3" fill="#e2e8f0" />
+                            <rect x="90" y="104" width="45" height="6" rx="3" fill="#e2e8f0" />
+                            <rect x="90" y="118" width="55" height="6" rx="3" fill="#e2e8f0" />
                             {/* Orange receipt strip */}
-                            <rect x="86" y="140" width="78" height="48" rx="6" fill="#fb923c" opacity="0.15"/>
-                            <rect x="92" y="148" width="60" height="5" rx="2" fill="#fb923c" opacity="0.5"/>
-                            <rect x="92" y="160" width="40" height="5" rx="2" fill="#fb923c" opacity="0.4"/>
+                            <rect x="86" y="140" width="78" height="48" rx="6" fill="#fb923c" opacity="0.15" />
+                            <rect x="92" y="148" width="60" height="5" rx="2" fill="#fb923c" opacity="0.5" />
+                            <rect x="92" y="160" width="40" height="5" rx="2" fill="#fb923c" opacity="0.4" />
                             {/* Receipt paper */}
-                            <path d="M130 180 L130 220 L148 210 L166 220 L166 180 Z" fill="white" stroke="#e2e8f0" strokeWidth="1.5"/>
-                            <line x1="138" y1="192" x2="158" y2="192" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round"/>
-                            <line x1="138" y1="200" x2="155" y2="200" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round"/>
+                            <path d="M130 180 L130 220 L148 210 L166 220 L166 180 Z" fill="white" stroke="#e2e8f0" strokeWidth="1.5" />
+                            <line x1="138" y1="192" x2="158" y2="192" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" />
+                            <line x1="138" y1="200" x2="155" y2="200" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" />
                             {/* Teal shield badge */}
-                            <circle cx="55" cy="130" r="24" fill="#0d9488" opacity="0.12"/>
-                            <path d="M55 112 C55 112 43 116 43 125 C43 134 48 140 55 144 C62 140 67 134 67 125 C67 116 55 112 55 112Z" fill="#0d9488"/>
-                            <path d="M50 129 L54 133 L61 124" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <circle cx="55" cy="130" r="24" fill="#0d9488" opacity="0.12" />
+                            <path d="M55 112 C55 112 43 116 43 125 C43 134 48 140 55 144 C62 140 67 134 67 125 C67 116 55 112 55 112Z" fill="#0d9488" />
+                            <path d="M50 129 L54 133 L61 124" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                             {/* Coins */}
-                            <circle cx="200" cy="80" r="18" fill="#fbbf24" opacity="0.9"/>
-                            <circle cx="200" cy="80" r="13" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2"/>
+                            <circle cx="200" cy="80" r="18" fill="#fbbf24" opacity="0.9" />
+                            <circle cx="200" cy="80" r="13" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
                             <text x="200" y="84" textAnchor="middle" fontSize="11" fontWeight="bold" fill="white">₹</text>
-                            <circle cx="218" cy="105" r="12" fill="#fbbf24" opacity="0.7"/>
-                            <circle cx="218" cy="105" r="8" fill="#fcd34d" stroke="#f59e0b" strokeWidth="1.5"/>
+                            <circle cx="218" cy="105" r="12" fill="#fbbf24" opacity="0.7" />
+                            <circle cx="218" cy="105" r="8" fill="#fcd34d" stroke="#f59e0b" strokeWidth="1.5" />
                             <text x="218" y="109" textAnchor="middle" fontSize="8" fontWeight="bold" fill="white">₹</text>
-                            <circle cx="185" cy="55" r="10" fill="#fbbf24" opacity="0.6"/>
-                            <circle cx="185" cy="55" r="7" fill="#fcd34d" stroke="#f59e0b" strokeWidth="1.5"/>
+                            <circle cx="185" cy="55" r="10" fill="#fbbf24" opacity="0.6" />
+                            <circle cx="185" cy="55" r="7" fill="#fcd34d" stroke="#f59e0b" strokeWidth="1.5" />
                             {/* Credit card */}
-                            <rect x="175" y="155" width="65" height="42" rx="8" fill="#0d9488" opacity="0.9"/>
-                            <rect x="175" y="168" width="65" height="10" fill="rgba(0,0,0,0.2)"/>
-                            <rect x="183" y="183" width="22" height="7" rx="3" fill="rgba(255,255,255,0.5)"/>
-                            <circle cx="228" cy="187" r="5" fill="#fbbf24" opacity="0.8"/>
-                            <circle cx="222" cy="187" r="5" fill="#fb923c" opacity="0.8"/>
+                            <rect x="175" y="155" width="65" height="42" rx="8" fill="#0d9488" opacity="0.9" />
+                            <rect x="175" y="168" width="65" height="10" fill="rgba(0,0,0,0.2)" />
+                            <rect x="183" y="183" width="22" height="7" rx="3" fill="rgba(255,255,255,0.5)" />
+                            <circle cx="228" cy="187" r="5" fill="#fbbf24" opacity="0.8" />
+                            <circle cx="222" cy="187" r="5" fill="#fb923c" opacity="0.8" />
                         </svg>
                     </div>
                     <div className="ct-illustration-label">
