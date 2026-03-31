@@ -1,0 +1,237 @@
+/* Exact match of the provided screenshot for Desktop */
+.uom-desktop-wrapper {
+    width: 100%;
+    height: calc(100vh - 80px); /* Fill the admin dashboard area */
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 0;
+}
+
+/* Teal Header */
+.uom-header-bar {
+    height: 64px;
+    background-color: #4b9596; /* Exact teal from image */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: white;
+}
+
+.uom-back-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 8px; /* Rounded square exactly like the image */
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+.uom-back-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.uom-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+/* Body Content */
+.uom-body-content {
+    padding: 24px 24px;
+    flex: 1;
+    background-color: #ffffff;
+}
+
+.uom-error-text {
+    font-size: 15px;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    white-space: pre-wrap; /* honors line breaks */
+}
+
+/* Floating Action Button (Rounded Square) */
+.uom-fab-btn {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px; /* Rounded square FAB matching image */
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.uom-fab-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* ======================================================== */
+/* ADD MODAL STYLES (From the Second Screenshot) 
+/* ======================================================== */
+
+.uom-modal-overlay {
+    position: absolute; /* Keeps it within the wrapper gracefully for desktop */
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.uom-modal-card {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 440px;
+    border-radius: 16px; /* Smooth card border radius */
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: uomPopIn 0.2s ease-out forwards;
+}
+
+@keyframes uomPopIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal Header: "Add" title (teal) and close button */
+.uom-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.uom-modal-title {
+    color: #4b9596; /* Teal match */
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.uom-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.uom-modal-close:hover {
+    color: #1e293b;
+}
+
+/* Modal Body */
+.uom-modal-body {
+    margin-bottom: 24px;
+}
+
+/* Input matching the screen exactly: outline with rounded edges (pill shaped) */
+.uom-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #4b9596; /* The image shows a tealish border around the input */
+    border-radius: 24px; /* Pill-shaped like the screenshot */
+    padding: 0 16px 0 20px;
+    height: 52px;
+    background-color: #ffffff;
+    transition: box-shadow 0.2s;
+}
+
+.uom-input-wrapper:focus-within {
+    box-shadow: 0 0 0 3px rgba(75, 149, 150, 0.15);
+}
+
+.uom-input-icon {
+    color: #94a3b8; /* Faded icon color */
+    margin-right: 14px;
+    font-size: 15px;
+}
+
+.uom-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #94a3b8; /* Match faded placeholder/text style */
+    background: transparent;
+    font-weight: 500;
+}
+
+.uom-input-actions {
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+}
+
+.uom-input-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #cbd5e1;
+    margin: 0 14px;
+}
+
+.uom-input-clear {
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+.uom-input-clear:hover {
+    color: #475569;
+}
+
+/* Save button: full width teal, rounded */
+.uom-modal-save-btn {
+    width: 100%;
+    height: 52px;
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.uom-modal-save-btn:hover {
+    background-color: #3f8484;
+}
+
+.uom-modal-save-btn:active {
+    transform: scale(0.98);
+}

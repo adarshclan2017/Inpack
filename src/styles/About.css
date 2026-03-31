@@ -1,0 +1,120 @@
+/* About.css */
+.about-page-wrapper {
+    width: 100%; min-height: 100vh; display: flex; justify-content: center;
+    background-color: #f8fafc; padding: 32px 40px 80px 40px;
+    animation: fadeIn 0.4s ease-out; position: relative;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.about-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; }
+
+.about-header {
+    display: flex; align-items: center; background-color: #4b9c9c; color: white;
+    padding: 18px 24px; border-radius: 16px 16px 0 0; margin-bottom: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+.about-back-btn {
+    background: white; color: #0f172a; border: none; border-radius: 8px; width: 36px; height: 36px;
+    display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 16px; transition: all 0.2s;
+}
+.about-back-btn:hover { background-color: #f1f5f9; transform: translateX(-2px); }
+.about-header-title { font-size: 20px; font-weight: 600; margin: 0; flex: 1; text-align: center; padding-right: 36px; }
+
+.about-content {
+    display: flex; flex-direction: column; gap: 20px; padding: 0 16px;
+}
+
+.about-action-pill {
+    background: white; border: 1px solid #cbd5e1; border-radius: 20px;
+    padding: 24px 32px; display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+.about-action-pill:hover {
+    border-color: #4b9c9c; box-shadow: 0 8px 20px rgba(75, 156, 156, 0.1); transform: translateY(-2px);
+}
+
+.about-pill-left {
+    display: flex; align-items: center; gap: 24px;
+    font-size: 18px; font-weight: 600; color: #334155;
+}
+
+.about-pill-icon {
+    font-size: 20px; color: #4b9c9c;
+}
+
+.about-pill-arrow {
+    color: #94a3b8; font-size: 18px; transition: transform 0.2s;
+}
+.about-action-pill:hover .about-pill-arrow {
+    color: #4b9c9c; transform: translateX(4px);
+}
+
+/* Contact Modal Styles */
+.about-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+    animation: fadeIn 0.2s ease-out; padding: 20px;
+}
+
+.about-contact-modal {
+    background: white; border-radius: 24px; width: 100%; max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15); padding: 40px; display: flex; flex-direction: column;
+    align-items: center; position: relative;
+    animation: popCenter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+
+@keyframes popCenter {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.about-modal-close {
+    position: absolute; top: 24px; right: 24px;
+    background: transparent; border: none; font-size: 20px; color: #64748b;
+    cursor: pointer; transition: color 0.2s;
+}
+.about-modal-close:hover { color: #0f172a; }
+
+.about-modal-icon-container {
+    background: #e6f6f5; color: #4b9c9c; width: 80px; height: 80px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin-bottom: 24px;
+}
+
+.about-modal-title {
+    font-size: 24px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0; text-align: center;
+}
+
+.about-modal-text {
+    font-size: 15px; color: #64748b; text-align: center; margin: 0 0 32px 0; line-height: 1.5;
+}
+
+.about-modal-actions {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%;
+}
+
+.about-contact-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+
+.about-btn-primary {
+    background: #4b9c9c; color: white; border: none;
+    box-shadow: 0 4px 12px rgba(75, 156, 156, 0.2);
+}
+.about-btn-primary:hover { background: #3e8585; transform: translateY(-2px); }
+
+.about-btn-secondary {
+    background: white; color: #4b9c9c; border: 2px solid #e2e8f0;
+}
+.about-btn-secondary:hover { border-color: #4b9c9c; background: #f8fafc; transform: translateY(-2px); }
+
+@media (max-width: 600px) {
+    .about-action-pill { padding: 20px; }
+    .about-pill-left { font-size: 16px; gap: 16px; }
+    .about-modal-actions { grid-template-columns: 1fr; }
+}

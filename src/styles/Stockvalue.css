@@ -1,0 +1,155 @@
+/* Stockvalue specific styles matching exactly the new reference image */
+
+.sv-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); z-index: 1000;
+    display: flex; justify-content: center; align-items: center; 
+}
+
+.sv-filter-modal {
+    background: white; 
+    border-radius: 16px; 
+    width: 440px; max-width: 90vw;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    overflow: hidden; 
+    animation: svPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes svPop { 
+    from { opacity: 0; transform: scale(0.95) translateY(10px); } 
+    to { opacity: 1; transform: scale(1) translateY(0); } 
+}
+
+.sv-modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 24px 20px;
+}
+
+.sv-modal-header h3 { 
+    margin: 0; color: #4b9c9c; font-size: 20px; font-weight: 600; 
+}
+
+.sv-close-btn { 
+    color: #64748b; font-size: 24px; cursor: pointer; transition: color 0.2s; 
+}
+
+.sv-close-btn:hover { color: #334155; }
+
+/* Modal Body */
+.sv-modal-body {
+    padding: 0 24px;
+}
+
+/* Base spacing for stacked inputs */
+.sv-filter-box {
+    margin-bottom: 16px;
+}
+
+/* Fieldset specifically for Date */
+.sv-fieldset {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 0;
+    position: relative;
+    transition: border-color 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.sv-fieldset:focus-within {
+    border-color: #4b9c9c;
+}
+
+.sv-fieldset legend {
+    font-size: 11px;
+    color: #94a3b8;
+    padding: 0 4px;
+    margin-left: 4px;
+    letter-spacing: 0.5px;
+}
+
+.sv-input-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+/* Base input resets */
+.sv-input-display {
+    border: none; outline: none; width: 100%;
+    font-size: 15px; color: #334155; font-family: inherit; font-weight: 500;
+    background: transparent; cursor: pointer;
+}
+
+/* Regular input boxes */
+.sv-search-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+}
+
+.sv-search-box:focus-within {
+    border-color: #4b9c9c;
+}
+
+/* Used for text and select elements */
+.sv-input-search {
+    border: none; outline: none; width: 100%;
+    font-size: 15px; color: #334155; font-weight: 500;
+    background: transparent;
+}
+
+.sv-input-search::placeholder { 
+    color: #94a3b8; font-weight: 400;
+}
+
+select.sv-input-search {
+    cursor: pointer;
+    color: #94a3b8; font-weight: 400;
+}
+select.sv-input-search option {
+    color: #334155;
+}
+
+/* Icons */
+.sv-divider { color: #cbd5e1; font-size: 16px; }
+.sv-icon { color: #94a3b8; font-size: 18px; }
+.sv-clear-icon { color: #94a3b8; font-size: 16px; cursor: pointer; }
+.sv-caret-icon { color: #38bdf8; font-size: 16px; }
+
+/* Filter button container and button */
+.sv-modal-footer {
+    padding: 8px 24px 24px;
+}
+
+.sv-filter-btn {
+    width: 100%; 
+    background-color: #4b9c9c; 
+    color: white;
+    border: none; 
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 16px; 
+    font-weight: 600; 
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sv-filter-btn:hover { background-color: #3e8585; }
+
+/* Invisible Native Date Picker */
+.sv-hidden-date {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; z-index: 2; padding: 0; margin: 0;
+}
+
+.sv-hidden-date::-webkit-calendar-picker-indicator {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; margin: 0; padding: 0;
+}

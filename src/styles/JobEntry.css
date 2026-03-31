@@ -1,0 +1,824 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ─── Shared page shell ──────────────────────────────────── */
+.je-page,
+.je-form-page {
+    min-height: 100vh;
+    background: #f0fdfa;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─── Header ─────────────────────────────────────────────── */
+.je-header,
+.je-form-header {
+    display: flex;
+    align-items: center;
+    background: #0d9488;
+    padding: 0 28px;
+    height: 64px;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(13, 148, 136, 0.25);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.je-title,
+.je-form-title {
+    flex: 1;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+.je-header-actions,
+.je-form-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.je-back-btn,
+.je-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+}
+
+.je-back-btn:hover,
+.je-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+/* ─── Empty State ────────────────────────────────────────── */
+.je-empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 40px 20px;
+}
+
+.je-empty-illustration {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 4px 24px -4px rgba(13, 148, 136, 0.12);
+    border: 1px solid rgba(13, 148, 136, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.je-empty-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0d9488;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+/* ─── FAB ────────────────────────────────────────────────── */
+.je-fab {
+    position: fixed;
+    bottom: 36px;
+    right: 36px;
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    border: none;
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(13, 148, 136, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 50;
+}
+
+.je-fab:hover {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 14px 32px rgba(13, 148, 136, 0.5);
+}
+
+.je-fab:active {
+    transform: scale(0.96);
+}
+
+/* ─── Form Page Body ─────────────────────────────────────── */
+.je-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 860px;
+    width: 100%;
+    margin: 32px auto;
+    padding: 0 28px 40px;
+}
+
+/* ─── Section ────────────────────────────────────────────── */
+.je-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.je-section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* ─── Service Type Radio Pills ───────────────────────────── */
+.je-radio-group {
+    display: flex;
+    gap: 0;
+    background: white;
+    border-radius: 14px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #e8f5f4;
+}
+
+.je-radio-pill {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    border-radius: 8px;
+    transition: color 0.2s;
+}
+
+.je-radio-pill input[type="radio"] {
+    display: none;
+}
+
+.je-radio-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s;
+}
+
+.je-radio-pill.active {
+    color: #0d9488;
+}
+
+.je-radio-pill.active .je-radio-dot {
+    border-color: #0d9488;
+    background: #0d9488;
+    box-shadow: inset 0 0 0 3px white;
+}
+
+/* ─── Cards ──────────────────────────────────────────────── */
+.je-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid #e8f5f4;
+    overflow: hidden;
+}
+
+
+
+/* ─── Input Rows ─────────────────────────────────────────── */
+.je-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    min-height: 52px;
+    transition: background 0.15s;
+}
+
+.je-input-row:focus-within {
+    background: #f8fffe;
+}
+
+.je-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.je-border-top {
+    border-top: 1px solid #f1f5f9;
+}
+
+.je-border-right {
+    border-right: 1px solid #f1f5f9;
+}
+
+.je-field-icon {
+    color: #0d9488;
+    font-size: 15px;
+    flex-shrink: 0;
+    width: 18px;
+    text-align: center;
+    opacity: 0.8;
+}
+
+.je-field-icon-right {
+    color: #94a3b8;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.je-rupee-icon {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d9488;
+    flex-shrink: 0;
+}
+
+.je-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+    min-width: 0;
+}
+
+.je-input::placeholder {
+    color: #94a3b8;
+}
+
+/* Date input specific */
+.je-input[type="date"],
+.je-filter-date-input[type="date"] {
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+}
+
+/* Customize the native calendar icon */
+.je-input[type="date"]::-webkit-calendar-picker-indicator,
+.je-filter-date-input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+/* Add customer button */
+.je-add-customer-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(13, 148, 136, 0.1);
+    color: #0d9488;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.je-add-customer-btn:hover {
+    background: rgba(13, 148, 136, 0.2);
+}
+
+/* ─── Warranty Radio Row ─────────────────────────────────── */
+.je-warranty-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+}
+
+.je-warranty-option {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.je-warranty-option input[type="radio"] {
+    display: none;
+}
+
+.je-warranty-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    transition: border-color 0.2s;
+    flex-shrink: 0;
+}
+
+.je-warranty-option.active {
+    color: #0d9488;
+}
+
+.je-warranty-option.active .je-warranty-dot {
+    border-color: #0d9488;
+    background: #0d9488;
+    box-shadow: inset 0 0 0 3px white;
+}
+
+/* ─── Attachment Buttons ─────────────────────────────────── */
+.je-attach-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px;
+}
+
+.je-attach-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    font-family: 'Inter', sans-serif;
+    transition: color 0.2s, transform 0.15s;
+}
+
+.je-attach-btn:hover {
+    color: #0d9488;
+    transform: translateY(-2px);
+}
+
+.je-attach-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(13, 148, 136, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #0d9488;
+    transition: background 0.2s;
+}
+
+.je-attach-btn:hover .je-attach-icon-wrap {
+    background: rgba(13, 148, 136, 0.2);
+}
+
+/* ─── Toggle ─────────────────────────────────────────────── */
+.je-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+}
+
+.je-toggle-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0d9488;
+}
+
+.je-toggle-switch {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.je-toggle-switch input {
+    display: none;
+}
+
+.je-toggle-track {
+    display: block;
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background: #e2e8f0;
+    cursor: pointer;
+    transition: background 0.25s;
+    position: relative;
+}
+
+.je-toggle-switch input:checked + .je-toggle-track {
+    background: #0d9488;
+}
+
+.je-toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: left 0.25s;
+}
+
+.je-toggle-switch input:checked + .je-toggle-track .je-toggle-thumb {
+    left: 23px;
+}
+
+/* ─── Form Actions ───────────────────────────────────────── */
+.je-form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.je-save-btn {
+    flex: 1;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+    transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.je-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(13, 148, 136, 0.45);
+}
+
+.je-cancel-btn {
+    height: 52px;
+    padding: 0 28px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: white;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.je-cancel-btn:hover {
+    border-color: #0d9488;
+    color: #0d9488;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 700px) {
+    .je-form-body {
+        padding: 0 16px 32px;
+        margin: 20px auto;
+    }
+    .je-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .je-border-right {
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .je-fab {
+        bottom: 24px;
+        right: 24px;
+    }
+}
+
+/* ─── Customer Details Modal ─────────────────────────────── */
+.je-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: je-fade-in 0.2s ease;
+}
+
+@keyframes je-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.je-modal {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    width: 100%;
+    max-width: 560px;
+    padding: 28px 24px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: je-slide-up 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes je-slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+}
+
+.je-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.je-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0d9488;
+    margin: 0;
+}
+
+.je-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+}
+
+.je-modal-close:hover {
+    color: #ef4444;
+}
+
+.je-modal-card {
+    border: 1.5px solid #e8f5f4;
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 12px rgba(13, 148, 136, 0.06);
+}
+
+.je-modal-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    min-height: 52px;
+    transition: background 0.15s;
+}
+
+.je-modal-field:focus-within {
+    background: #f8fffe;
+}
+
+.je-modal-x {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+    padding: 0;
+}
+
+.je-modal-x:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.je-modal-divider {
+    width: 1px;
+    height: 28px;
+    background: #e2e8f0;
+    flex-shrink: 0;
+    margin: 0 4px;
+}
+
+.je-modal-download {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(13, 148, 136, 0.1);
+    color: #0d9488;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    padding: 0;
+}
+
+.je-modal-download:hover {
+    background: rgba(13, 148, 136, 0.2);
+}
+
+.je-modal-save-btn {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+    transition: transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.je-modal-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(13, 148, 136, 0.45);
+}
+
+/* ─── Filter Modal (wider desktop sheet) ────────────────── */
+.je-filter-modal {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    width: 100%;
+    max-width: 680px;
+    padding: 28px 28px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: je-slide-up 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 92vh;
+    overflow-y: auto;
+}
+
+/* Date Row */
+.je-filter-date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.je-filter-date-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.je-filter-date-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding-left: 4px;
+}
+
+.je-filter-date-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 12px;
+    min-height: 50px;
+    transition: border-color 0.2s;
+}
+
+.je-filter-date-inner:focus-within {
+    border-color: #0d9488;
+}
+
+.je-filter-divider {
+    width: 1px;
+    height: 24px;
+    background: #e2e8f0;
+    flex-shrink: 0;
+}
+
+.je-filter-date-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    min-width: 0;
+}
+
+/* Filter Type Dropdown */
+.je-filter-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid #0d9488;
+    border-radius: 12px;
+    padding: 0 14px;
+    min-height: 50px;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.je-filter-select {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+}
+
+.je-filter-chevron {
+    color: #94a3b8;
+    font-size: 12px;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
+/* Search Fields */
+.je-filter-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.je-filter-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 14px;
+    min-height: 50px;
+    transition: border-color 0.2s;
+}
+
+.je-filter-field:focus-within {
+    border-color: #0d9488;
+}

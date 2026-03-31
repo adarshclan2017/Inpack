@@ -1,0 +1,447 @@
+/* Dashboard Specific Styles */
+.dashboard-content.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: none;
+  margin: 0;
+  padding: 32px;
+  min-height: calc(100vh - 80px);
+  /* Fill at least the screen */
+  overflow-y: auto;
+  /* Enable safe vertical scrolling */
+}
+
+/* Ensure inner structures share height equally to fill vertical space */
+.dashboard-page > .dashboard-main-split {
+  min-height: 500px;
+}
+
+/* Header & Filters */
+.dash-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dash-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0d9488;
+  margin: 0;
+}
+
+.dash-controls-wrapper {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dash-filters {
+  display: flex;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.filter-pill {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-pill:hover {
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.05);
+}
+
+.filter-pill.active {
+  background: #0d9488;
+  color: white;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.2);
+}
+
+.dash-toggles {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: #5aa6a1;
+  /* Teal shade from screenshot */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(90, 166, 161, 0.3);
+}
+
+.toggle-btn:hover {
+  transform: translateY(-2px);
+  background: #478b86;
+}
+
+/* Sections */
+.dash-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: auto;
+  min-height: min-content;
+}
+
+.dash-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Base Card Style */
+.dash-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* Financial Grid Layout (4 columns on desktop) */
+.financial-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  row-gap: 32px;
+}
+
+.fin-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
+  min-height: 180px;
+}
+
+.fin-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-icon-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.card-icon-title i {
+  font-size: 16px;
+}
+
+.teal-text {
+  color: #5aa6a1;
+}
+
+.green-text {
+  color: #22c55e;
+}
+
+.blue-text {
+  color: #3b82f6;
+}
+
+.purple-text {
+  color: #a855f7;
+}
+
+/* The small green '0' badge on top right of financial cards */
+.card-badge {
+  background: #22c55e;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+}
+
+.fin-card .card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.fin-card .amount {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* Trend circle (green UP arrow) */
+.trend-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.trend-circle.positive {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.trend-circle.neutral {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Middle analytical charts row */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  row-gap: 40px;
+  margin-top: 12px;
+}
+
+.chart-placeholder {
+  min-height: 280px;
+  /* Healthy comfortable height */
+  height: 100%;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #cbd5e1;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Main Split Dashboard Grid */
+
+.dashboard-main-split {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  /* 66% / 33% split */
+  gap: 32px;
+  /* Stretch to fill remaining desktop height */
+}
+
+.dash-left-col,
+.dash-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.services-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  height: 100%;
+}
+
+.accounts-grid-2x2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  /* matched gaps for alignment */
+  height: 100%;
+  /* Ensures inner items stretch/space out evenly in height */
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.accounts-grid-2x2 .small-stat {
+  justify-content: center;
+}
+
+/* Flex Utilities for Card Stretching */
+.flex-1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.align-center {
+  justify-content: center;
+  align-items: center;
+}
+
+/* Setup sections to enforce full height scaling inside grid cells */
+.dash-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+@media (max-width: 1400px) {
+  .dashboard-main-split {
+    grid-template-columns: 1.5fr 1fr;
+  }
+
+  .financial-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .dashboard-main-split {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .dash-left-col,
+  .dash-right-col {
+    height: auto;
+  }
+
+  .dashboard-content.dashboard-page {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .services-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .financial-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+
+  .services-grid-3,
+  .accounts-grid-2x2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Purchases Card */
+.purchase-card {
+  gap: 16px;
+  padding: 24px;
+  justify-content: center;
+}
+
+.purchase-card .total-amount {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+}
+
+.purchase-split {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+
+.split-item {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.split-label {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.split-val {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* Services / Stats */
+.small-stat {
+  padding: 24px;
+  gap: 16px;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-val-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-val-row .val {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* Adjust margins/paddings if needed */
+.mt-0 {
+  margin-top: 0;
+}

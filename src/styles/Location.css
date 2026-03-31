@@ -1,0 +1,316 @@
+/* Extension of the desktop layout for Location */
+.loc-desktop-wrapper {
+    width: 100%;
+    height: calc(100vh - 80px);
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 0;
+}
+
+/* Teal Header */
+.loc-header-bar {
+    height: 64px;
+    background-color: #4b9596; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: white;
+}
+
+.loc-back-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 8px; /* Rounded square */
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+.loc-back-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.loc-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+/* Body Content */
+.loc-body-content {
+    padding: 24px 24px;
+    flex: 1;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.loc-error-text {
+    font-size: 15px;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    white-space: pre-wrap;
+}
+
+/* Floating Action Button */
+.loc-fab-btn {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px; 
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    z-index: 50;
+}
+
+.loc-fab-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* ======================================================== */
+/* ADD MODAL STYLES (Desktop Optimized 2-Column Grid)
+/* ======================================================== */
+
+.loc-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loc-modal-card {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 760px; /* Desktop width to accommodate 2-column grid naturally */
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: locPopIn 0.2s ease-out forwards;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes locPopIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal Header */
+.loc-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.loc-modal-title {
+    color: #4b9596; 
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.loc-modal-back {
+    background: none;
+    border: none;
+    color: #4b9596;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.loc-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.loc-modal-close:hover {
+    color: #1e293b;
+}
+
+/* Modal Body */
+.loc-modal-body {
+    margin-bottom: 24px;
+}
+
+/* The teal outer bounding box configured as a 2-column grid */
+.loc-input-group {
+    border: 1px solid #4b9596; 
+    border-radius: 20px; 
+    padding: 24px;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px; /* Optimal desktop spacing inside the box */
+}
+
+/* Switch back to 1 column gracefully if it's the main page but only has 2 inputs, 
+   actually wait, let's keep it grid so they are side-by-side! */
+
+/* Individual separate pill inputs inside the teal box */
+.loc-input-row {
+    display: flex;
+    align-items: center;
+    padding: 0 16px 0 20px;
+    height: 48px;
+    border: 1px solid #94a3b8; /* Greyish thin outline */
+    border-radius: 24px; /* Fully rounded pill */
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.loc-input-row:focus-within {
+    border-color: #4b9596;
+    box-shadow: 0 0 0 3px rgba(75, 149, 150, 0.1);
+}
+
+.loc-input-icon {
+    color: #94a3b8;
+    margin-right: 14px;
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.loc-sub-text {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -0.05em;
+}
+
+.loc-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #334155; 
+    background: transparent;
+    font-weight: 500;
+}
+
+.loc-input-field::placeholder {
+    color: #b5c3d3; /* Slightly lighter placeholder */
+}
+
+.loc-input-actions {
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+}
+
+.loc-input-divider {
+    width: 1px;
+    height: 20px;
+    background-color: #cbd5e1;
+    margin: 0 12px;
+}
+
+.loc-input-clear {
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.loc-input-clear:hover {
+    color: #475569;
+}
+
+/* More Button Styles */
+.loc-more-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.loc-more-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 24px;
+    height: 44px;
+    background: white;
+    border: 1px solid #94a3b8;
+    border-radius: 22px;
+    color: #334155;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.loc-more-btn:hover {
+    background: #f8fafc;
+    border-color: #64748b;
+}
+
+.loc-more-btn:active {
+    transform: scale(0.97);
+}
+
+/* Save button */
+.loc-modal-add-btn {
+    width: 100%;
+    height: 52px;
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.loc-modal-add-btn:hover {
+    background-color: #3f8484;
+}
+
+.loc-modal-add-btn:active {
+    transform: scale(0.98);
+}

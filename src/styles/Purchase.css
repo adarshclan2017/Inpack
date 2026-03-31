@@ -1,0 +1,221 @@
+/* Purchase.css */
+.purchase-page-wrapper {
+    width: 100%; min-height: 100vh; display: flex; justify-content: center;
+    background-color: #f8fafc; padding: 32px 40px 80px 40px;
+    animation: fadeIn 0.4s ease-out; position: relative;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.purchase-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; }
+
+/* Header */
+.purchase-header {
+    display: flex; align-items: center; background-color: #4b9c9c; color: white;
+    padding: 18px 24px; border-radius: 16px 16px 0 0; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+.purchase-back-btn {
+    background: white; color: #0f172a; border: none; border-radius: 8px; width: 36px; height: 36px;
+    display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 16px; transition: all 0.2s;
+}
+.purchase-back-btn:hover { background-color: #f1f5f9; transform: translateX(-2px); }
+.purchase-header-title { font-size: 20px; font-weight: 600; margin: 0; flex: 1; text-align: center; padding-right: 36px; }
+
+/* Main White Card Structure */
+.purchase-card {
+    background: white; border-radius: 20px; border: 1px solid #cbd5e1;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 32px;
+    display: flex; flex-direction: column; gap: 24px; margin-bottom: 24px;
+}
+
+/* 
+ * TRUE GRID ALIGNMENT CORE 
+ * The top grid and bottom grid share identical gutter tracks (48px)
+ * ensuring visually flawless vertical column spines for the entire page. 
+ */
+.purchase-top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 48px;
+}
+
+.purchase-top-subgrid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 16px;
+    height: 100%;
+}
+
+.purchase-desktop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 48px; /* 48px perfectly lines up with top grid central gutter */
+    margin-top: 16px;
+    animation: slideDownFade 0.3s ease-out;
+}
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Top Detail Box */
+.purchase-bill-info {
+    display: flex; justify-content: space-between; align-items: center; background-color: #e6f6f5; 
+    border-radius: 12px; padding: 0 24px; height: 52px; /* strict match for input box heights */
+}
+.purchase-bill-col { display: flex; gap: 12px; align-items: baseline; }
+.purchase-bill-col.right { justify-content: flex-end; }
+.purchase-bill-label { font-size: 13px; font-weight: 700; color: #4b9c9c; text-transform: uppercase; letter-spacing: 0.5px; }
+.purchase-bill-value { font-size: 16px; font-weight: 700; color: #334155; }
+
+/* 
+ * Universal pristine input boxes locking flex and font alignments mathematically
+ */
+.purchase-input-box {
+    border: 1px solid #cbd5e1; border-radius: 12px; padding: 0 16px;
+    display: flex; align-items: center; transition: border-color 0.2s; background: white;
+    min-width: 0; height: 52px; align-self: stretch;
+}
+.purchase-input-box:focus-within { border-color: #4b9c9c; box-shadow: 0 0 0 3px rgba(75, 156, 156, 0.1); }
+
+fieldset.purchase-input-box {
+    padding-top: 6px; padding-bottom: 8px; margin: 0; height: 52px; flex-direction: row;
+}
+fieldset.purchase-input-box legend {
+    font-size: 11px; color: #94a3b8; padding: 0 4px; letter-spacing: 0.5px; margin-left: -5px; line-height: 1;
+}
+
+.purchase-input-icon {
+    color: #94a3b8; font-size: 15px; width: 32px; 
+    display: flex; justify-content: flex-start; align-items: center; height: 100%;
+}
+
+.purchase-input-field {
+    border: none; outline: none; flex: 1; min-width: 0;
+    font-size: 15px; color: #334155; font-weight: 500; background: transparent;
+    height: 100%; padding: 0; margin: 0; display: flex; align-items: center; line-height: normal;
+}
+.purchase-input-field::placeholder { color: #94a3b8; font-weight: 400; }
+select.purchase-input-field { cursor: pointer; }
+
+.purchase-input-actions { display: flex; align-items: center; gap: 12px; color: #94a3b8; height: 100%; }
+.purchase-divider { width: 1px; height: 16px; background-color: #cbd5e1; }
+.purchase-clear-btn { cursor: pointer; font-size: 16px; display: flex; align-items: center; height: 100%; transition: color 0.2s; }
+.purchase-clear-btn:hover { color: #64748b; }
+
+/* Ensure nested rows deploy grids to force mathematical split */
+.purchase-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; height: 52px; }
+
+/* Grid specific spans */
+.col-span-2 { grid-column: span 2; }
+
+/* Options Row placed above accordion cleanly */
+.purchase-options-row { display: flex; justify-content: flex-start; gap: 32px; padding: 0 0 8px 8px; }
+.purchase-option-btn {
+    display: flex; align-items: center; gap: 12px; background: transparent; border: none;
+    cursor: pointer; color: #4b9c9c; font-weight: 600; font-size: 15px; transition: opacity 0.2s;
+}
+.purchase-option-btn:hover { opacity: 0.8; }
+.purchase-option-icon {
+    width: 36px; height: 36px; background-color: #1e3a3a; color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+
+/* Accordion Component */
+.purchase-accordion-toggle {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    color: #334155; font-weight: 600; font-size: 16px; cursor: pointer; padding-top: 16px;
+}
+.purchase-dashed-line { flex: 1; border-bottom: 2px dashed #cbd5e1; position: relative; top: -2px; }
+
+/* Bottom Desktop Fast Action Circles */
+.purchase-footer-actions { 
+    display: flex; justify-content: space-between; align-items: center;
+    background: white; border-radius: 16px; padding: 24px 32px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.purchase-fast-actions-inline { display: flex; gap: 32px; }
+.purchase-fast-btn {
+    display: flex; align-items: center; gap: 16px; border: none;
+    background: transparent; cursor: pointer; color: #4b9c9c; font-weight: 600; font-size: 15px; transition: transform 0.2s;
+    padding: 8px; border-radius: 12px;
+}
+.purchase-fast-btn:hover { transform: translateY(-3px); background-color: #f8fafc; }
+.purchase-fast-icon {
+    width: 48px; height: 48px; border-radius: 50%; background-color: #e6f6f5; color: #4b9c9c;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.purchase-save-btn {
+    background-color: #4b9c9c; color: white; border: none; border-radius: 12px; min-width: 180px;
+    padding: 16px 32px; font-size: 17px; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 12px rgba(75,156,156,0.2);
+}
+.purchase-save-btn:hover { background-color: #3e8585; transform: translateY(-2px); }
+
+/* Responsive Adjustments */
+@media (max-width: 1000px) {
+    .purchase-top-grid, .purchase-desktop-grid { grid-template-columns: 1fr; gap: 20px; }
+    .purchase-top-subgrid { grid-template-columns: 1fr 1fr; }
+    .col-span-2 { grid-column: span 1; }
+}
+
+/* Modal UI Overrides */
+.purchase-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+    animation: fadeIn 0.2s ease-out; padding: 40px;
+}
+
+.purchase-item-modal {
+    background: white; border-radius: 20px; width: 100%; max-width: 900px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); display: flex; flex-direction: column;
+    animation: popCenter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    overflow: hidden; max-height: 85vh; margin: auto;
+}
+
+@keyframes popCenter {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.purchase-modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 32px; border-bottom: 1px solid #e2e8f0; background: #fbfcfd;
+}
+.purchase-modal-header h3 { margin: 0; color: #4b9c9c; font-size: 20px; font-weight: 600; }
+.purchase-modal-close {
+    background: transparent; border: none; color: #64748b; font-size: 24px; cursor: pointer; transition: all 0.2s;
+}
+.purchase-modal-close:hover { color: #0f172a; transform: scale(1.1); }
+
+.purchase-modal-body {
+    padding: 24px 32px; display: flex; flex-direction: column; gap: 20px;
+    overflow-y: auto;
+}
+
+.purchase-modal-top-section { display: grid; grid-template-columns: 1.2fr 2fr; gap: 20px; }
+.purchase-modal-info-row { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; font-weight: 600; color: #334155; }
+.purchase-modal-used-pill {
+    display: flex; align-items: center; gap: 8px; color: #059669; background: #ecfdf5;
+    padding: 6px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; border: 1px solid #a7f3d0;
+}
+
+.purchase-modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-top: 20px; border-top: 1px dashed #cbd5e1; }
+.purchase-modal-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+.purchase-modal-total {
+    background: #e6f6f5; color: #0f766e; padding: 24px 32px; border-radius: 12px;
+    display: flex; justify-content: space-between; align-items: center; font-size: 20px; font-weight: 800; margin-top: 8px;
+}
+
+.purchase-modal-footer { padding: 24px 32px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+.purchase-modal-save-btn {
+    width: 100%; background: #4b9c9c; color: white; border: none; border-radius: 12px;
+    padding: 16px; font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.purchase-modal-save-btn:hover { background: #3e8585; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(75,156,156,0.2); }
+
+@media(max-width: 768px) {
+    .purchase-modal-top-section, .purchase-modal-grid { grid-template-columns: 1fr; }
+}

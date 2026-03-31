@@ -1,0 +1,289 @@
+/* Exact match of the provided screenshot for Desktop 2-column Grid (Commission Agent) */
+.comm-desktop-wrapper {
+    width: 100%;
+    height: calc(100vh - 80px);
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 0;
+}
+
+/* Teal Header */
+.comm-header-bar {
+    height: 64px;
+    background-color: #4b9596; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: white;
+}
+
+.comm-back-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 8px; /* Rounded square */
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+.comm-back-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.comm-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+/* Body Content */
+.comm-body-content {
+    padding: 24px 24px;
+    flex: 1;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.comm-error-text {
+    font-size: 15px;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    white-space: pre-wrap;
+}
+
+/* Floating Action Button */
+.comm-fab-btn {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px; 
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    z-index: 50;
+}
+
+.comm-fab-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* ======================================================== */
+/* ADD MODAL STYLES (Desktop Optimized 2-Column Grid)
+/* ======================================================== */
+
+.comm-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.comm-modal-card {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 760px; /* Desktop width to accommodate 2-column grid naturally */
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: commPopIn 0.2s ease-out forwards;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes commPopIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal Header */
+.comm-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.comm-modal-title {
+    color: #4b9596; 
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.comm-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.comm-modal-close:hover {
+    color: #1e293b;
+}
+
+/* Modal Body */
+.comm-modal-body {
+    margin-bottom: 24px;
+}
+
+/* The teal outer bounding box configured as a 2-column grid */
+.comm-input-group {
+    border: 1px solid #4b9596; 
+    border-radius: 20px; 
+    padding: 24px;
+    background-color: #ffffff;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px; /* Optimal desktop spacing inside the box */
+}
+
+/* Individual separate pill inputs inside the teal box */
+.comm-input-row {
+    display: flex;
+    align-items: center;
+    padding: 0 16px 0 20px;
+    height: 48px;
+    border: 1px solid #94a3b8; /* Greyish thin outline */
+    border-radius: 24px; /* Fully rounded pill */
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.comm-input-row:focus-within {
+    border-color: #4b9596;
+    box-shadow: 0 0 0 3px rgba(75, 149, 150, 0.1);
+}
+
+.comm-input-icon {
+    color: #94a3b8;
+    margin-right: 14px;
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.comm-sub-text {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -0.05em;
+}
+
+.comm-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #334155; 
+    background: transparent;
+    font-weight: 500;
+}
+
+.comm-input-field::placeholder {
+    color: #b5c3d3; /* Slightly lighter placeholder */
+}
+
+.comm-input-actions {
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+}
+
+.comm-input-divider {
+    width: 1px;
+    height: 20px;
+    background-color: #cbd5e1;
+    margin: 0 12px;
+}
+
+.comm-input-clear {
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.comm-input-clear:hover {
+    color: #475569;
+}
+
+/* Secondary Buttons Row */
+.comm-secondary-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.comm-secondary-btn {
+    flex: 1;
+    height: 48px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.comm-secondary-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Save button */
+.comm-modal-add-btn {
+    width: 100%;
+    height: 52px;
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.comm-modal-add-btn:hover {
+    background-color: #3f8484;
+}
+
+.comm-modal-add-btn:active {
+    transform: scale(0.98);
+}

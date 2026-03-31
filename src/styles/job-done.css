@@ -1,0 +1,394 @@
+/* job-done.css */
+.jd-page {
+    background-color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+}
+
+.jd-header {
+    background-color: #0d9488;
+    /* Match global theme */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 28px;
+    height: 64px;
+    box-shadow: 0 4px 20px rgba(13, 148, 136, 0.25);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.jd-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.jd-back-btn,
+.jd-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+}
+
+.jd-back-btn:hover,
+.jd-action-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+.jd-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.jd-empty-state-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 24px;
+}
+
+.jd-illustration-container {
+    width: 260px;
+    height: 260px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px -4px rgba(13, 148, 136, 0.12);
+    border: 1px solid rgba(13, 148, 136, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jd-empty-state-text {
+    color: #0d9488;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+/* Modal Overlay */
+.jd-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    animation: jdFadeIn 0.2s ease;
+}
+
+@keyframes jdFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Filter Modal Base */
+.jd-filter-modal {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    width: 100%;
+    max-width: 680px;
+    padding: 28px 28px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: jdSlideUp 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 92vh;
+    overflow-y: auto;
+}
+
+@keyframes jdSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Desktop Modal Alignment */
+@media (min-width: 680px) {
+    .jd-modal-overlay {
+        align-items: center;
+    }
+
+    .jd-filter-modal {
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        animation: jdPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        padding: 32px;
+        gap: 24px;
+    }
+}
+
+@keyframes jdPop {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Header */
+.jd-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jd-modal-header h3 {
+    margin: 0;
+    color: #0d9488;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.jd-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.jd-close-btn:hover {
+    color: #ef4444;
+}
+
+/* Body Elements */
+.jd-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Desktop 2-Column Grids */
+.jd-dates-row,
+.jd-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+@media (min-width: 680px) {
+
+    .jd-dates-row,
+    .jd-grid-2 {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+}
+
+/* Base Input Box Style */
+.jd-box {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 14px;
+    position: relative;
+    transition: border-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: transparent;
+    min-height: 52px;
+}
+
+.jd-box:focus-within {
+    border-color: #0d9488;
+    background: #f8fffe;
+}
+
+/* specific for fieldset */
+.jd-date-box {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin: 0;
+}
+
+.jd-date-box legend {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    padding: 0 4px;
+    margin-left: -4px;
+    width: auto;
+    text-align: left;
+    letter-spacing: 0.4px;
+}
+
+.jd-box.jd-filter-box {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.jd-input-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    position: relative;
+    min-width: 0;
+    height: 100%;
+}
+
+.jd-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    background: transparent;
+    min-width: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.jd-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+select.jd-input {
+    appearance: none;
+    cursor: pointer;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.jd-divider {
+    width: 1.5px;
+    height: 24px;
+    background: #e2e8f0;
+    font-size: 0;
+}
+
+.jd-icon {
+    color: #94a3b8;
+    font-size: 16px;
+    text-align: center;
+}
+
+.jd-caret-icon {
+    color: #94a3b8;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.jd-clear-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.jd-clear-icon:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.jd-modal-footer {
+    margin-top: 8px;
+}
+
+.jd-filter-btn {
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+    transition: transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.3px;
+    font-family: 'Inter', sans-serif;
+}
+
+.jd-filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(13, 148, 136, 0.45);
+}
+
+.jd-hidden-date {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0;
+    margin: 0;
+}
+
+.jd-hidden-date::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}

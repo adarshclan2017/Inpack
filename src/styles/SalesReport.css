@@ -1,0 +1,293 @@
+.sales-report-container {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8fafc;
+    border-radius: 12px;
+}
+
+.sales-report-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 40px;
+    gap: 12px;
+}
+
+.action-btn.icon-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1e293b;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn.icon-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.empty-state-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 60px; /* Offset to visually center */
+}
+
+.illustration-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    background-color: #fff4ed; /* Light peach background from image */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.speech-bubble {
+    position: absolute;
+    top: 20px;
+    left: -40px;
+    background-color: #4b9c9c;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transform: rotate(-5deg);
+    z-index: 2;
+}
+
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    border-width: 10px 10px 0 0;
+    border-style: solid;
+    border-color: #4b9c9c transparent transparent transparent;
+}
+
+.person-illustration {
+    width: 150px;
+    height: 150px;
+    /* We'll use an SVG person inside the React component */
+    z-index: 1;
+}
+
+.empty-state-text {
+    color: #4b9c9c;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Animations */
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Exact Filter Modal UI (From Reference Image) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+
+.filter-modal {
+    background: white; border-radius: 16px;
+    width: 480px; max-width: 90vw;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPopIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.filter-modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 24px 16px;
+}
+
+.filter-modal-header h3 {
+    margin: 0; color: #4b9c9c; font-size: 22px; font-weight: 600;
+}
+
+.close-icon-btn {
+    color: #64748b; font-size: 24px; cursor: pointer; transition: color 0.2s;
+}
+
+.close-icon-btn:hover { color: #334155; }
+
+.filter-modal-body { padding: 0 24px; }
+
+.exact-ui-container {
+    border: 1px solid #4b9c9c;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.exact-dates-row {
+    display: flex;
+    gap: 12px;
+}
+
+.exact-fieldset {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 0;
+    position: relative;
+    background: white;
+    transition: border-color 0.2s;
+}
+
+.exact-fieldset:focus-within {
+    border-color: #4b9c9c;
+}
+
+.exact-fieldset legend {
+    font-size: 13px;
+    color: #94a3b8;
+    padding: 0 4px;
+    margin-left: 4px;
+    font-weight: 500;
+}
+
+.exact-input-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.vertical-divider {
+    color: #cbd5e1;
+    font-size: 16px;
+}
+
+.exact-input-content > .fa-calendar {
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+.custom-text-display {
+    border: none; outline: none; width: 100%;
+    font-size: 16px; color: #1e293b; font-family: inherit;
+    background: transparent; cursor: pointer;
+}
+
+.hidden-date-input {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; z-index: 2; padding: 0; margin: 0;
+}
+.hidden-date-input::-webkit-calendar-picker-indicator {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; margin: 0; padding: 0;
+}
+
+.exact-search-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+}
+
+.exact-search-box:focus-within {
+    border-color: #4b9c9c;
+}
+
+.exact-search-box input {
+    border: none; outline: none; width: 100%;
+    font-size: 15px; color: #1e293b;
+}
+
+.exact-search-box input::placeholder {
+    color: #94a3b8;
+}
+
+.filter-modal-footer {
+    padding: 0 24px 24px;
+}
+
+.apply-filter-btn {
+    width: 100%; background-color: #4b9c9c; color: white;
+    border: none; border-radius: 8px; padding: 16px;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(75, 156, 156, 0.2);
+    transition: background-color 0.2s;
+}
+
+.apply-filter-btn:hover { background-color: #3e8585; }
+
+/* Flawless Invisible Date Input Overlay */
+.hidden-date-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2; /* ensure covering everything */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.hidden-date-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+
+.custom-text-display {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #334155;
+    background: transparent;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}

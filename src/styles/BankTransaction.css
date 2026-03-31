@@ -1,0 +1,93 @@
+/* ─── BankTransaction-specific additions ───────────────────
+   Base layout uses CashTransaction.css (ct- prefix classes)
+   This file adds bank-only element styles.
+──────────────────────────────────────────────────────────── */
+
+/* UTR input group: char count sits below the input */
+.bt-utr-group {
+    align-items: flex-start;
+    padding-top: 10px;
+    padding-bottom: 6px;
+}
+
+.bt-utr-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.bt-char-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: #94a3b8;
+    text-align: right;
+    padding-right: 2px;
+    letter-spacing: 0.2px;
+}
+
+/* ─── Bottom Split Row (Received by + Amount) ──────────── */
+.bt-split-row {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid #f1f5f9;
+    min-height: 64px;
+}
+
+.bt-select-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    border-right: 1px solid #f1f5f9;
+    position: relative;
+    transition: background 0.15s;
+}
+
+.bt-select-wrap:focus-within {
+    background: #f8fffe;
+}
+
+.bt-inline-select {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+    appearance: none;
+    cursor: pointer;
+}
+
+.bt-inline-select option {
+    color: #1e293b;
+}
+
+/* placeholder color when nothing selected */
+.bt-inline-select:invalid,
+.bt-inline-select option[value=""] {
+    color: #94a3b8;
+}
+
+.bt-select-chevron {
+    color: #94a3b8;
+    font-size: 11px;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.bt-amount-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    transition: background 0.15s;
+}
+
+.bt-amount-wrap:focus-within {
+    background: #f8fffe;
+}

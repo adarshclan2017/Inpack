@@ -1,0 +1,331 @@
+/* Customerwise.css - Desktop Optimized Filter Modal */
+
+/* Modal Backdrop */
+.cw-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.6); /* Slate-900 with opacity */
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Modal Container */
+.cw-filter-modal {
+    background: white;
+    border-radius: 20px;
+    width: 720px;
+    max-width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: cwPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes cwPop {
+    from {
+        opacity: 0;
+        transform: scale(0.98) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Header */
+.cw-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 40px 24px;
+    background: white;
+}
+
+.cw-modal-header h3 {
+    margin: 0;
+    color: #115e5e; /* Deeper teal */
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.cw-close-btn {
+    color: #94a3b8;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+}
+
+.cw-close-btn:hover {
+    color: #ef4444;
+    background: #fef2f2;
+    transform: rotate(90deg);
+}
+
+/* Body */
+.cw-modal-body {
+    padding: 0 40px 10px;
+}
+
+.cw-filter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* Filter Box (Input Container) */
+.cw-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 16px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.cw-box:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.cw-box:focus-within {
+    border-color: #4b9c9c;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(75, 156, 156, 0.1);
+}
+
+.cw-input-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+}
+
+.cw-icon {
+    color: #64748b;
+    font-size: 18px;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.cw-divider {
+    height: 24px;
+    width: 1px;
+    background: #e2e8f0;
+    display: block;
+    margin: 0 4px;
+}
+
+.cw-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+    color: #0f172a;
+    font-weight: 500;
+    background: transparent;
+}
+
+.cw-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Interactive Icons */
+.cw-caret-icon {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-left: 8px;
+    transition: transform 0.2s;
+}
+
+.cw-box:focus-within .cw-caret-icon {
+    color: #4b9c9c;
+}
+
+.cw-clear-icon {
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: color 0.2s;
+}
+
+.cw-clear-icon:hover {
+    color: #ef4444;
+}
+
+/* Dropdown Menu */
+.cw-search-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+.cw-search-dropdown-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #334155;
+    border-radius: 8px;
+    transition: all 0.1s;
+    font-weight: 500;
+}
+
+.cw-search-dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #4b9c9c;
+}
+
+/* Checkbox Row */
+.cw-checkbox-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px 4px 24px;
+}
+
+.cw-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Custom Checkbox */
+.cw-checkbox {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+    position: relative;
+    margin: 0;
+}
+
+.cw-checkbox:checked {
+    background-color: #4b9c9c;
+    border-color: #4b9c9c;
+}
+
+.cw-checkbox:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cw-checkbox:hover {
+    border-color: #4b9c9c;
+}
+
+/* Footer */
+.cw-modal-footer {
+    padding: 0 40px 40px;
+    display: flex;
+    justify-content: flex-end;
+    background: white;
+}
+
+.cw-filter-btn {
+    background-color: #4b9c9c;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(75, 156, 156, 0.2), 0 2px 4px -1px rgba(75, 156, 156, 0.1);
+}
+
+.cw-filter-btn:hover {
+    background-color: #3e8585;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(75, 156, 156, 0.3);
+}
+
+.cw-filter-btn:active {
+    transform: translateY(0);
+}
+
+/* Date Input Overlay */
+.cw-hidden-date {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.cw-hidden-date::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cw-filter-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cw-filter-modal {
+        width: 100%;
+        margin: 10px;
+    }
+    
+    .cw-modal-header, .cw-modal-body, .cw-modal-footer {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}

@@ -1,0 +1,372 @@
+/* Customers.css - Desktop Layout Implementation */
+
+.cust-desktop-wrapper, .cust-desktop-wrapper * {
+    box-sizing: border-box;
+}
+
+.cust-desktop-wrapper {
+    width: 100%;
+    height: calc(100vh - 80px);
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 0;
+}
+
+/* Teal Header */
+.cust-header-bar {
+    height: 64px;
+    background-color: #4b9596; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: white;
+}
+
+.cust-back-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.2s;
+}
+
+.cust-back-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.cust-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+/* Body Content */
+.cust-body-content {
+    padding: 24px 24px;
+    flex: 1;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.cust-error-text {
+    font-size: 15px;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    white-space: pre-wrap;
+}
+
+/* Floating Action Button */
+.cust-fab-btn {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px; 
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    z-index: 50;
+}
+
+.cust-fab-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* ======================================================== */
+/* ADD MODAL STYLES (Desktop Optimized 2-Column Grid)
+/* ======================================================== */
+
+.cust-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.cust-modal-card {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 760px; /* Desktop width to accommodate 2-column grid naturally */
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: custPopIn 0.2s ease-out forwards;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@keyframes custPopIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal Header */
+.cust-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+.cust-modal-title {
+    color: #4b9596 !important; 
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.cust-modal-close {
+    background: none !important;
+    border: none !important;
+    font-size: 22px !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: color 0.2s;
+}
+
+.cust-modal-close:hover {
+    color: #1e293b;
+}
+
+/* Modal Body */
+.cust-modal-body {
+    margin-bottom: 24px;
+}
+
+/* The teal outer bounding box configured as a 2-column grid */
+.cust-input-group {
+    border: 1px solid #4b9596; 
+    border-radius: 20px; 
+    padding: 24px;
+    background-color: #ffffff;
+    margin: 0 0 20px 0 !important;
+    width: 100% !important;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px; /* Optimal desktop spacing inside the box */
+}
+
+/* Individual separate pill inputs inside the teal box */
+.cust-input-row {
+    display: flex;
+    align-items: center;
+    padding: 0 16px 0 20px;
+    height: 48px;
+    border: 1px solid #94a3b8; /* Greyish thin outline */
+    border-radius: 24px; /* Fully rounded pill */
+    transition: box-shadow 0.2s, border-color 0.2s;
+    min-width: 0 !important; /* Vital constraint preventing infinite CSS Grid inflation */
+}
+
+.cust-input-row.span-2 {
+    grid-column: span 2;
+}
+
+.cust-input-row:focus-within {
+    border-color: #4b9596;
+    box-shadow: 0 0 0 3px rgba(75, 149, 150, 0.1);
+}
+
+.cust-input-icon {
+    color: #94a3b8;
+    margin-right: 14px;
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.cust-sub-text {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: -0.05em;
+}
+
+.cust-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #334155; 
+    background: transparent;
+    font-weight: 500;
+    min-width: 0 !important; /* Ensure the actual input flex child obeys bounds */
+}
+
+.cust-input-field::placeholder {
+    color: #b5c3d3; /* Slightly lighter placeholder */
+}
+
+.cust-input-actions {
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+}
+
+.cust-input-divider {
+    width: 1px;
+    height: 20px;
+    background-color: #cbd5e1;
+    margin: 0 12px;
+}
+
+.cust-input-clear {
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.cust-input-clear:hover {
+    color: #475569;
+}
+
+/* Secondary 2x2 Buttons Grid */
+.cust-secondary-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.cust-secondary-btn {
+    height: 48px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    font-size: 14px;
+}
+
+.cust-secondary-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Save button */
+.cust-modal-add-btn {
+    width: 100%;
+    height: 52px;
+    background-color: #4b9596;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.cust-modal-add-btn:hover {
+    background-color: #3f8484;
+}
+
+.cust-modal-add-btn:active {
+    transform: scale(0.98);
+}
+
+/* ======================================================== */
+/* NESTED MODAL STYLES (Commercial Details)
+/* ======================================================== */
+
+.cust-nested-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1010; /* Sits above main modal */
+}
+
+.cust-nested-modal-card {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 680px; /* Slightly narrower than parent to show hierarchy */
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    animation: custPopIn 0.2s ease-out forwards;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.cust-radio-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 32px;
+    padding-top: 12px;
+    padding-bottom: 8px;
+}
+
+.cust-radio-group.span-2 {
+    grid-column: span 2;
+}
+
+.cust-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cust-radio-option i {
+    color: #94a3b8;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+.cust-radio-option:hover i.fa-circle {
+    color: #64748b;
+}
+
+.cust-radio-option i.fa-circle-check {
+    color: #4b9596;
+}
