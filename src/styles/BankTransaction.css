@@ -91,3 +91,53 @@
 .bt-amount-wrap:focus-within {
     background: #f8fffe;
 }
+
+/* ─── Responsive ──────────────────────────────────────── */
+
+/* ── Tablet (≤ 900px) ── */
+@media (max-width: 900px) {
+    .bt-split-row {
+        min-height: 56px;
+    }
+}
+
+/* ── Mobile (≤ 600px) ── */
+@media (max-width: 600px) {
+    /* Stack Received by / Paid by and Amount vertically */
+    .bt-split-row {
+        flex-direction: column;
+        min-height: unset;
+        gap: 0;
+    }
+
+    .bt-select-wrap {
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 10px 16px;
+        min-height: 52px;
+    }
+
+    .bt-amount-wrap {
+        padding: 6px 16px;
+        min-height: 60px;
+    }
+
+    .bt-inline-select {
+        font-size: 14px;
+    }
+
+    .bt-char-count {
+        font-size: 10.5px;
+    }
+}
+
+/* ── Small Mobile (≤ 380px) ── */
+@media (max-width: 380px) {
+    .bt-select-wrap {
+        padding: 10px 14px;
+    }
+
+    .bt-amount-wrap {
+        padding: 6px 14px;
+    }
+}

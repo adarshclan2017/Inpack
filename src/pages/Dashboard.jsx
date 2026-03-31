@@ -7,6 +7,7 @@ export default function Dashboard() {
     const navigate = useNavigate();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [activeFilter, setActiveFilter] = useState('Today');
 
     return (
         <div className="admin-dashboard">
@@ -32,6 +33,10 @@ export default function Dashboard() {
                 <nav className="sidebar-nav">
                     {!isCollapsed && <div className="nav-label">Main Menu</div>}
                     <ul>
+                        <li onClick={() => { navigate('/welcome'); setIsMobileMenuOpen(false); }}>
+                            <i className="fa-solid fa-house"></i>
+                            {!isCollapsed && <span>Home</span>}
+                        </li>
                         <li className="active" onClick={() => setIsMobileMenuOpen(false)}>
                             <i className="fa-solid fa-chart-pie"></i>
                             {!isCollapsed && <span>Dashboard</span>}
