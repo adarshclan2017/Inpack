@@ -1,5 +1,7 @@
+import API_BASE_URL from "./apiConfig";
+
 export async function validatePhone(phone) {
-  const url = `/asmx/InPackService.asmx/validatePhoneno?Phoneno=${encodeURIComponent(
+  const url = `${API_BASE_URL}/InPackService.asmx/validatePhoneno?Phoneno=${encodeURIComponent(
     phone
   )}`;
 
