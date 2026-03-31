@@ -152,12 +152,7 @@ select.purchase-input-field { cursor: pointer; }
 }
 .purchase-save-btn:hover { background-color: #3e8585; transform: translateY(-2px); }
 
-/* Responsive Adjustments */
-@media (max-width: 1000px) {
-    .purchase-top-grid, .purchase-desktop-grid { grid-template-columns: 1fr; gap: 20px; }
-    .purchase-top-subgrid { grid-template-columns: 1fr 1fr; }
-    .col-span-2 { grid-column: span 1; }
-}
+
 
 /* Modal UI Overrides */
 .purchase-modal-overlay {
@@ -216,6 +211,57 @@ select.purchase-input-field { cursor: pointer; }
 }
 .purchase-modal-save-btn:hover { background: #3e8585; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(75,156,156,0.2); }
 
-@media(max-width: 768px) {
-    .purchase-modal-top-section, .purchase-modal-grid { grid-template-columns: 1fr; }
+/* ========================================================= */
+/*                   RESPONSIVE MEDIA QUERIES                */
+/* ========================================================= */
+
+/* Table / Smaller Desktop Screens */
+@media screen and (max-width: 1024px) {
+    .purchase-page-wrapper { padding: 24px 20px 80px 20px; }
+    .purchase-top-grid, .purchase-desktop-grid { grid-template-columns: 1fr; gap: 20px; }
+    .purchase-top-subgrid { grid-template-columns: 1fr 1fr; }
+    .col-span-2 { grid-column: span 1; }
+    .purchase-footer-actions { padding: 20px 24px; }
+}
+
+/* Tablet & Mobile Screens */
+@media screen and (max-width: 768px) {
+    .purchase-page-wrapper { padding: 16px 12px 64px 12px; }
+    .purchase-header { padding: 16px 20px; margin-bottom: 20px; }
+    .purchase-card { padding: 20px 16px; gap: 20px; }
+    
+    .purchase-top-subgrid, 
+    .purchase-row, 
+    .purchase-modal-top-section, 
+    .purchase-modal-grid, 
+    .purchase-modal-grid-2 { grid-template-columns: 1fr; gap: 16px; }
+    
+    .purchase-row { height: auto; }
+    
+    .purchase-bill-info { flex-direction: column; height: auto; padding: 16px; gap: 12px; align-items: flex-start; }
+    .purchase-bill-col.right { justify-content: flex-start; }
+
+    /* Modal Mobile Fixes */
+    .purchase-modal-overlay { padding: 16px; }
+    .purchase-item-modal { max-height: 90vh; }
+    .purchase-modal-header { padding: 16px 20px; }
+    .purchase-modal-body, .purchase-modal-footer, .purchase-modal-total { padding: 16px 20px; }
+    .purchase-modal-info-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    
+    /* Footer layout stacked */
+    .purchase-footer-actions { flex-direction: column; gap: 20px; padding: 20px; }
+    .purchase-fast-actions-inline { flex-wrap: wrap; gap: 16px; justify-content: center; width: 100%; }
+    .purchase-fast-btn { flex-direction: column; gap: 8px; font-size: 13px; flex: 1 1 calc(33.33% - 16px); min-width: 80px; }
+    .purchase-fast-icon { width: 44px; height: 44px; }
+    .purchase-save-btn { width: 100%; }
+}
+
+/* Extra Small Phones */
+@media screen and (max-width: 480px) {
+    .purchase-options-row { gap: 16px; flex-wrap: wrap; }
+    .purchase-accordion-toggle { font-size: 15px; padding-top: 12px; }
+    .purchase-header-title { font-size: 18px; padding-right: 0;}
+    .purchase-back-btn { width: 32px; height: 32px; font-size: 14px; }
+    .purchase-bill-value { font-size: 15px; }
+    .purchase-fast-btn { flex: 1 1 calc(50% - 16px); }
 }

@@ -107,7 +107,7 @@ export default function Suppliers({ setActiveTab }) {
                                 </div>
 
                                 {/* 7. State */}
-                                <div className="sup-input-row">
+                                <div className="sup-input-row sup-col-span-2">
                                     <i className="fa-solid fa-map sup-input-icon"></i>
                                     <input type="text" className="sup-input-field" value={state} onChange={(e) => setState(e.target.value)} placeholder="State" />
                                     <div className="sup-input-actions">

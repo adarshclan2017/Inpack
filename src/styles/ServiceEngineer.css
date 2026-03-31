@@ -1,16 +1,18 @@
 /* Extension of the desktop layout for Service Engineer */
 .seng-desktop-wrapper {
     width: 100%;
-    height: calc(100vh - 80px);
+    min-height: calc(100vh - 80px);
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
     font-family: 'Inter', system-ui, sans-serif;
     position: relative;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin: 0;
+    box-sizing: border-box;
 }
 
 /* Teal Header */
@@ -100,13 +102,15 @@
 /* ======================================================== */
 
 .seng-modal-overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .seng-modal-card {
@@ -180,14 +184,16 @@
 
 /* The teal outer bounding box configured as a 2-column grid */
 .seng-input-group {
-    border: 1px solid #4b9596; 
-    border-radius: 20px; 
+    border: 1px solid #4b9596;
+    border-radius: 20px;
     padding: 24px;
     background-color: #ffffff;
     margin-bottom: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px 20px; /* Optimal desktop spacing inside the box */
+    gap: 16px 20px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 /* Clear icon omitted for main page logic based on snapshot */
@@ -198,9 +204,12 @@
     align-items: center;
     padding: 0 16px 0 20px;
     height: 48px;
-    border: 1px solid #94a3b8; /* Greyish thin outline */
-    border-radius: 24px; /* Fully rounded pill */
+    border: 1px solid #94a3b8;
+    border-radius: 24px;
     transition: box-shadow 0.2s, border-color 0.2s;
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .seng-input-row:focus-within {
@@ -214,6 +223,7 @@
     font-size: 15px;
     width: 20px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .seng-sub-text {
@@ -227,9 +237,11 @@
     border: none;
     outline: none;
     font-size: 15px;
-    color: #334155; 
+    color: #334155;
     background: transparent;
     font-weight: 500;
+    min-width: 0;
+    width: 100%;
 }
 
 .seng-input-field::placeholder {
@@ -241,6 +253,7 @@
     display: flex;
     align-items: center;
     color: #94a3b8;
+    flex-shrink: 0;
 }
 
 .seng-input-divider {
@@ -313,4 +326,184 @@
 
 .seng-modal-add-btn:active {
     transform: scale(0.98);
+}
+
+/* ========================================================= */
+/*                   RESPONSIVE MEDIA QUERIES                */
+/* ========================================================= */
+
+/* Small Laptops & Large Tablets */
+@media screen and (max-width: 1024px) {
+    .seng-modal-card {
+        width: 85%;
+        padding: 24px;
+        max-height: 85vh;
+    }
+
+    .seng-input-group {
+        padding: 20px;
+        gap: 14px;
+    }
+}
+
+/* Tablet & Mobile Screens */
+@media screen and (max-width: 768px) {
+    .seng-desktop-wrapper {
+        border-radius: 0;
+        min-height: 100vh;
+        height: auto;
+    }
+
+    .seng-header-bar {
+        padding: 0 16px;
+    }
+
+    .seng-modal-overlay {
+        padding: 12px;
+        align-items: center;
+    }
+
+    .seng-modal-card {
+        padding: 20px 16px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        margin: auto;
+    }
+
+    .seng-input-group {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .seng-modal-header {
+        margin-bottom: 16px;
+    }
+
+    .seng-modal-body {
+        margin-bottom: 16px;
+    }
+
+    .seng-fab-btn {
+        right: 20px;
+        bottom: 20px;
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
+    }
+}
+
+/* Small Phones */
+@media screen and (max-width: 480px) {
+    .seng-modal-card {
+        padding: 16px 12px;
+        width: 100%;
+        max-height: 95vh;
+        border-radius: 14px;
+    }
+
+    .seng-header-bar {
+        padding: 0 12px;
+        height: 56px;
+    }
+
+    .seng-title {
+        font-size: 16px;
+    }
+
+    .seng-back-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .seng-input-group {
+        padding: 14px;
+        gap: 12px;
+        border-radius: 16px;
+    }
+
+    .seng-input-row {
+        height: 44px;
+        padding: 0 12px 0 14px;
+        border-radius: 22px;
+    }
+
+    .seng-input-icon {
+        margin-right: 10px;
+        font-size: 14px;
+    }
+
+    .seng-input-field {
+        font-size: 14px;
+    }
+
+    .seng-modal-title {
+        font-size: 18px;
+    }
+
+    .seng-modal-add-btn {
+        height: 48px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .seng-more-btn {
+        height: 40px;
+        font-size: 13px;
+        padding: 0 20px;
+    }
+
+    .seng-fab-btn {
+        right: 16px;
+        bottom: 16px;
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+}
+
+/* Ultra Small Phones */
+@media screen and (max-width: 360px) {
+    .seng-modal-card {
+        padding: 12px 10px;
+        border-radius: 12px;
+    }
+
+    .seng-input-group {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .seng-input-row {
+        height: 40px;
+        padding: 0 10px 0 12px;
+    }
+
+    .seng-input-field {
+        font-size: 13px;
+    }
+
+    .seng-input-icon {
+        margin-right: 8px;
+        font-size: 13px;
+        width: 16px;
+    }
+
+    .seng-modal-add-btn {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .seng-modal-title {
+        font-size: 16px;
+    }
+
+    .seng-more-btn {
+        height: 36px;
+        font-size: 12px;
+        padding: 0 16px;
+    }
 }

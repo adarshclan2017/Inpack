@@ -1,22 +1,24 @@
 /* Exact match of the provided screenshot for Desktop 2-column Grid (Commission Agent) */
 .comm-desktop-wrapper {
     width: 100%;
-    height: calc(100vh - 80px);
+    min-height: calc(100vh - 80px);
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
     font-family: 'Inter', system-ui, sans-serif;
     position: relative;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin: 0;
+    box-sizing: border-box;
 }
 
 /* Teal Header */
 .comm-header-bar {
     height: 64px;
-    background-color: #4b9596; 
+    background-color: #4b9596;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -29,14 +31,14 @@
     height: 36px;
     background-color: #ffffff;
     border: none;
-    border-radius: 8px; /* Rounded square */
+    border-radius: 8px;
     color: #111;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: 16px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
 }
 
@@ -54,7 +56,7 @@
 
 /* Body Content */
 .comm-body-content {
-    padding: 24px 24px;
+    padding: 24px;
     flex: 1;
     background-color: #ffffff;
     overflow-y: auto;
@@ -76,7 +78,7 @@
     bottom: 32px;
     width: 56px;
     height: 56px;
-    border-radius: 12px; 
+    border-radius: 12px;
     background-color: #4b9596;
     color: white;
     border: none;
@@ -85,7 +87,7 @@
     justify-content: center;
     font-size: 24px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease, filter 0.2s ease;
     z-index: 50;
 }
@@ -96,29 +98,32 @@
 }
 
 /* ======================================================== */
-/* ADD MODAL STYLES (Desktop Optimized 2-Column Grid)
+/* ADD MODAL STYLES
 /* ======================================================== */
 
 .comm-modal-overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .comm-modal-card {
     background-color: #ffffff;
     width: 90%;
-    max-width: 760px; /* Desktop width to accommodate 2-column grid naturally */
+    max-width: 760px;
     border-radius: 16px;
     padding: 32px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     animation: commPopIn 0.2s ease-out forwards;
     max-height: 90vh;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 @keyframes commPopIn {
@@ -135,7 +140,7 @@
 }
 
 .comm-modal-title {
-    color: #4b9596; 
+    color: #4b9596;
     font-size: 20px;
     font-weight: 600;
     margin: 0;
@@ -165,25 +170,30 @@
 
 /* The teal outer bounding box configured as a 2-column grid */
 .comm-input-group {
-    border: 1px solid #4b9596; 
-    border-radius: 20px; 
+    border: 1px solid #4b9596;
+    border-radius: 20px;
     padding: 24px;
     background-color: #ffffff;
     margin-bottom: 24px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px 20px; /* Optimal desktop spacing inside the box */
+    gap: 16px 20px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
-/* Individual separate pill inputs inside the teal box */
+/* Individual separate pill inputs */
 .comm-input-row {
     display: flex;
     align-items: center;
     padding: 0 16px 0 20px;
     height: 48px;
-    border: 1px solid #94a3b8; /* Greyish thin outline */
-    border-radius: 24px; /* Fully rounded pill */
+    border: 1px solid #94a3b8;
+    border-radius: 24px;
     transition: box-shadow 0.2s, border-color 0.2s;
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .comm-input-row:focus-within {
@@ -197,6 +207,7 @@
     font-size: 15px;
     width: 20px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .comm-sub-text {
@@ -210,19 +221,22 @@
     border: none;
     outline: none;
     font-size: 15px;
-    color: #334155; 
+    color: #334155;
     background: transparent;
     font-weight: 500;
+    min-width: 0;
+    width: 100%;
 }
 
 .comm-input-field::placeholder {
-    color: #b5c3d3; /* Slightly lighter placeholder */
+    color: #b5c3d3;
 }
 
 .comm-input-actions {
     display: flex;
     align-items: center;
     color: #94a3b8;
+    flex-shrink: 0;
 }
 
 .comm-input-divider {
@@ -256,7 +270,7 @@
     background: white;
     font-weight: 700;
     color: #1e293b;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
 }
@@ -286,4 +300,187 @@
 
 .comm-modal-add-btn:active {
     transform: scale(0.98);
+}
+
+/* ========================================================= */
+/*                   RESPONSIVE MEDIA QUERIES                */
+/* ========================================================= */
+
+/* Small Laptops & Large Tablets */
+@media screen and (max-width: 1024px) {
+    .comm-modal-card {
+        width: 85%;
+        padding: 24px;
+        max-height: 85vh;
+    }
+
+    .comm-input-group {
+        padding: 20px;
+        gap: 14px;
+    }
+}
+
+/* Tablet & Mobile Screens */
+@media screen and (max-width: 768px) {
+    .comm-desktop-wrapper {
+        border-radius: 0;
+        min-height: 100vh;
+        height: auto;
+    }
+
+    .comm-header-bar {
+        padding: 0 16px;
+    }
+
+    .comm-modal-overlay {
+        padding: 12px;
+        align-items: center;
+    }
+
+    .comm-modal-card {
+        padding: 20px 16px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        margin: auto;
+    }
+
+    .comm-input-group {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .comm-secondary-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .comm-secondary-btn {
+        height: 46px;
+        font-size: 14px;
+    }
+
+    .comm-modal-header {
+        margin-bottom: 16px;
+    }
+
+    .comm-modal-body {
+        margin-bottom: 16px;
+    }
+
+    .comm-fab-btn {
+        right: 20px;
+        bottom: 20px;
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
+    }
+}
+
+/* Small Phones */
+@media screen and (max-width: 480px) {
+    .comm-modal-card {
+        padding: 16px 12px;
+        width: 100%;
+        max-height: 95vh;
+        border-radius: 14px;
+    }
+
+    .comm-header-bar {
+        padding: 0 12px;
+        height: 56px;
+    }
+
+    .comm-title {
+        font-size: 16px;
+    }
+
+    .comm-back-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .comm-input-group {
+        padding: 14px;
+        gap: 12px;
+        border-radius: 16px;
+    }
+
+    .comm-input-row {
+        height: 44px;
+        padding: 0 12px 0 14px;
+        border-radius: 22px;
+    }
+
+    .comm-input-icon {
+        margin-right: 10px;
+        font-size: 14px;
+    }
+
+    .comm-input-field {
+        font-size: 14px;
+    }
+
+    .comm-modal-title {
+        font-size: 18px;
+    }
+
+    .comm-modal-add-btn {
+        height: 48px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .comm-fab-btn {
+        right: 16px;
+        bottom: 16px;
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+}
+
+/* Ultra Small Phones */
+@media screen and (max-width: 360px) {
+    .comm-modal-card {
+        padding: 12px 10px;
+        border-radius: 12px;
+    }
+
+    .comm-input-group {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .comm-input-row {
+        height: 40px;
+        padding: 0 10px 0 12px;
+    }
+
+    .comm-input-field {
+        font-size: 13px;
+    }
+
+    .comm-input-icon {
+        margin-right: 8px;
+        font-size: 13px;
+        width: 16px;
+    }
+
+    .comm-secondary-btn {
+        height: 40px;
+        font-size: 13px;
+    }
+
+    .comm-modal-add-btn {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .comm-modal-title {
+        font-size: 16px;
+    }
 }
