@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/asmx/:path*",
+      "destination": "http://148.72.215.143:1355/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
