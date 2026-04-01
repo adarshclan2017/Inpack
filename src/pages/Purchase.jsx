@@ -55,18 +55,17 @@ const Purchase = ({ setActiveTab }) => {
                         </div>
 
                         <div className="purchase-top-subgrid">
-                            <fieldset className="purchase-input-box purchase-fieldset">
-                                <legend>Order No</legend>
+                            <div className="purchase-input-box">
                                 <div className="purchase-input-icon">
                                     <span style={{fontSize: '11px', fontWeight: 'bold'}}>123</span>
                                 </div>
-                                <input type="text" className="purchase-input-field" value={orderNo} onChange={(e) => setOrderNo(e.target.value)} />
+                                <input type="text" className="purchase-input-field" placeholder="Order No" value={orderNo} onChange={(e) => setOrderNo(e.target.value)} />
                                 <div className="purchase-input-actions">
                                     <i className="fa-solid fa-caret-down"></i>
                                     <div className="purchase-divider"></div>
                                     <div className="purchase-clear-btn" onClick={() => setOrderNo('')}><i className="fa-solid fa-xmark"></i></div>
                                 </div>
-                            </fieldset>
+                            </div>
 
                             <div className="purchase-input-box">
                                 <div className="purchase-input-icon"><i className="fa-solid fa-table-list"></i></div>
