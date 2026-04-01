@@ -44,7 +44,7 @@ const Profile = () => {
     const [activeMenu, setActiveMenu] = useState('Follow up');
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(window.innerWidth <= 768);
 
     const menuItems = [
         { name: 'Home', icon: <Home />, id: 'home', route: '/welcome' },
@@ -201,7 +201,7 @@ const Profile = () => {
                         </div>
                         <h3 className="profile-logout-title">Logout</h3>
                         <p className="profile-logout-text">Are you want to logout ?</p>
-                            
+
                         <div className="profile-logout-actions">
                             <button className="profile-btn-no" onClick={() => setIsLogoutModalOpen(false)}>No</button>
                             <button className="profile-btn-yes" onClick={handleLogout}>Yes</button>
