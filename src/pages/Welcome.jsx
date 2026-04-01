@@ -78,14 +78,24 @@ export default function Welcome() {
                         </div>
                     </div>
                     <div className="topbar-actions">
-                        <button className="icon-btn">
+                        <div className="header-date desktop-only">
+                            <i className="fa-regular fa-calendar-days"></i>
+                            <span>Today, Mar 19</span>
+                        </div>
+                        <div className="separator desktop-only"></div>
+                        <button className="icon-btn notif-btn">
                             <i className="fa-regular fa-bell"></i>
                             <span className="badge">3</span>
                         </button>
-                        <div className="separator"></div>
-                        <div className="header-date">
-                            <i className="fa-regular fa-calendar"></i>
-                            <span>Today, Mar 19</span>
+                        <div className="topbar-user-chip" onClick={() => handleNavigation('/profile')}>
+                            <div className="topbar-avatar">
+                                <i className="fa-solid fa-user"></i>
+                            </div>
+                            <div className="topbar-user-info">
+                                <span className="topbar-user-name">DEMO TVM</span>
+                                <span className="topbar-user-role">Admin</span>
+                            </div>
+                            <i className="fa-solid fa-chevron-down topbar-caret"></i>
                         </div>
                     </div>
                 </header>
