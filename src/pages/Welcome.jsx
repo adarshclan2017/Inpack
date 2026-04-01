@@ -6,6 +6,7 @@ export default function Welcome() {
     const navigate = useNavigate();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isWidgetModalOpen, setIsWidgetModalOpen] = useState(false);
 
     const handleNavigation = (path) => {
         navigate(path);
@@ -113,7 +114,7 @@ export default function Welcome() {
                     <section className="dashboard-section">
                         <div className="section-header">
                             <h2 className="section-title">Quick Access</h2>
-                            <button className="text-btn">Manage Widgets</button>
+                            <button className="text-btn" onClick={() => setIsWidgetModalOpen(true)}>Manage Widgets</button>
                         </div>
 
                         <div className="quick-access-grid">
@@ -273,6 +274,69 @@ export default function Welcome() {
                     </div>
                 </div>
             </main>
+
+            {/* MANAGE WIDGETS MODAL */}
+            {isWidgetModalOpen && (
+                <div className="widget-modal-overlay" onClick={() => setIsWidgetModalOpen(false)}>
+                    <div className="widget-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="widget-modal-header">
+                            <h3>Manage Widgets</h3>
+                            <button className="widget-modal-close" onClick={() => setIsWidgetModalOpen(false)}>
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div className="widget-modal-body">
+                            <p className="widget-modal-desc">Customize your dashboard by toggling widgets on or off.</p>
+                            
+                            <div className="widget-toggle-list">
+                                <div className="widget-toggle-item">
+                                    <div className="widget-toggle-info">
+                                        <div className="widget-icon primary-light"><i className="fa-solid fa-bolt"></i></div>
+                                        <div>
+                                            <h4>Quick Access Grid</h4>
+                                            <span>Frequently used shortcuts</span>
+                                        </div>
+                                    </div>
+                                    <label className="widget-switch">
+                                        <input type="checkbox" defaultChecked />
+                                        <span className="widget-slider"></span>
+                                    </label>
+                                </div>
+                                <div className="widget-toggle-item">
+                                    <div className="widget-toggle-info">
+                                        <div className="widget-icon success-light"><i className="fa-solid fa-bullhorn"></i></div>
+                                        <div>
+                                            <h4>Promo Banner</h4>
+                                            <span>Latest offers & announcements</span>
+                                        </div>
+                                    </div>
+                                    <label className="widget-switch">
+                                        <input type="checkbox" defaultChecked />
+                                        <span className="widget-slider"></span>
+                                    </label>
+                                </div>
+                                <div className="widget-toggle-item">
+                                    <div className="widget-toggle-info">
+                                        <div className="widget-icon info-light"><i className="fa-solid fa-chart-line"></i></div>
+                                        <div>
+                                            <h4>Top Sales Metrics</h4>
+                                            <span>Performance data insights</span>
+                                        </div>
+                                    </div>
+                                    <label className="widget-switch">
+                                        <input type="checkbox" defaultChecked />
+                                        <span className="widget-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="widget-modal-footer">
+                            <button className="widget-btn-cancel" onClick={() => setIsWidgetModalOpen(false)}>Cancel</button>
+                            <button className="widget-btn-save" onClick={() => setIsWidgetModalOpen(false)}>Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
