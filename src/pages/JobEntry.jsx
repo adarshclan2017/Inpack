@@ -22,61 +22,124 @@ const ServiceForm = ({ onBack }) => {
     const [advanceReceived, setAdvanceReceived] = useState('');
     const [multiMode, setMultiMode] = useState(false);
     const [showSignature, setShowSignature] = useState(false);
-    // Signature pad
-    const canvasRef = useRef(null);
-    const isDrawing = useRef(false);
-    const lastPos = useRef(null);
 
-    const getPos = (e, canvas) => {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const src = e.touches ? e.touches[0] : e;
+    // ── Signature pad ───────────────────────────────────────
+    const canvasRef   = useRef(null);
+    const isDrawing   = useRef(false);
+    const lastPos     = useRef(null);
+    const ctxRef      = useRef(null);
+
+    // Return position in CSS-space coords relative to canvas
+    const getCSSPos = (e) => {
+        const canvas = canvasRef.current;
+        const rect   = canvas.getBoundingClientRect();
+        const src    = e.touches ? e.touches[0] : e;
         return {
-            x: (src.clientX - rect.left) * scaleX,
-            y: (src.clientY - rect.top)  * scaleY
+            x: src.clientX - rect.left,
+            y: src.clientY - rect.top,
         };
     };
 
+    // Initialise canvas size whenever panel opens
+    useEffect(() => {
+        if (!showSignature) return;
+
+        // Let the DOM paint first so offsetWidth is correct
+        const frame = requestAnimationFrame(() => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            const w   = canvas.offsetWidth;
+            const h   = canvas.offsetHeight;
+
+            canvas.width  = w * dpr;
+            canvas.height = h * dpr;
+
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);           // coordinate space = CSS pixels
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth   = 2.5;
+            ctx.lineCap     = 'round';
+            ctx.lineJoin    = 'round';
+            ctxRef.current  = ctx;
+        });
+
+        return () => cancelAnimationFrame(frame);
+    }, [showSignature]);
+
+    // Attach non-passive touch listeners manually to override browser scroll
+    useEffect(() => {
+        if (!showSignature) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const onTouchStart = (e) => {
+            e.preventDefault();
+            isDrawing.current = true;
+            lastPos.current = getCSSPos(e);
+        };
+
+        const onTouchMove = (e) => {
+            e.preventDefault();
+            if (!isDrawing.current || !ctxRef.current) return;
+            const pos = getCSSPos(e);
+            const ctx = ctxRef.current;
+            ctx.beginPath();
+            ctx.moveTo(lastPos.current.x, lastPos.current.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            lastPos.current = pos;
+        };
+
+        const onTouchEnd = (e) => {
+            e.preventDefault();
+            isDrawing.current = false;
+            lastPos.current   = null;
+        };
+
+        // { passive: false } lets us call preventDefault() to stop the page scrolling
+        canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+        canvas.addEventListener('touchmove',  onTouchMove,  { passive: false });
+        canvas.addEventListener('touchend',   onTouchEnd,   { passive: false });
+
+        return () => {
+            canvas.removeEventListener('touchstart', onTouchStart);
+            canvas.removeEventListener('touchmove',  onTouchMove);
+            canvas.removeEventListener('touchend',   onTouchEnd);
+        };
+    }, [showSignature]);
+
+    // Mouse handlers (desktop)
     const startDraw = useCallback((e) => {
-        e.preventDefault();
-        const canvas = canvasRef.current; if (!canvas) return;
+        if (e.type !== 'mousedown') return;
         isDrawing.current = true;
-        lastPos.current = getPos(e, canvas);
+        lastPos.current   = getCSSPos(e);
     }, []);
 
     const draw = useCallback((e) => {
-        e.preventDefault();
-        if (!isDrawing.current) return;
-        const canvas = canvasRef.current; if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const pos = getPos(e, canvas);
+        if (e.type !== 'mousemove') return;
+        if (!isDrawing.current || !ctxRef.current) return;
+        const pos = getCSSPos(e);
+        const ctx = ctxRef.current;
         ctx.beginPath();
         ctx.moveTo(lastPos.current.x, lastPos.current.y);
         ctx.lineTo(pos.x, pos.y);
-        ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
         ctx.stroke();
         lastPos.current = pos;
     }, []);
 
-    const stopDraw = useCallback(() => { isDrawing.current = false; lastPos.current = null; }, []);
-
-    const clearSignature = useCallback(() => {
-        const canvas = canvasRef.current; if (!canvas) return;
-        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    const stopDraw = useCallback(() => {
+        isDrawing.current = false;
+        lastPos.current   = null;
     }, []);
 
-    useEffect(() => {
-        if (!showSignature) return;
-        const canvas = canvasRef.current; if (!canvas) return;
-        canvas.width  = canvas.offsetWidth  * window.devicePixelRatio;
-        canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-        const ctx = canvas.getContext('2d');
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    }, [showSignature]);
+    const clearSignature = useCallback(() => {
+        const canvas = canvasRef.current;
+        const ctx    = ctxRef.current;
+        if (!canvas || !ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, []);
     // Customer Details modal
     const [showCustomerModal, setShowCustomerModal] = useState(false);
     const [custName, setCustName] = useState('');
