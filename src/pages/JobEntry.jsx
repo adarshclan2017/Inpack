@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/JobEntry.css';
 
@@ -21,6 +21,62 @@ const ServiceForm = ({ onBack }) => {
     const [estimatedAmount, setEstimatedAmount] = useState('');
     const [advanceReceived, setAdvanceReceived] = useState('');
     const [multiMode, setMultiMode] = useState(false);
+    const [showSignature, setShowSignature] = useState(false);
+    // Signature pad
+    const canvasRef = useRef(null);
+    const isDrawing = useRef(false);
+    const lastPos = useRef(null);
+
+    const getPos = (e, canvas) => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const src = e.touches ? e.touches[0] : e;
+        return {
+            x: (src.clientX - rect.left) * scaleX,
+            y: (src.clientY - rect.top)  * scaleY
+        };
+    };
+
+    const startDraw = useCallback((e) => {
+        e.preventDefault();
+        const canvas = canvasRef.current; if (!canvas) return;
+        isDrawing.current = true;
+        lastPos.current = getPos(e, canvas);
+    }, []);
+
+    const draw = useCallback((e) => {
+        e.preventDefault();
+        if (!isDrawing.current) return;
+        const canvas = canvasRef.current; if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const pos = getPos(e, canvas);
+        ctx.beginPath();
+        ctx.moveTo(lastPos.current.x, lastPos.current.y);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        lastPos.current = pos;
+    }, []);
+
+    const stopDraw = useCallback(() => { isDrawing.current = false; lastPos.current = null; }, []);
+
+    const clearSignature = useCallback(() => {
+        const canvas = canvasRef.current; if (!canvas) return;
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    }, []);
+
+    useEffect(() => {
+        if (!showSignature) return;
+        const canvas = canvasRef.current; if (!canvas) return;
+        canvas.width  = canvas.offsetWidth  * window.devicePixelRatio;
+        canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }, [showSignature]);
     // Customer Details modal
     const [showCustomerModal, setShowCustomerModal] = useState(false);
     const [custName, setCustName] = useState('');
@@ -30,6 +86,57 @@ const ServiceForm = ({ onBack }) => {
     const [custRoute, setCustRoute] = useState('');
     const [custClass, setCustClass] = useState('');
     const [custState, setCustState] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [fetchError, setFetchError] = useState('');
+
+    const handleCustomerSearch = async (query) => {
+        setCustName(query);
+        setFetchError('');
+        
+        // Reset phone and other details whenever the name is changed
+        setCustPhone('');
+        setCustAddress('');
+        setCustGst('');
+        setCustRoute('');
+        setCustClass('');
+        setCustState('');
+
+        if (!query) {
+            setSearchResults([]);
+            return;
+        }
+        try {
+            const response = await fetch(`/api2025/InPackService.asmx/loadOldCustomerDetails?CustomerName=${encodeURIComponent(query)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`);
+            const text = await response.text();
+            
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, "text/xml");
+            const stringElement = xmlDoc.getElementsByTagName("string")[0];
+            
+            let jsonStr = "";
+            if (stringElement && stringElement.textContent) {
+                jsonStr = stringElement.textContent;
+            } else {
+                const match = text.match(/\{[\s\S]*\}/);
+                if (match) jsonStr = match[0];
+            }
+            
+            if (jsonStr) {
+                const data = JSON.parse(jsonStr);
+                setSearchResults(data.customers || []);
+                if (!data.customers || data.customers.length === 0) {
+                    setFetchError('No matches found.');
+                }
+            } else {
+                setSearchResults([]);
+                setFetchError('Failed to parse API response.');
+            }
+        } catch (error) {
+            console.error("Error fetching customers:", error);
+            setSearchResults([]);
+            setFetchError(error.message || 'Network error (CORS might be blocking).');
+        }
+    };
 
     return (
         <>
@@ -189,63 +296,174 @@ const ServiceForm = ({ onBack }) => {
                     {/* ── Terms ─────────────────────────────────────── */}
                     <div className="je-section">
                         <h2 className="je-section-title">Terms</h2>
-                        <div className="je-card je-product-card">
-                            <div className="je-grid-2">
-                                <div className="je-input-row je-border-right">
-                                    <i className="fa-regular fa-calendar je-field-icon"></i>
-                                    <input
-                                        type="date"
-                                        className="je-input"
-                                        value={expectedDate}
-                                        onChange={e => setExpectedDate(e.target.value)}
-                                        onClick={(e) => e.target.showPicker?.()}
-                                    />
+                        <div className="je-terms-card">
+
+                            {/* Row: Expected date + Job received */}
+                            <div className="je-terms-row-2">
+                                <div className="je-terms-field">
+                                    <label className="je-terms-label">Expected Date</label>
+                                    <div className="je-terms-input-wrap">
+                                        <i className="fa-regular fa-calendar je-terms-fi"></i>
+                                        <input
+                                            type="date"
+                                            className="je-terms-native-input"
+                                            value={expectedDate}
+                                            onChange={e => setExpectedDate(e.target.value)}
+                                            onClick={(e) => e.target.showPicker?.()}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="je-input-row">
-                                    <input
-                                        type="date"
-                                        className="je-input"
-                                        value={jobReceived}
-                                        onChange={e => setJobReceived(e.target.value)}
-                                        onClick={(e) => e.target.showPicker?.()}
-                                    />
-                                    <i className="fa-regular fa-calendar je-field-icon-right"></i>
+                                <div className="je-terms-field">
+                                    <label className="je-terms-label">Job Received</label>
+                                    <div className="je-terms-input-wrap">
+                                        <i className="fa-regular fa-calendar je-terms-fi"></i>
+                                        <input
+                                            type="date"
+                                            className="je-terms-native-input"
+                                            value={jobReceived || new Date().toISOString().slice(0,10)}
+                                            onChange={e => setJobReceived(e.target.value)}
+                                            onClick={(e) => e.target.showPicker?.()}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Estimated amount */}
-                            <div className="je-input-row je-border-top">
-                                <span className="je-rupee-icon">₹</span>
-                                <input className="je-input" placeholder="Estimated amount" type="number" value={estimatedAmount} onChange={e => setEstimatedAmount(e.target.value)} />
+                            {/* Row: Estimated + Advance */}
+                            <div className="je-terms-row-2">
+                                <div className="je-terms-field">
+                                    <label className="je-terms-label">Estimated Amount</label>
+                                    <div className="je-terms-input-wrap">
+                                        <span className="je-terms-rupee">₹</span>
+                                        <input className="je-terms-native-input" placeholder="0.00" type="number" value={estimatedAmount} onChange={e => setEstimatedAmount(e.target.value)} />
+                                    </div>
+                                </div>
+                                <div className="je-terms-field">
+                                    <label className="je-terms-label">Advance Received</label>
+                                    <div className="je-terms-input-wrap">
+                                        <span className="je-terms-rupee">₹</span>
+                                        <input className="je-terms-native-input" placeholder="0.00" type="number" value={advanceReceived} onChange={e => setAdvanceReceived(e.target.value)} />
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Advance received */}
-                            <div className="je-input-row je-border-top">
-                                <span className="je-rupee-icon">₹</span>
-                                <input className="je-input" placeholder="Advance received" type="number" value={advanceReceived} onChange={e => setAdvanceReceived(e.target.value)} />
-                            </div>
-
-                            {/* Multi mode payment splits toggle */}
-                            <div className="je-toggle-row je-border-top">
+                            {/* Multi mode toggle */}
+                            <div className="je-terms-toggle-bar">
+                                <span className="je-terms-toggle-label">Multi mode payment splits</span>
                                 <label className="je-toggle-switch">
                                     <input type="checkbox" checked={multiMode} onChange={e => setMultiMode(e.target.checked)} />
-                                    <span className="je-toggle-track">
-                                        <span className="je-toggle-thumb"></span>
-                                    </span>
+                                    <span className="je-toggle-track"><span className="je-toggle-thumb"></span></span>
                                 </label>
-                                <span className="je-toggle-label">Multi mode payment splits</span>
                             </div>
+
+                            {/* Payment Split Rows */}
+                            <div className="je-splits-list">
+                                {[
+                                    { id: '1', method: 'Cash',                icon: 'fa-regular fa-money-bill-1',   hasDropdown: true  },
+                                    { id: '2', method: 'Federal Bank Swiping',icon: 'fa-regular fa-credit-card',    hasDropdown: true  },
+                                    { id: '3', method: 'Google Pay',           icon: 'fa-brands fa-google-pay',      hasDropdown: true  },
+                                    { id: '4', method: 'Bajaj FinServ',        icon: 'fa-regular fa-credit-card',    hasDropdown: true  },
+                                    { id: '5', method: 'Margin Free',          icon: 'fa-solid fa-gift',             hasDropdown: true  },
+                                    { id: '6', method: 'Credit',               icon: 'fa-regular fa-credit-card',    hasDropdown: false }
+                                ].filter(s => multiMode ? true : s.id === '1').map(split => (
+                                    <div key={split.id} className="je-split-row-wrap">
+                                        <div className="je-split-row">
+
+                                            {/* LEFT: icon + method name/select */}
+                                            <div className="je-split-pill je-split-pill--method">
+                                                <span className="je-split-pill-icon"><i className={split.icon}></i></span>
+                                                {split.hasDropdown ? (
+                                                    <select className="je-split-pill-select" defaultValue={split.method}>
+                                                        <option>Cash</option>
+                                                        <option>Federal Bank Swiping</option>
+                                                        <option>Google Pay</option>
+                                                        <option>Bajaj FinServ</option>
+                                                        <option>Margin Free</option>
+                                                    </select>
+                                                ) : (
+                                                    <span className="je-split-pill-name">{split.method}</span>
+                                                )}
+                                            </div>
+
+                                            {/* RIGHT: amount + X */}
+                                            <div className="je-split-pill je-split-pill--amount">
+                                                <input
+                                                    className="je-split-amt"
+                                                    placeholder="0.00"
+                                                    type="number"
+                                                />
+                                                <button className="je-split-x-btn"><i className="fa-solid fa-xmark"></i></button>
+                                            </div>
+
+                                        </div>
+
+                                        {/* Credit card number field */}
+                                        {split.id === '6' && (
+                                            <div className="je-split-card-num-row">
+                                                <i className="fa-regular fa-credit-card je-split-card-num-icon"></i>
+                                                <input
+                                                    className="je-split-card-num-input"
+                                                    placeholder="XXXX  XXXX  XXXX  XXXX"
+                                                    type="text"
+                                                    maxLength={19}
+                                                    onChange={(e) => {
+                                                        let v = e.target.value.replace(/\D/g,'');
+                                                        v = v.replace(/(.{4})/g,'$1 ').trim();
+                                                        e.target.value = v;
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
                         </div>
                     </div>
 
+                    {/* Signature Toggle */}
+                    <div className="je-signature-section">
+                        <div className="je-toggle-row je-center-toggle">
+                            <label className="je-toggle-switch">
+                                <input type="checkbox" checked={showSignature} onChange={e => setShowSignature(e.target.checked)} />
+                                <span className="je-toggle-track">
+                                    <span className="je-toggle-thumb"></span>
+                                </span>
+                            </label>
+                            <span className="je-toggle-label je-blue-label">Tap to see Signature pad</span>
+                        </div>
+                        
+                        {/* Signature Pad Box */}
+                        {showSignature && (
+                            <div className="je-signature-pad-wrapper">
+                                <div className="je-sig-header">
+                                    <span className="je-sig-title">Draw Customer Signature Below</span>
+                                    <button className="je-sig-clear-btn" onClick={clearSignature}>
+                                        <i className="fa-solid fa-rotate-left"></i> Clear
+                                    </button>
+                                </div>
+                                <div className="je-sig-canvas-wrap">
+                                    <span className="je-sig-hint">Sign here</span>
+                                    <canvas
+                                        ref={canvasRef}
+                                        className="je-sig-canvas"
+                                        onMouseDown={startDraw}
+                                        onMouseMove={draw}
+                                        onMouseUp={stopDraw}
+                                        onMouseLeave={stopDraw}
+                                        onTouchStart={startDraw}
+                                        onTouchMove={draw}
+                                        onTouchEnd={stopDraw}
+                                    />
+                                    <div className="je-sig-baseline"></div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     {/* Save Button */}
-                    <div className="je-form-actions">
-                        <button className="je-save-btn" onClick={onBack}>
-                            <i className="fa-solid fa-floppy-disk"></i>
-                            Save Service
-                        </button>
-                        <button className="je-cancel-btn" onClick={onBack}>
-                            Cancel
+                    <div className="je-full-save-button-container">
+                        <button className="je-full-save-btn" onClick={onBack}>
+                            Save
                         </button>
                     </div>
                 </div>
@@ -262,11 +480,69 @@ const ServiceForm = ({ onBack }) => {
                             </button>
                         </div>
 
-                        <div className="je-modal-card">
-                            <div className="je-modal-field">
+                        <div className="je-modal-card" style={{ overflow: 'visible' }}>
+                            <div className="je-modal-field" style={{ position: 'relative', zIndex: searchResults.length > 0 ? 100 : 1 }}>
                                 <i className="fa-regular fa-user je-field-icon"></i>
-                                <input className="je-input" placeholder="Customer Name" value={custName} onChange={e => setCustName(e.target.value)} />
-                                {custName && <button className="je-modal-x" onClick={() => setCustName('')}><i className="fa-solid fa-xmark"></i></button>}
+                                <input 
+                                    className="je-input" 
+                                    placeholder="Customer Name" 
+                                    value={custName} 
+                                    onChange={e => handleCustomerSearch(e.target.value)} 
+                                    autoComplete="off"
+                                />
+                                {custName && <button className="je-modal-x" onClick={() => handleCustomerSearch('')}><i className="fa-solid fa-xmark"></i></button>}
+                                
+                                {fetchError && (
+                                    <div style={{ position: 'absolute', top: '100%', left: 0, padding: '8px', background: '#fee2e2', color: '#ef4444', fontSize: '12px', border: '1px solid #f87171', borderRadius: '4px', zIndex: 100, marginTop: '4px' }}>
+                                        {fetchError}
+                                    </div>
+                                )}
+                                
+                                {searchResults.length > 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#fff',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        zIndex: 50,
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        marginTop: '4px',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {searchResults.map((cust, idx) => (
+                                            <div 
+                                                key={idx} 
+                                                style={{ 
+                                                    padding: '12px 16px', 
+                                                    borderBottom: '1px solid #f1f5f9', 
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center'
+                                                }}
+                                                onClick={() => {
+                                                    setCustName(cust.customername || '');
+                                                    setCustPhone(cust.mobile || '');
+                                                    setCustAddress(cust.address || '');
+                                                    setCustGst(cust.gstin || '');
+                                                    setCustRoute(cust.route || '');
+                                                    setCustClass(cust.class || '');
+                                                    setCustState(cust.state || '');
+                                                    setSearchResults([]);
+                                                }}
+                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                            >
+                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{cust.customername}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-solid fa-phone je-field-icon"></i>
