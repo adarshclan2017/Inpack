@@ -5,6 +5,10 @@
       "destination": "http://148.72.215.143:1355/:path*"
     },
     {
+      "source": "/api2025/:path*",
+      "destination": "http://148.72.215.143:2025/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
