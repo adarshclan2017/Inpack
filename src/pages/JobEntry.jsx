@@ -169,7 +169,11 @@ const ServiceForm = ({ onBack }) => {
             return;
         }
         try {
-            const response = await fetch(`/api2025/InPackService.asmx/loadOldCustomerDetails?CustomerName=${encodeURIComponent(query)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`);
+            // Use proxy path in dev, absolute URL in prod deployment
+            const baseUrl = import.meta.env.DEV ? '' : 'http://148.72.215.143:2025';
+            const apiUrl = `${baseUrl}/api2025/InPackService.asmx/loadOldCustomerDetails?CustomerName=${encodeURIComponent(query)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
+            
+            const response = await fetch(apiUrl);
             const text = await response.text();
             
             const parser = new DOMParser();
