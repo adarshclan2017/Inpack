@@ -241,7 +241,11 @@ const ServiceForm = ({ onBack }) => {
         const canvas = canvasRef.current;
         const ctx    = ctxRef.current;
         if (!canvas || !ctx) return;
+        
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
     }, []);
     // Customer Details modal
     const [showCustomerModal, setShowCustomerModal] = useState(false);
