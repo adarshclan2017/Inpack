@@ -710,54 +710,36 @@ const ServiceForm = ({ onBack }) => {
                             <span className="je-picker-title">{FIELD_LABELS[activePicker]}</span>
                         </div>
 
-                        {/* Single bar: toggles between Search mode and Add-new mode */}
-                        <div className="je-brand-search-wrap">
-                            {showAddItem ? (
-                                <>
-                                    <i className="fa-solid fa-plus je-brand-search-icon"></i>
-                                    <input
-                                        className="je-brand-search-input"
-                                        placeholder={`New ${FIELD_LABELS[activePicker]?.toLowerCase()} name…`}
-                                        value={newItemInput}
-                                        onChange={e => setNewItemInput(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && handlePickerAddNew()}
-                                        autoFocus
-                                    />
-                                    {newItemInput && (
-                                        <button className="je-modal-x" onClick={() => setNewItemInput('')}>
-                                            <i className="fa-solid fa-xmark"></i>
-                                        </button>
-                                    )}
-                                    <div className="je-brand-search-divider"></div>
-                                    <button
-                                        className="je-brand-add-btn je-brand-save-btn"
-                                        disabled={!newItemInput.trim()}
+                        {/* Streamlined single-layer search/add input */}
+                        <div className="je-picker-search-container">
+                            <div className="je-picker-search-field">
+                                <i className={`fa-solid ${showAddItem ? 'fa-plus' : 'fa-magnifying-glass'} je-picker-search-icon`}></i>
+                                <input
+                                    className="je-picker-search-input"
+                                    placeholder={showAddItem ? `Enter new ${FIELD_LABELS[activePicker]?.toLowerCase()}...` : `Search ${FIELD_LABELS[activePicker]?.toLowerCase()}...`}
+                                    value={showAddItem ? newItemInput : pickerSearch}
+                                    onChange={e => showAddItem ? setNewItemInput(e.target.value) : setPickerSearch(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && showAddItem && handlePickerAddNew()}
+                                />
+                                {showAddItem ? (
+                                    <button 
+                                        className="je-picker-save-btn" 
                                         onClick={handlePickerAddNew}
+                                        disabled={!newItemInput.trim()}
+                                        title="Save New"
                                     >
-                                        <i className="fa-solid fa-check"></i> Save
+                                        <i className="fa-solid fa-check"></i>
                                     </button>
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fa-solid fa-magnifying-glass je-brand-search-icon"></i>
-                                    <input
-                                        className="je-brand-search-input"
-                                        placeholder="Search"
-                                        value={pickerSearch}
-                                        onChange={e => setPickerSearch(e.target.value)}
-                                        autoFocus
-                                    />
-                                    {pickerSearch && (
-                                        <button className="je-modal-x" onClick={() => setPickerSearch('')}>
-                                            <i className="fa-solid fa-xmark"></i>
-                                        </button>
-                                    )}
-                                    <div className="je-brand-search-divider"></div>
-                                    <button className="je-brand-add-btn" onClick={() => setShowAddItem(true)}>
-                                        <i className="fa-solid fa-circle-plus"></i> Add
+                                ) : (
+                                    <button 
+                                        className="je-picker-add-toggle-btn" 
+                                        onClick={() => { setShowAddItem(true); setNewItemInput(pickerSearch); }}
+                                        title="Add New"
+                                    >
+                                        <i className="fa-solid fa-circle-plus"></i>
                                     </button>
-                                </>
-                            )}
+                                )}
+                            </div>
                         </div>
 
                         {/* Options Grid */}
