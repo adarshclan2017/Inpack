@@ -7,14 +7,20 @@ const ServiceForm = ({ onBack }) => {
     const [serviceType, setServiceType] = useState('backend');
     const [phone, setPhone] = useState('');
     const [brand, setBrand] = useState('');
+    const [brandId, setBrandId] = useState('');
     const [model, setModel] = useState('');
+    const [modelId, setModelId] = useState('');
     const [color, setColor] = useState('');
+    const [colorId, setColorId] = useState('');
     const [collect, setCollect] = useState('');
+    const [collectId, setCollectId] = useState('');
     const [status, setStatus] = useState('');
+    const [statusId, setStatusId] = useState('');
     const [warranty, setWarranty] = useState('non');
     const [serial1, setSerial1] = useState('');
     const [serial2, setSerial2] = useState('');
     const [complaint, setComplaint] = useState('');
+    const [complaintId, setComplaintId] = useState('');
     const [technician, setTechnician] = useState('');
     const [expectedDate, setExpectedDate] = useState('');
     const [jobReceived, setJobReceived] = useState('');
@@ -22,6 +28,103 @@ const ServiceForm = ({ onBack }) => {
     const [advanceReceived, setAdvanceReceived] = useState('');
     const [multiMode, setMultiMode] = useState(false);
     const [showSignature, setShowSignature] = useState(false);
+
+    // ── Generic Field Picker ──────────────────────────────────
+    const [PICKER_OPTIONS, setPickerOptions] = useState({
+        brand:     [],
+        model:     [],
+        color:     [],
+        collect:   [],
+        status:    [],
+        complaint: [],
+    });
+    const [lookupLoading, setLookupLoading] = useState(true);
+
+    // Fetch lookup data from API on mount
+    useEffect(() => {
+        const fetchLookup = async () => {
+            try {
+                const url = '/api2025/InPackService.asmx/loadLookup?InternalUserID=41&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255';
+                const res  = await fetch(url);
+                const text = await res.text();
+
+                // Parse XML wrapper → extract inner JSON string
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const stringEl = xmlDoc.getElementsByTagName('string')[0];
+                let jsonStr = '';
+                if (stringEl && stringEl.textContent) {
+                    jsonStr = stringEl.textContent;
+                } else {
+                    const m = text.match(/\{[\s\S]*\}/);
+                    if (m) jsonStr = m[0];
+                }
+
+                if (jsonStr) {
+                    const data = JSON.parse(jsonStr);
+                    const extract = (key) =>
+                        (data[key] || [])
+                            .map(item => ({ 
+                                id: String(item.internal_lookup_id || ''), 
+                                label: String(item.lookup_data || '') 
+                            }))
+                            .filter(i => i.label);
+
+                    setPickerOptions({
+                        brand:     extract('PhoneDetails'),   // PhoneDetails → Brand
+                        model:     extract('Model'),
+                        color:     extract('Colour'),
+                        collect:   extract('Accessories'),    // Accessories → Collect
+                        status:    extract('DeviceState'),    // DeviceState → Status
+                        complaint: extract('Complaint'),
+                    });
+                }
+            } catch (err) {
+                console.error('loadLookup error:', err);
+            } finally {
+                setLookupLoading(false);
+            }
+        };
+        fetchLookup();
+    }, []);
+
+    const [activePicker, setActivePicker] = useState(null); // 'brand' | 'model' | 'color' | 'collect' | 'status' | 'complaint'
+    const [pickerSearch, setPickerSearch] = useState('');
+    const [showAddItem, setShowAddItem] = useState(false);
+    const [newItemInput, setNewItemInput] = useState('');
+    const [extraOptions, setExtraOptions] = useState({ brand: [], model: [], color: [], collect: [], status: [], complaint: [] });
+
+    const FIELD_SETTERS = { brand: setBrand, model: setModel, color: setColor, collect: setCollect, status: setStatus, complaint: setComplaint };
+    const FIELD_ID_SETTERS = { brand: setBrandId, model: setModelId, color: setColorId, collect: setCollectId, status: setStatusId, complaint: setComplaintId };
+    const FIELD_VALUES  = { brand, model, color, collect, status, complaint };
+    const FIELD_LABELS  = { brand: 'Brand', model: 'Model', color: 'Color', collect: 'Collect', status: 'Status', complaint: 'Complaint' };
+
+    const openPicker = (field) => { setActivePicker(field); setPickerSearch(''); setShowAddItem(false); setNewItemInput(''); };
+    const closePicker = () => { setActivePicker(null); setPickerSearch(''); setShowAddItem(false); setNewItemInput(''); };
+
+    const handlePickerSelect = (opt) => {
+        if (activePicker) {
+            FIELD_SETTERS[activePicker](opt.label);
+            FIELD_ID_SETTERS[activePicker](opt.id);
+        }
+        closePicker();
+    };
+
+    const handlePickerAddNew = () => {
+        const v = newItemInput.trim();
+        if (!v || !activePicker) return;
+        const newObj = { id: '0', label: v };
+        setExtraOptions(prev => ({ ...prev, [activePicker]: [...(prev[activePicker] || []), newObj] }));
+        FIELD_SETTERS[activePicker](v);
+        FIELD_ID_SETTERS[activePicker]('0');
+        closePicker();
+    };
+
+    const activeOptions = activePicker
+        ? [...(PICKER_OPTIONS[activePicker] || []), ...(extraOptions[activePicker] || [])].filter(
+              o => o.label.toLowerCase().includes(pickerSearch.toLowerCase())
+          )
+        : [];
 
     // ── Signature pad ───────────────────────────────────────
     const canvasRef   = useRef(null);
@@ -269,11 +372,33 @@ const ServiceForm = ({ onBack }) => {
                             <div className="je-grid-2">
                                 <div className="je-input-row je-border-right">
                                     <i className="fa-regular fa-square je-field-icon"></i>
-                                    <input className="je-input" placeholder="Brand" value={brand} onChange={e => setBrand(e.target.value)} />
+                                    <input
+                                        className="je-input"
+                                        placeholder="Brand"
+                                        value={brand}
+                                        readOnly
+                                        style={{ cursor: 'pointer' }}
+                                        onDoubleClick={() => openPicker('brand')}
+                                        title="Double-click to pick a brand"
+                                    />
+                                    {brand && (
+                                        <button className="je-modal-x" onClick={() => setBrand('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    )}
                                 </div>
                                 <div className="je-input-row">
                                     <i className="fa-solid fa-person-running je-field-icon"></i>
-                                    <input className="je-input" placeholder="Model" value={model} onChange={e => setModel(e.target.value)} />
+                                    <input
+                                        className="je-input"
+                                        placeholder="Model"
+                                        value={model}
+                                        readOnly
+                                        style={{ cursor: 'pointer' }}
+                                        onDoubleClick={() => openPicker('model')}
+                                        title="Double-click to pick a model"
+                                    />
+                                    {model && <button className="je-modal-x" onClick={() => setModel('')}><i className="fa-solid fa-xmark"></i></button>}
                                 </div>
                             </div>
 
@@ -281,18 +406,45 @@ const ServiceForm = ({ onBack }) => {
                             <div className="je-grid-2 je-border-top">
                                 <div className="je-input-row je-border-right">
                                     <i className="fa-solid fa-palette je-field-icon"></i>
-                                    <input className="je-input" placeholder="Color" value={color} onChange={e => setColor(e.target.value)} />
+                                    <input
+                                        className="je-input"
+                                        placeholder="Color"
+                                        value={color}
+                                        readOnly
+                                        style={{ cursor: 'pointer' }}
+                                        onDoubleClick={() => openPicker('color')}
+                                        title="Double-click to pick a color"
+                                    />
+                                    {color && <button className="je-modal-x" onClick={() => setColor('')}><i className="fa-solid fa-xmark"></i></button>}
                                 </div>
                                 <div className="je-input-row">
                                     <i className="fa-solid fa-box je-field-icon"></i>
-                                    <input className="je-input" placeholder="Collect" value={collect} onChange={e => setCollect(e.target.value)} />
+                                    <input
+                                        className="je-input"
+                                        placeholder="Collect"
+                                        value={collect}
+                                        readOnly
+                                        style={{ cursor: 'pointer' }}
+                                        onDoubleClick={() => openPicker('collect')}
+                                        title="Double-click to pick collect type"
+                                    />
+                                    {collect && <button className="je-modal-x" onClick={() => setCollect('')}><i className="fa-solid fa-xmark"></i></button>}
                                 </div>
                             </div>
 
                             {/* Status */}
                             <div className="je-input-row je-border-top">
                                 <i className="fa-solid fa-circle-info je-field-icon"></i>
-                                <input className="je-input" placeholder="Status" value={status} onChange={e => setStatus(e.target.value)} />
+                                <input
+                                    className="je-input"
+                                    placeholder="Status"
+                                    value={status}
+                                    readOnly
+                                    style={{ cursor: 'pointer' }}
+                                    onDoubleClick={() => openPicker('status')}
+                                    title="Double-click to pick a status"
+                                />
+                                {status && <button className="je-modal-x" onClick={() => setStatus('')}><i className="fa-solid fa-xmark"></i></button>}
                             </div>
 
                             {/* Warranty Radio */}
@@ -326,7 +478,16 @@ const ServiceForm = ({ onBack }) => {
                             {/* Complaint */}
                             <div className="je-input-row je-border-top">
                                 <i className="fa-solid fa-triangle-exclamation je-field-icon"></i>
-                                <input className="je-input" placeholder="Complaint" value={complaint} onChange={e => setComplaint(e.target.value)} />
+                                <input
+                                    className="je-input"
+                                    placeholder="Complaint"
+                                    value={complaint}
+                                    readOnly
+                                    style={{ cursor: 'pointer' }}
+                                    onDoubleClick={() => openPicker('complaint')}
+                                    title="Double-click to pick a complaint"
+                                />
+                                {complaint && <button className="je-modal-x" onClick={() => setComplaint('')}><i className="fa-solid fa-xmark"></i></button>}
                             </div>
 
                             {/* Technician */}
@@ -534,6 +695,94 @@ const ServiceForm = ({ onBack }) => {
                     </div>
                 </div>
             </div>
+
+            {/* ── Generic Field Picker Modal ───────────────────── */}
+            {activePicker && (
+                <div className="je-modal-overlay je-brand-overlay" onClick={closePicker}>
+                    <div className="je-brand-picker" onClick={e => e.stopPropagation()}>
+
+                        {/* Title */}
+                        <div className="je-picker-title-row">
+                            <span className="je-picker-title">{FIELD_LABELS[activePicker]}</span>
+                        </div>
+
+                        {/* Single bar: toggles between Search mode and Add-new mode */}
+                        <div className="je-brand-search-wrap">
+                            {showAddItem ? (
+                                <>
+                                    <i className="fa-solid fa-plus je-brand-search-icon"></i>
+                                    <input
+                                        className="je-brand-search-input"
+                                        placeholder={`New ${FIELD_LABELS[activePicker]?.toLowerCase()} name…`}
+                                        value={newItemInput}
+                                        onChange={e => setNewItemInput(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && handlePickerAddNew()}
+                                        autoFocus
+                                    />
+                                    {newItemInput && (
+                                        <button className="je-modal-x" onClick={() => setNewItemInput('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    )}
+                                    <div className="je-brand-search-divider"></div>
+                                    <button
+                                        className="je-brand-add-btn je-brand-save-btn"
+                                        disabled={!newItemInput.trim()}
+                                        onClick={handlePickerAddNew}
+                                    >
+                                        <i className="fa-solid fa-check"></i> Save
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fa-solid fa-magnifying-glass je-brand-search-icon"></i>
+                                    <input
+                                        className="je-brand-search-input"
+                                        placeholder="Search"
+                                        value={pickerSearch}
+                                        onChange={e => setPickerSearch(e.target.value)}
+                                        autoFocus
+                                    />
+                                    {pickerSearch && (
+                                        <button className="je-modal-x" onClick={() => setPickerSearch('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    )}
+                                    <div className="je-brand-search-divider"></div>
+                                    <button className="je-brand-add-btn" onClick={() => setShowAddItem(true)}>
+                                        <i className="fa-solid fa-circle-plus"></i> Add
+                                    </button>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Options Grid */}
+                        <div className="je-brand-grid">
+                            {lookupLoading ? (
+                                <p className="je-brand-empty" style={{ gridColumn: '1/-1' }}>
+                                    <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: 6 }}></i>
+                                    Loading…
+                                </p>
+                            ) : activeOptions.length > 0 ? activeOptions.map((opt, i) => (
+                                <button
+                                    key={i}
+                                    className={`je-brand-chip ${FIELD_VALUES[activePicker] === opt.label ? 'active' : ''}`}
+                                    onClick={() => handlePickerSelect(opt)}
+                                >
+                                    {opt.label}
+                                </button>
+                            )) : (
+                                <p className="je-brand-empty">No options found</p>
+                            )}
+                        </div>
+
+                        {/* Cancel */}
+                        <button className="je-brand-cancel-btn" onClick={closePicker}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* ── Customer Details Modal ──────────────────────── */}
             {showCustomerModal && (
