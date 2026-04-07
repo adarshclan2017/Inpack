@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import '../styles/welcome.css';
 
 export default function Welcome() {
@@ -103,92 +104,90 @@ export default function Welcome() {
 
                 {/* DASHBOARD CONTENT */}
                 <div className="dashboard-content">
-                    <div className="welcome-banner">
+                    <motion.div 
+                        className="welcome-banner"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
                         <div>
                             <h1 className="gradient-text">Welcome back, DEMO TVM! 👋</h1>
                             <p>Here's what is happening with your business today.</p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* QUICK ACCESS GRID */}
                     <section className="dashboard-section">
-                        <div className="section-header">
+                        <motion.div 
+                            className="section-header"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                        >
                             <h2 className="section-title">Quick Access</h2>
                             <button className="text-btn" onClick={() => setIsWidgetModalOpen(true)}>Manage Widgets</button>
-                        </div>
+                        </motion.div>
 
-                        <div className="quick-access-grid">
-                            <div className="action-card" onClick={() => navigate('/invoice')} style={{ cursor: 'pointer' }}>
-                                <div className="icon-wrapper blue">
-                                    <i className="fa-solid fa-file-invoice"></i>
-                                </div>
-                                <div className="action-info">
-                                    <h3>Invoice</h3>
-                                    <p>Create & manage</p>
-                                </div>
-                                <i className="fa-solid fa-arrow-right action-arrow"></i>
-                            </div>
-
-                            <div className="action-card" onClick={() => navigate('/cash')} style={{ cursor: 'pointer' }}>
-                                <div className="icon-wrapper green">
-                                    <i className="fa-solid fa-money-bill-wave"></i>
-                                </div>
-                                <div className="action-info">
-                                    <h3>Cash</h3>
-                                    <p>Transactions</p>
-                                </div>
-                                <i className="fa-solid fa-arrow-right action-arrow"></i>
-                            </div>
-
-                            <div className="action-card" onClick={() => navigate('/bank')} style={{ cursor: 'pointer' }}>
-                                <div className="icon-wrapper purple">
-                                    <i className="fa-solid fa-building-columns"></i>
-                                </div>
-                                <div className="action-info">
-                                    <h3>Bank</h3>
-                                    <p>Transfers & deposits</p>
-                                </div>
-                                <i className="fa-solid fa-arrow-right action-arrow"></i>
-                            </div>
-
-                            <div className="action-card" onClick={() => navigate('/job-entry')} style={{ cursor: 'pointer' }}>
-                                <div className="icon-wrapper orange">
-                                    <i className="fa-solid fa-briefcase"></i>
-                                </div>
-                                <div className="action-info">
-                                    <h3>Job Entry</h3>
-                                    <p>Create new job</p>
-                                </div>
-                                <i className="fa-solid fa-arrow-right action-arrow"></i>
-                            </div>
-
-                            <div className="action-card" onClick={() => navigate('/job-done')} style={{ cursor: 'pointer' }}>
-                                <div className="icon-wrapper teal">
-                                    <i className="fa-solid fa-circle-check"></i>
-                                </div>
-                                <div className="action-info">
-                                    <h3>Job done</h3>
-                                    <p>Completed jobs</p>
-                                </div>
-                                <i className="fa-solid fa-arrow-right action-arrow"></i>
-                            </div>
-
-                            <div className="action-card" onClick={() => navigate('/job-delivery')} style={{ cursor: 'pointer' }}>
-                                <div className="icon-wrapper indigo">
-                                    <i className="fa-solid fa-truck-fast"></i>
-                                </div>
-                                <div className="action-info">
-                                    <h3>Job Delivery</h3>
-                                    <p>Dispatch details</p>
-                                </div>
-                                <i className="fa-solid fa-arrow-right action-arrow"></i>
-                            </div>
-                        </div>
+                        <motion.div 
+                            className="quick-access-grid"
+                            initial="hidden"
+                            animate="visible"
+                            variants={{
+                                hidden: { opacity: 0 },
+                                visible: { 
+                                    opacity: 1,
+                                    transition: { staggerChildren: 0.1 }
+                                }
+                            }}
+                        >
+                            {[ 
+                                { path: '/invoice', icon: 'fa-file-invoice', color: 'blue', title: 'Invoice', desc: 'Create & manage' },
+                                { path: '/cash', icon: 'fa-money-bill-wave', color: 'green', title: 'Cash', desc: 'Transactions' },
+                                { path: '/bank', icon: 'fa-building-columns', color: 'purple', title: 'Bank', desc: 'Transfers & deposits' },
+                                { path: '/job-entry', icon: 'fa-briefcase', color: 'orange', title: 'Job Entry', desc: 'Create new job' },
+                                { path: '/job-done', icon: 'fa-circle-check', color: 'teal', title: 'Job done', desc: 'Completed jobs' },
+                                { path: '/job-delivery', icon: 'fa-truck-fast', color: 'indigo', title: 'Job Delivery', desc: 'Dispatch details' }
+                            ].map((item, index) => (
+                                <motion.div 
+                                    key={index}
+                                    className="action-card" 
+                                    onClick={() => navigate(item.path)} 
+                                    style={{ cursor: 'pointer' }}
+                                    variants={{
+                                        hidden: { y: 30, opacity: 0, scale: 0.9 },
+                                        visible: { y: 0, opacity: 1, scale: 1, transition: { type: "spring", stiffness: 120, damping: 14 } }
+                                    }}
+                                    whileHover={{ scale: 1.05, y: -8, boxShadow: "0 15px 30px -10px rgba(0,0,0,0.15)" }}
+                                    whileTap={{ scale: 0.96 }}
+                                >
+                                    <motion.div 
+                                        className={`icon-wrapper ${item.color}`}
+                                        whileHover={{ rotate: 15, scale: 1.1 }}
+                                        transition={{ type: "spring", stiffness: 300 }}
+                                    >
+                                        <i className={`fa-solid ${item.icon}`}></i>
+                                    </motion.div>
+                                    <div className="action-info">
+                                        <h3>{item.title}</h3>
+                                        <p>{item.desc}</p>
+                                    </div>
+                                    <motion.i 
+                                        className="fa-solid fa-arrow-right action-arrow"
+                                        whileHover={{ x: 5 }}
+                                    ></motion.i>
+                                </motion.div>
+                            ))}
+                        </motion.div>
                     </section>
 
                     <div className="dashboard-split">
                         {/* LARGE PROMO BANNER */}
-                        <div className="promo-banner-wide">
+                        <motion.div 
+                            className="promo-banner-wide"
+                            initial={{ opacity: 0, x: -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4, duration: 0.5 }}
+                        >
                             <div className="promo-glass-effect"></div>
                             <div className="promo-info">
                                 <span className="promo-badge">Special Offer</span>
@@ -197,80 +196,86 @@ export default function Welcome() {
                                 <button className="promo-btn">Enquire now <i className="fa-solid fa-arrow-right"></i></button>
                             </div>
                             <div className="promo-graphics">
-                                <i className="fa-solid fa-print promo-icon-bg"></i>
-                                <div className="floating-receipt"></div>
+                                <motion.i 
+                                    className="fa-solid fa-print promo-icon-bg"
+                                    animate={{ rotate: [0, -5, 5, 0] }}
+                                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                ></motion.i>
+                                <motion.div 
+                                    className="floating-receipt"
+                                    animate={{ y: [0, -10, 0] }}
+                                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                                ></motion.div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* TOP SALES WIDGET */}
-                        <div className="top-sales-card">
+                        <motion.div 
+                            className="top-sales-card"
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.5, duration: 0.5 }}
+                        >
                             <div className="card-header">
                                 <h2 className="section-title">Top Sales Metrics</h2>
                                 <i className="fa-solid fa-ellipsis-vertical more-icon"></i>
                             </div>
 
-                            <div className="sales-list">
-                                {/* Sale Item 1 */}
-                                <div className="sales-item">
-                                    <div className="sales-header-row">
-                                        <div className="icon-box light-blue">
-                                            <i className="fa-solid fa-chart-line"></i>
-                                        </div>
-                                        <div className="sales-details">
-                                            <h4>Top Value</h4>
-                                            <p>Highest revenue</p>
-                                        </div>
-                                        <div className="sales-stat">
-                                            <span className="amount">$12,450</span>
-                                            <div className="sales-trend positive">
-                                                <i className="fa-solid fa-arrow-trend-up"></i> +12%
+                            <motion.div 
+                                className="sales-list"
+                                initial="hidden"
+                                animate="visible"
+                                variants={{
+                                    hidden: { opacity: 0 },
+                                    visible: {
+                                        opacity: 1,
+                                        transition: { staggerChildren: 0.15, delayChildren: 0.6 }
+                                    }
+                                }}
+                            >
+                                {[
+                                    { color: "light-blue", icon: "fa-chart-line", title: "Top Value", desc: "Highest revenue", amount: "$12,450", trend: "+12%", trendClass: "positive", trendIcon: "fa-arrow-trend-up", percent: "85%", fillClass: "blue-fill" },
+                                    { color: "light-green", icon: "fa-cubes", title: "Top Volume", desc: "Most items sold", amount: "1,240 pkgs", trend: "+8%", trendClass: "positive", trendIcon: "fa-arrow-trend-up", percent: "65%", fillClass: "green-fill" },
+                                    { color: "light-orange", icon: "fa-print", title: "Print", desc: "Direct sales", amount: "342 units", trend: "-2%", trendClass: "negative", trendIcon: "fa-arrow-trend-down", percent: "40%", fillClass: "orange-fill" }
+                                ].map((item, index) => (
+                                    <motion.div 
+                                        key={index} 
+                                        className="sales-item"
+                                        variants={{
+                                            hidden: { x: 20, opacity: 0 },
+                                            visible: { x: 0, opacity: 1 }
+                                        }}
+                                    >
+                                        <div className="sales-header-row">
+                                            <motion.div 
+                                                className={`icon-box ${item.color}`}
+                                                whileHover={{ rotate: 10, scale: 1.15 }}
+                                            >
+                                                <i className={`fa-solid ${item.icon}`}></i>
+                                            </motion.div>
+                                            <div className="sales-details">
+                                                <h4>{item.title}</h4>
+                                                <p>{item.desc}</p>
+                                            </div>
+                                            <div className="sales-stat">
+                                                <span className="amount">{item.amount}</span>
+                                                <div className={`sales-trend ${item.trendClass}`}>
+                                                    <i className={`fa-solid ${item.trendIcon}`}></i> {item.trend}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="progress-bg"><div className="progress-fill blue-fill" style={{ width: '85%' }}></div></div>
-                                </div>
-
-                                {/* Sale Item 2 */}
-                                <div className="sales-item">
-                                    <div className="sales-header-row">
-                                        <div className="icon-box light-green">
-                                            <i className="fa-solid fa-cubes"></i>
+                                        <div className="progress-bg">
+                                            <motion.div 
+                                                className={`progress-fill ${item.fillClass}`} 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: item.percent }}
+                                                transition={{ duration: 1.5, type: "spring", stiffness: 40, damping: 10, delay: 0.8 + (index * 0.2) }}
+                                            ></motion.div>
                                         </div>
-                                        <div className="sales-details">
-                                            <h4>Top Volume</h4>
-                                            <p>Most items sold</p>
-                                        </div>
-                                        <div className="sales-stat">
-                                            <span className="amount">1,240 pkgs</span>
-                                            <div className="sales-trend positive">
-                                                <i className="fa-solid fa-arrow-trend-up"></i> +8%
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="progress-bg"><div className="progress-fill green-fill" style={{ width: '65%' }}></div></div>
-                                </div>
-
-                                {/* Sale Item 3 */}
-                                <div className="sales-item">
-                                    <div className="sales-header-row">
-                                        <div className="icon-box light-orange">
-                                            <i className="fa-solid fa-print"></i>
-                                        </div>
-                                        <div className="sales-details">
-                                            <h4>Print</h4>
-                                            <p>Direct sales</p>
-                                        </div>
-                                        <div className="sales-stat">
-                                            <span className="amount">342 units</span>
-                                            <div className="sales-trend negative">
-                                                <i className="fa-solid fa-arrow-trend-down"></i> -2%
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="progress-bg"><div className="progress-fill orange-fill" style={{ width: '40%' }}></div></div>
-                                </div>
-                            </div>
-                        </div>
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        </motion.div>
                     </div>
                 </div>
             </main>
