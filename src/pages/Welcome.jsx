@@ -14,56 +14,172 @@ export default function Welcome() {
         setIsMobileMenuOpen(false);
     };
 
+    const sidebarVariants = {
+        expanded: { width: "260px" },
+        collapsed: { width: "80px" }
+    };
+
+    const cardContainerVariants = {
+        hidden: { opacity: 0 },
+        visible: { 
+            opacity: 1,
+            transition: { 
+                staggerChildren: 0.08,
+                delayChildren: 0.1
+            }
+        }
+    };
+
+    const cardItemVariants = {
+        hidden: { y: 20, opacity: 0, scale: 0.95 },
+        visible: { 
+            y: 0, 
+            opacity: 1, 
+            scale: 1,
+            transition: { type: "spring", stiffness: 100, damping: 15 }
+        }
+    };
+
     return (
         <div className="admin-dashboard">
             {/* Decorative ambient background blur */}
-            <div className="ambient-glow glow-1"></div>
-            <div className="ambient-glow glow-2"></div>
+            <motion.div 
+                className="ambient-glow glow-1"
+                animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                    x: [0, 30, 0],
+                    y: [0, -20, 0]
+                }}
+                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            ></motion.div>
+            <motion.div 
+                className="ambient-glow glow-2"
+                animate={{ 
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.2, 0.4, 0.2],
+                    x: [0, -40, 0],
+                    y: [0, 30, 0]
+                }}
+                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+            ></motion.div>
 
             {/* Side Menu Overlay for Mobile */}
-            {isMobileMenuOpen && <div className="sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div 
+                        className="sidebar-overlay" 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    ></motion.div>
+                )}
+            </AnimatePresence>
 
             {/* SIDEBAR */}
-            <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+            <motion.aside 
+                layout
+                className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}
+                initial={false}
+                animate={isCollapsed ? "collapsed" : "expanded"}
+                variants={sidebarVariants}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
                 <div className="sidebar-logo">
-                    <div className="logo-box">
+                    <motion.div layout className="logo-box">
                         <i className="fa-solid fa-cube"></i>
-                    </div>
-                    {!isCollapsed && <h2>inpack</h2>}
+                    </motion.div>
+                    <AnimatePresence>
+                        {!isCollapsed && (
+                            <motion.h2
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -10 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                inpack
+                            </motion.h2>
+                        )}
+                    </AnimatePresence>
                     <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-                        <i className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}></i>
+                        <motion.i 
+                            layout
+                            className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}
+                        ></motion.i>
                     </button>
                 </div>
 
                 <nav className="sidebar-nav">
-                    {!isCollapsed && <div className="nav-label">Main Menu</div>}
+                    {!isCollapsed && (
+                        <motion.div 
+                            className="nav-label"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            Main Menu
+                        </motion.div>
+                    )}
                     <ul>
-                        <li className="active" onClick={() => setIsMobileMenuOpen(false)}>
+                        <motion.li 
+                            layout
+                            className="active" 
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            whileHover={{ x: 5 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
                             <i className="fa-solid fa-house"></i>
-                            {!isCollapsed && <span>Home</span>}
-                            <div className="active-indicator"></div>
-                        </li>
-                        <li onClick={() => handleNavigation('/dashboard')} style={{ cursor: 'pointer' }}>
+                            {!isCollapsed && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Home</motion.span>}
+                            <motion.div layoutId="active-nav" className="active-indicator"></motion.div>
+                        </motion.li>
+                        <motion.li 
+                            layout
+                            onClick={() => handleNavigation('/dashboard')} 
+                            style={{ cursor: 'pointer' }}
+                            whileHover={{ x: 5 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
                             <i className="fa-solid fa-chart-pie"></i>
-                            {!isCollapsed && <span>Dashboard</span>}
-                        </li>
-                        <li onClick={() => handleNavigation('/profile')} style={{ cursor: 'pointer' }}>
+                            {!isCollapsed && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Dashboard</motion.span>}
+                        </motion.li>
+                        <motion.li 
+                            layout
+                            onClick={() => handleNavigation('/profile')} 
+                            style={{ cursor: 'pointer' }}
+                            whileHover={{ x: 5 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
                             <i className="fa-solid fa-user"></i>
-                            {!isCollapsed && <span>Profile</span>}
-                        </li>
+                            {!isCollapsed && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Profile</motion.span>}
+                        </motion.li>
                     </ul>
                 </nav>
 
                 <div className="sidebar-footer">
-                    <div className="user-profile" onClick={() => handleNavigation('/profile')} style={{ cursor: 'pointer' }}>
+                    <motion.div 
+                        layout
+                        className="user-profile" 
+                        onClick={() => handleNavigation('/profile')} 
+                        style={{ cursor: 'pointer' }}
+                        whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                    >
                         <div className="avatar">
                             <i className="fa-solid fa-user"></i>
                         </div>
-
+                        {!isCollapsed && (
+                            <motion.div 
+                                className="user-info"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
+                                <span className="user-name">DEMO TVM</span>
+                                <span className="user-role">Admin</span>
+                            </motion.div>
+                        )}
                         <i className="fa-solid fa-chevron-right chevron-icon"></i>
-                    </div>
+                    </motion.div>
                 </div>
-            </aside>
+            </motion.aside>
 
             {/* MAIN CONTENT */}
             <main className="admin-main">
@@ -73,11 +189,14 @@ export default function Welcome() {
                         <button className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
                             <i className="fa-solid fa-bars"></i>
                         </button>
-                        <div className="search-bar">
+                        <motion.div 
+                            className="search-bar"
+                            whileFocusWithin={{ scale: 1.02, boxShadow: "0 4px 20px -5px rgba(0,0,0,0.1)" }}
+                        >
                             <i className="fa-solid fa-magnifying-glass"></i>
                             <input type="text" placeholder="Search invoices, customers, jobs..." />
                             <div className="search-shortcut">⌘K</div>
-                        </div>
+                        </motion.div>
                     </div>
                     <div className="topbar-actions">
                         <div className="header-date desktop-only">
@@ -85,11 +204,19 @@ export default function Welcome() {
                             <span>Today, Mar 19</span>
                         </div>
                         <div className="separator desktop-only"></div>
-                        <button className="icon-btn notif-btn">
+                        <motion.button 
+                            className="icon-btn notif-btn"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
                             <i className="fa-regular fa-bell"></i>
                             <span className="badge">3</span>
-                        </button>
-                        <div className="topbar-user-chip" onClick={() => handleNavigation('/profile')}>
+                        </motion.button>
+                        <motion.div 
+                            className="topbar-user-chip" 
+                            onClick={() => handleNavigation('/profile')}
+                            whileHover={{ scale: 1.02 }}
+                        >
                             <div className="topbar-avatar">
                                 <i className="fa-solid fa-user"></i>
                             </div>
@@ -98,7 +225,7 @@ export default function Welcome() {
                                 <span className="topbar-user-role">Admin</span>
                             </div>
                             <i className="fa-solid fa-chevron-down topbar-caret"></i>
-                        </div>
+                        </motion.div>
                     </div>
                 </header>
 
@@ -106,13 +233,26 @@ export default function Welcome() {
                 <div className="dashboard-content">
                     <motion.div 
                         className="welcome-banner"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ type: "spring", stiffness: 100, damping: 15 }}
                     >
                         <div>
-                            <h1 className="gradient-text">Welcome back, DEMO TVM! 👋</h1>
-                            <p>Here's what is happening with your business today.</p>
+                            <motion.h1 
+                                className="gradient-text"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                            >
+                                Welcome back, DEMO TVM! 👋
+                            </motion.h1>
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.4 }}
+                            >
+                                Here's what is happening with your business today.
+                            </motion.p>
                         </div>
                     </motion.div>
 
@@ -122,23 +262,23 @@ export default function Welcome() {
                             className="section-header"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
+                            transition={{ delay: 0.5 }}
                         >
                             <h2 className="section-title">Quick Access</h2>
-                            <button className="text-btn" onClick={() => setIsWidgetModalOpen(true)}>Manage Widgets</button>
+                            <motion.button 
+                                className="text-btn" 
+                                onClick={() => setIsWidgetModalOpen(true)}
+                                whileHover={{ scale: 1.05, x: 5 }}
+                            >
+                                Manage Widgets
+                            </motion.button>
                         </motion.div>
 
                         <motion.div 
                             className="quick-access-grid"
                             initial="hidden"
                             animate="visible"
-                            variants={{
-                                hidden: { opacity: 0 },
-                                visible: { 
-                                    opacity: 1,
-                                    transition: { staggerChildren: 0.1 }
-                                }
-                            }}
+                            variants={cardContainerVariants}
                         >
                             {[ 
                                 { path: '/invoice', icon: 'fa-file-invoice', color: 'blue', title: 'Invoice', desc: 'Create & manage' },
@@ -153,17 +293,19 @@ export default function Welcome() {
                                     className="action-card" 
                                     onClick={() => navigate(item.path)} 
                                     style={{ cursor: 'pointer' }}
-                                    variants={{
-                                        hidden: { y: 30, opacity: 0, scale: 0.9 },
-                                        visible: { y: 0, opacity: 1, scale: 1, transition: { type: "spring", stiffness: 120, damping: 14 } }
+                                    variants={cardItemVariants}
+                                    whileHover={{ 
+                                        scale: 1.04, 
+                                        y: -10, 
+                                        boxShadow: "0 20px 40px -15px rgba(0,0,0,0.15)",
+                                        borderColor: "var(--primary-color)"
                                     }}
-                                    whileHover={{ scale: 1.05, y: -8, boxShadow: "0 15px 30px -10px rgba(0,0,0,0.15)" }}
                                     whileTap={{ scale: 0.96 }}
                                 >
                                     <motion.div 
                                         className={`icon-wrapper ${item.color}`}
-                                        whileHover={{ rotate: 15, scale: 1.1 }}
-                                        transition={{ type: "spring", stiffness: 300 }}
+                                        whileHover={{ rotate: [0, -10, 10, 0] }}
+                                        transition={{ duration: 0.4 }}
                                     >
                                         <i className={`fa-solid ${item.icon}`}></i>
                                     </motion.div>
@@ -173,7 +315,8 @@ export default function Welcome() {
                                     </div>
                                     <motion.i 
                                         className="fa-solid fa-arrow-right action-arrow"
-                                        whileHover={{ x: 5 }}
+                                        initial={{ x: 0 }}
+                                        whileHover={{ x: 8 }}
                                     ></motion.i>
                                 </motion.div>
                             ))}
@@ -184,27 +327,46 @@ export default function Welcome() {
                         {/* LARGE PROMO BANNER */}
                         <motion.div 
                             className="promo-banner-wide"
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4, duration: 0.5 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.8, type: "spring", stiffness: 80 }}
+                            whileHover={{ scale: 1.01 }}
                         >
                             <div className="promo-glass-effect"></div>
                             <div className="promo-info">
-                                <span className="promo-badge">Special Offer</span>
+                                <motion.span 
+                                    className="promo-badge"
+                                    animate={{ scale: [1, 1.05, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                    Special Offer
+                                </motion.span>
                                 <h2>Thermal Printers – Save Up to 50%!</h2>
                                 <p>Get crisp, reliable prints without the ink hassle. Speed up your checkout process instantly.</p>
-                                <button className="promo-btn">Enquire now <i className="fa-solid fa-arrow-right"></i></button>
+                                <motion.button 
+                                    className="promo-btn"
+                                    whileHover={{ scale: 1.05, gap: "12px" }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Enquire now <i className="fa-solid fa-arrow-right"></i>
+                                </motion.button>
                             </div>
                             <div className="promo-graphics">
                                 <motion.i 
                                     className="fa-solid fa-print promo-icon-bg"
-                                    animate={{ rotate: [0, -5, 5, 0] }}
-                                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                    animate={{ 
+                                        rotate: [0, -8, 8, 0],
+                                        y: [0, -10, 10, 0]
+                                    }}
+                                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
                                 ></motion.i>
                                 <motion.div 
                                     className="floating-receipt"
-                                    animate={{ y: [0, -10, 0] }}
-                                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                                    animate={{ 
+                                        y: [0, -20, 0],
+                                        rotate: [15, 10, 20, 15]
+                                    }}
+                                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                                 ></motion.div>
                             </div>
                         </motion.div>
@@ -214,11 +376,14 @@ export default function Welcome() {
                             className="top-sales-card"
                             initial={{ opacity: 0, x: 30 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.5, duration: 0.5 }}
+                            transition={{ delay: 0.9, duration: 0.6 }}
                         >
                             <div className="card-header">
                                 <h2 className="section-title">Top Sales Metrics</h2>
-                                <i className="fa-solid fa-ellipsis-vertical more-icon"></i>
+                                <motion.i 
+                                    className="fa-solid fa-ellipsis-vertical more-icon"
+                                    whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+                                ></motion.i>
                             </div>
 
                             <motion.div 
@@ -229,7 +394,7 @@ export default function Welcome() {
                                     hidden: { opacity: 0 },
                                     visible: {
                                         opacity: 1,
-                                        transition: { staggerChildren: 0.15, delayChildren: 0.6 }
+                                        transition: { staggerChildren: 0.15, delayChildren: 1.1 }
                                     }
                                 }}
                             >
@@ -245,11 +410,12 @@ export default function Welcome() {
                                             hidden: { x: 20, opacity: 0 },
                                             visible: { x: 0, opacity: 1 }
                                         }}
+                                        whileHover={{ x: 5 }}
                                     >
                                         <div className="sales-header-row">
                                             <motion.div 
                                                 className={`icon-box ${item.color}`}
-                                                whileHover={{ rotate: 10, scale: 1.15 }}
+                                                whileHover={{ rotate: 15, scale: 1.1 }}
                                             >
                                                 <i className={`fa-solid ${item.icon}`}></i>
                                             </motion.div>
@@ -269,7 +435,7 @@ export default function Welcome() {
                                                 className={`progress-fill ${item.fillClass}`} 
                                                 initial={{ width: 0 }}
                                                 animate={{ width: item.percent }}
-                                                transition={{ duration: 1.5, type: "spring", stiffness: 40, damping: 10, delay: 0.8 + (index * 0.2) }}
+                                                transition={{ duration: 1.8, type: "spring", stiffness: 35, damping: 12, delay: 1.3 + (index * 0.2) }}
                                             ></motion.div>
                                         </div>
                                     </motion.div>
@@ -281,67 +447,89 @@ export default function Welcome() {
             </main>
 
             {/* MANAGE WIDGETS MODAL */}
-            {isWidgetModalOpen && (
-                <div className="widget-modal-overlay" onClick={() => setIsWidgetModalOpen(false)}>
-                    <div className="widget-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="widget-modal-header">
-                            <h3>Manage Widgets</h3>
-                            <button className="widget-modal-close" onClick={() => setIsWidgetModalOpen(false)}>
-                                <i className="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div className="widget-modal-body">
-                            <p className="widget-modal-desc">Customize your dashboard by toggling widgets on or off.</p>
-                            
-                            <div className="widget-toggle-list">
-                                <div className="widget-toggle-item">
-                                    <div className="widget-toggle-info">
-                                        <div className="widget-icon primary-light"><i className="fa-solid fa-bolt"></i></div>
-                                        <div>
-                                            <h4>Quick Access Grid</h4>
-                                            <span>Frequently used shortcuts</span>
-                                        </div>
-                                    </div>
-                                    <label className="widget-switch">
-                                        <input type="checkbox" defaultChecked />
-                                        <span className="widget-slider"></span>
-                                    </label>
-                                </div>
-                                <div className="widget-toggle-item">
-                                    <div className="widget-toggle-info">
-                                        <div className="widget-icon success-light"><i className="fa-solid fa-bullhorn"></i></div>
-                                        <div>
-                                            <h4>Promo Banner</h4>
-                                            <span>Latest offers & announcements</span>
-                                        </div>
-                                    </div>
-                                    <label className="widget-switch">
-                                        <input type="checkbox" defaultChecked />
-                                        <span className="widget-slider"></span>
-                                    </label>
-                                </div>
-                                <div className="widget-toggle-item">
-                                    <div className="widget-toggle-info">
-                                        <div className="widget-icon info-light"><i className="fa-solid fa-chart-line"></i></div>
-                                        <div>
-                                            <h4>Top Sales Metrics</h4>
-                                            <span>Performance data insights</span>
-                                        </div>
-                                    </div>
-                                    <label className="widget-switch">
-                                        <input type="checkbox" defaultChecked />
-                                        <span className="widget-slider"></span>
-                                    </label>
-                                </div>
+            <AnimatePresence>
+                {isWidgetModalOpen && (
+                    <motion.div 
+                        className="widget-modal-overlay" 
+                        onClick={() => setIsWidgetModalOpen(false)}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div 
+                            className="widget-modal-content" 
+                            onClick={(e) => e.stopPropagation()}
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                        >
+                            <div className="widget-modal-header">
+                                <h3>Manage Widgets</h3>
+                                <motion.button 
+                                    className="widget-modal-close" 
+                                    onClick={() => setIsWidgetModalOpen(false)}
+                                    whileHover={{ rotate: 90, scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </motion.button>
                             </div>
-                        </div>
-                        <div className="widget-modal-footer">
-                            <button className="widget-btn-cancel" onClick={() => setIsWidgetModalOpen(false)}>Cancel</button>
-                            <button className="widget-btn-save" onClick={() => setIsWidgetModalOpen(false)}>Save Changes</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                            <div className="widget-modal-body">
+                                <p className="widget-modal-desc">Customize your dashboard by toggling widgets on or off.</p>
+                                
+                                <motion.div 
+                                    className="widget-toggle-list"
+                                    initial="hidden"
+                                    animate="visible"
+                                    variants={{
+                                        hidden: { opacity: 0 },
+                                        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                                    }}
+                                >
+                                    {[
+                                        { title: "Quick Access Grid", desc: "Frequently used shortcuts", icon: "fa-bolt", class: "primary-light" },
+                                        { title: "Promo Banner", desc: "Latest offers & announcements", icon: "fa-bullhorn", class: "success-light" },
+                                        { title: "Top Sales Metrics", desc: "Performance data insights", icon: "fa-chart-line", class: "info-light" }
+                                    ].map((widget, i) => (
+                                        <motion.div 
+                                            key={i}
+                                            className="widget-toggle-item"
+                                            variants={{
+                                                hidden: { x: -20, opacity: 0 },
+                                                visible: { x: 0, opacity: 1 }
+                                            }}
+                                        >
+                                            <div className="widget-toggle-info">
+                                                <div className={`widget-icon ${widget.class}`}><i className={`fa-solid ${widget.icon}`}></i></div>
+                                                <div>
+                                                    <h4>{widget.title}</h4>
+                                                    <span>{widget.desc}</span>
+                                                </div>
+                                            </div>
+                                            <label className="widget-switch">
+                                                <input type="checkbox" defaultChecked />
+                                                <span className="widget-slider"></span>
+                                            </label>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            </div>
+                            <div className="widget-modal-footer">
+                                <button className="widget-btn-cancel" onClick={() => setIsWidgetModalOpen(false)}>Cancel</button>
+                                <motion.button 
+                                    className="widget-btn-save" 
+                                    onClick={() => setIsWidgetModalOpen(false)}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Save Changes
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

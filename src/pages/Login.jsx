@@ -69,16 +69,30 @@ export default function Login() {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
-      transition: { staggerChildren: 0.15 }
+      transition: { 
+        staggerChildren: 0.12, 
+        delayChildren: 0.2,
+        when: "beforeChildren"
+      }
     }
   };
 
   const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
+    hidden: { y: 25, opacity: 0, scale: 0.95 },
     visible: { 
       y: 0, 
       opacity: 1, 
-      transition: { type: "spring", stiffness: 100, damping: 15 }
+      scale: 1,
+      transition: { type: "spring", stiffness: 300, damping: 25 }
+    }
+  };
+
+  const formElementVariants = {
+    hidden: { opacity: 0, x: -15 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: { type: "spring", stiffness: 400, damping: 30 }
     }
   };
 
@@ -94,27 +108,39 @@ export default function Login() {
             hidden: { opacity: 0 },
             visible: { 
               opacity: 1,
-              transition: { staggerChildren: 0.2, delayChildren: 0.2 }
+              transition: { staggerChildren: 0.25, delayChildren: 0.3 }
             }
           }}
         >
           <motion.div 
             className="brand" 
             variants={{
-              hidden: { y: 40, opacity: 0, scale: 0.9 },
-              visible: { y: 0, opacity: 1, scale: 1, transition: { type: "spring", stiffness: 80, damping: 20 } }
+              hidden: { y: 30, opacity: 0, scale: 0.8 },
+              visible: { 
+                y: 0, 
+                opacity: 1, 
+                scale: 1, 
+                transition: { type: "spring", stiffness: 100, damping: 15 } 
+              }
             }}
           >
             <h1 className="logo">inpack</h1>
-            <p className="subtitle">Secure and efficient branch management.</p>
+            <motion.p 
+              className="subtitle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 1 }}
+            >
+              Secure and efficient branch management.
+            </motion.p>
           </motion.div>
           <motion.div 
             className="illustration-wrapper"
             variants={{
-              hidden: { opacity: 0, x: -50, rotate: -5 },
+              hidden: { opacity: 0, x: -40, rotate: -3, scale: 0.9 },
               visible: { 
-                opacity: 1, x: 0, rotate: 0,
-                transition: { type: "spring", stiffness: 60, damping: 15 }
+                opacity: 1, x: 0, rotate: 0, scale: 1,
+                transition: { type: "spring", stiffness: 50, damping: 12 }
               }
             }}
           >
@@ -122,8 +148,16 @@ export default function Login() {
               src="/illustration.png" 
               alt="illustration" 
               className="desktop-illustration" 
-              animate={{ y: [0, -15, 0], rotate: [0, 2, -2, 0] }}
-              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              animate={{ 
+                y: [0, -18, 0],
+                rotate: [0, 1.5, -1.5, 0],
+                scale: [1, 1.02, 1]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 7, 
+                ease: "easeInOut" 
+              }}
             />
           </motion.div>
         </motion.div>
@@ -131,16 +165,16 @@ export default function Login() {
         {/* RIGHT PANEL - FORM */}
         <motion.div 
           className="right-panel"
-          initial={{ opacity: 0, x: 100 }}
+          initial={{ opacity: 0, x: 60 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", stiffness: 70, damping: 20, delay: 0.3 }}
+          transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.4 }}
         >
           <div className="form-container">
             <motion.h2 
               className="title"
-              initial={{ opacity: 0, y: -30, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.6 }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.7 }}
             >
               Welcome Back
             </motion.h2>
@@ -148,7 +182,7 @@ export default function Login() {
               className="instructions"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
+              transition={{ delay: 0.9, duration: 1 }}
             >
               Login to continue managing your branches securely.
             </motion.p>
@@ -162,16 +196,13 @@ export default function Login() {
                 hidden: { opacity: 0 },
                 visible: { 
                   opacity: 1,
-                  transition: { staggerChildren: 0.15, delayChildren: 0.9 }
+                  transition: { staggerChildren: 0.1, delayChildren: 1.1 }
                 }
               }}
             >
               <motion.div 
                 className="login-form-group"
-                variants={{
-                  hidden: { opacity: 0, x: -20 },
-                  visible: { opacity: 1, x: 0, transition: { type: "spring" } }
-                }}
+                variants={formElementVariants}
               >
                 <label>Phone Number</label>
                 <div className="phoneInputWrapper">
@@ -188,14 +219,14 @@ export default function Login() {
                 </div>
               </motion.div>
 
-              <AnimatePresence>
+              <AnimatePresence mode="wait">
                 {err && (
                   <motion.p 
                     className="errorText"
-                    initial={{ opacity: 0, height: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, height: "auto", scale: 1 }}
-                    exit={{ opacity: 0, height: 0, scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   >
                     {err}
                   </motion.p>
@@ -205,14 +236,35 @@ export default function Login() {
               <motion.button 
                 className="loginBtn" 
                 disabled={loading}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { type: "spring"} }
+                variants={formElementVariants}
+                whileHover={{ 
+                  scale: 1.03, 
+                  boxShadow: "0 12px 24px -8px rgba(0,0,0,0.25)",
+                  backgroundColor: "#ff5035"
                 }}
-                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px -10px rgba(0,0,0,0.3)" }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
               >
-                {loading ? "Please wait..." : "Continue"}
+                <AnimatePresence mode="wait">
+                  {loading ? (
+                    <motion.span
+                      key="loading"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                    >
+                      <i className="fa-solid fa-circle-notch fa-spin"></i> Please wait...
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="continue"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      Continue
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </motion.button>
             </motion.form>
           </div>
@@ -227,19 +279,30 @@ export default function Login() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
             <motion.div 
               className="otp-popup-card"
-              initial={{ scale: 0.5, opacity: 0, y: 50, rotateX: -20 }}
+              initial={{ scale: 0.7, opacity: 0, y: 40, rotateX: -15 }}
               animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
-              exit={{ scale: 0.5, opacity: 0, y: 50, rotateX: 20 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              style={{ perspective: 1000 }}
+              exit={{ scale: 0.7, opacity: 0, y: 40, rotateX: 15 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 25, 
+                mass: 1.2
+              }}
+              style={{ perspective: 1200 }}
             >
-              <div className="otp-icon-container">
+              <motion.div 
+                className="otp-icon-container"
+                initial={{ rotate: -45, scale: 0 }}
+                animate={{ rotate: 0, scale: 1 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+              >
                 <span className="otp-icon-shield"></span>
                 <div className="otp-success-glow"></div>
-              </div>
+              </motion.div>
 
               <h2 className="otp-popup-title">OTP Received</h2>
               <p className="otp-popup-msg">Your verification code is ready. Use the code below to complete your login.</p>
@@ -249,9 +312,14 @@ export default function Login() {
                   <motion.span 
                     key={index} 
                     className="otp-digit"
-                    initial={{ opacity: 0, y: -20, scale: 0.5 }}
+                    initial={{ opacity: 0, y: 20, scale: 0.5 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15, delay: index * 0.1 + 0.3 }}
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 400, 
+                      damping: 18, 
+                      delay: index * 0.08 + 0.45 
+                    }}
                   >
                     {char}
                   </motion.span>
@@ -261,16 +329,26 @@ export default function Login() {
               <motion.button 
                 className="otp-proceed-btn" 
                 onClick={handleProceed}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                whileHover={{ scale: 1.05, boxShadow: "0 8px 15px -5px rgba(255, 96, 68, 0.4)" }}
+                transition={{ delay: 0.9 }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  boxShadow: "0 10px 20px -8px rgba(255, 96, 68, 0.5)" 
+                }}
                 whileTap={{ scale: 0.95 }}
               >
                 Verify & Proceed
               </motion.button>
 
-              <p className="otp-footer-hint">Security powered by Inpack Authenticator</p>
+              <motion.p 
+                className="otp-footer-hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2 }}
+              >
+                Security powered by Inpack Authenticator
+              </motion.p>
             </motion.div>
           </motion.div>
         )}

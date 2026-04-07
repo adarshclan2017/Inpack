@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import '../styles/Menu.css';
 
 const Menu = ({ setActiveTab }) => {
@@ -18,30 +19,92 @@ const Menu = ({ setActiveTab }) => {
         { name: 'Report Screen', icon: 'fa-solid fa-chart-pie', desc: 'Comprehensive analytics and data exports.' }
     ];
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.08
+            }
+        }
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, scale: 0.95, y: 20 },
+        show: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+        },
+        hover: {
+            scale: 1.02,
+            y: -4,
+            boxShadow: "0 15px 30px rgba(0,0,0,0.08)",
+            transition: { duration: 0.3, ease: "easeOut" }
+        }
+    };
+
+    const iconVariants = {
+        hover: { scale: 1.05 }
+    };
+
+    const arrowVariants = {
+        hover: { x: 5 }
+    };
+
     return (
-        <div className="menu-desktop-container">
-            <div className="menu-header">
+        <motion.div
+            className="menu-desktop-container"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+        >
+            <motion.div
+                className="menu-header"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
                 <h1>Master Configuration</h1>
                 <p>Manage your core system entities, configurations, and organizational parameters.</p>
-            </div>
+            </motion.div>
 
-            <div className="menu-desktop-grid">
+            <motion.div
+                className="menu-desktop-grid"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+            >
                 {menuItems.map((item, index) => (
-                    <div key={index} className="menu-item-card" onClick={() => setActiveTab && setActiveTab(item.name)}>
-                        <div className="menu-icon-wrapper">
+                    <motion.div
+                        key={index}
+                        className="menu-item-card"
+                        onClick={() => setActiveTab && setActiveTab(item.name)}
+                        variants={cardVariants}
+                        whileHover="hover"
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <motion.div
+                            className="menu-icon-wrapper"
+                            variants={iconVariants}
+                        >
                             <i className={item.icon}></i>
-                        </div>
+                        </motion.div>
                         <div className="menu-item-info">
                             <h3 className="menu-item-title">{item.name}</h3>
                             <p className="menu-item-desc">{item.desc}</p>
                         </div>
-                        <div className="menu-action-arrow">
+                        <motion.div
+                            className="menu-action-arrow"
+                            variants={arrowVariants}
+                        >
                             <i className="fa-solid fa-arrow-right"></i>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 ))}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 };
 

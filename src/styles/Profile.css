@@ -39,7 +39,6 @@ body {
   flex-direction: column;
   z-index: 20;
   height: 100%;
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
@@ -76,7 +75,8 @@ body {
   font-size: 11px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   z-index: 100;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 100;
 }
 
 .sidebar-toggle-btn:hover {
@@ -116,7 +116,7 @@ body {
   box-shadow: 0 16px 32px rgba(13, 148, 136, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.6);
   margin-bottom: 24px;
   transform: rotate(-4deg);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: rotate(-4deg);
 }
 
 .collapsed .profile-avatar {
@@ -163,7 +163,6 @@ body {
   justify-content: center;
   color: #64748b;
   cursor: pointer;
-  transition: all 0.3s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
@@ -202,7 +201,6 @@ body {
   border-radius: 20px;
   cursor: pointer;
   background: transparent;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid transparent;
 }
 
@@ -225,7 +223,7 @@ body {
   color: #94a3b8;
   width: 24px;
   height: 24px;
-  transition: all 0.3s;
+  height: 24px;
 }
 
 .menu-item:hover {
@@ -294,6 +292,7 @@ body {
   font-weight: 800;
   background: linear-gradient(135deg, #0f172a, #334155);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
 }
@@ -315,7 +314,6 @@ body {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .action-btn:hover {
@@ -402,7 +400,6 @@ body {
   border-radius: 32px;
   padding: 40px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.05);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {

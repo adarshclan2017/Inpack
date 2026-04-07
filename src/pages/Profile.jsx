@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import '../styles/Profile.css';
 import FollowUp from './FollowUp';
 import SalesReport from './SalesReport';
@@ -45,6 +46,27 @@ const Profile = () => {
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(window.innerWidth <= 768);
+
+    const menuVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.04,
+                delayChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -15, scale: 0.98 },
+        show: { 
+            opacity: 1, 
+            x: 0, 
+            scale: 1,
+            transition: { type: "spring", stiffness: 300, damping: 25 }
+        }
+    };
 
     const menuItems = [
         { name: 'Home', icon: <Home />, id: 'home', route: '/welcome' },
@@ -132,55 +154,142 @@ const Profile = () => {
     return (
         <div className="profile-dashboard">
             {/* Mobile Drawer Overlay */}
-            {isMobileMenuOpen && <div className="profile-sidebar-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        className="profile-sidebar-overlay"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    />
+                )}
+            </AnimatePresence>
 
-            <aside className={`profile-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+            <motion.aside 
+                layout
+                className={`profile-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}
+                transition={{ type: "spring", stiffness: 300, damping: 32 }}
+            >
                 <div className="sidebar-header">
-                    <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-                        <i className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}></i>
-                    </button>
-                    <div className="profile-avatar">
+                    <motion.button
+                        layout
+                        className="sidebar-toggle-btn"
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.15)" }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <motion.i 
+                            layout
+                            className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}
+                        ></motion.i>
+                    </motion.button>
+                    <motion.div
+                        layout
+                        className="profile-avatar"
+                        whileHover={{ scale: 1.05, rotate: 5, boxShadow: "0 0 20px rgba(255,255,255,0.3)" }}
+                    >
                         <User size={isCollapsed ? 24 : 36} color="white" />
-                    </div>
-                    {!isCollapsed && (
-                        <div className="profile-info">
-                            <div className="profile-name">Inpack App Test</div>
-                            <div className="profile-actions">
-                                <button className="profile-action-btn" title="Login actions" onClick={() => setIsLogoutModalOpen(true)}>
-                                    <LogOut size={16} />
-                                </button>
-                                <button className="profile-action-btn" title="Company info">
-                                    <Info size={16} />
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                    </motion.div>
+                    <AnimatePresence mode="popLayout">
+                        {!isCollapsed && (
+                            <motion.div
+                                className="profile-info"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -10 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <div className="profile-name">Inpack App Test</div>
+                                <div className="profile-actions">
+                                    <motion.button
+                                        className="profile-action-btn"
+                                        title="Login actions"
+                                        onClick={() => setIsLogoutModalOpen(true)}
+                                        whileHover={{ scale: 1.15, backgroundColor: 'rgba(255,255,255,0.2)' }}
+                                        whileTap={{ scale: 0.9 }}
+                                    >
+                                        <LogOut size={16} />
+                                    </motion.button>
+                                    <motion.button
+                                        className="profile-action-btn"
+                                        title="Company info"
+                                        whileHover={{ scale: 1.15, backgroundColor: 'rgba(255,255,255,0.2)' }}
+                                        whileTap={{ scale: 0.9 }}
+                                    >
+                                        <Info size={16} />
+                                    </motion.button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                <nav className="sidebar-menu-card">
+                <motion.nav
+                    layout
+                    className="sidebar-menu-card"
+                    variants={menuVariants}
+                    initial="hidden"
+                    animate="show"
+                >
                     {menuItems.map((item) => (
-                        <div
+                        <motion.div
+                            layout
                             key={item.id}
+                            variants={itemVariants}
                             className={`menu-item ${activeMenu === item.name ? 'active' : ''}`}
                             onClick={() => handleMenuNavigation(item)}
+                            whileHover={{ x: 6, backgroundColor: "rgba(255,255,255,0.1)" }}
+                            whileTap={{ scale: 0.98 }}
                         >
-                            <div className="menu-item-icon">
+                            <motion.div layout className="menu-item-icon">
                                 {item.icon}
-                            </div>
-                            {!isCollapsed && <span>{item.name}</span>}
+                            </motion.div>
+                            <AnimatePresence mode="popLayout">
+                                {!isCollapsed && (
+                                    <motion.span
+                                        initial={{ opacity: 0, x: -5 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -5 }}
+                                    >
+                                        {item.name}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
                             {!isCollapsed && <ChevronRight className="chevron-icon" />}
-                        </div>
+                            {activeMenu === item.name && (
+                                <motion.div 
+                                    layoutId="active-pill"
+                                    className="menu-active-pill"
+                                    initial={false}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                />
+                            )}
+                        </motion.div>
                     ))}
-                </nav>
-            </aside>
+                </motion.nav>
+            </motion.aside>
 
             <main className="profile-main">
                 <header className="main-header">
                     <div className="header-left-section">
-                        <button className="profile-mobile-toggle" onClick={() => setIsMobileMenuOpen(true)}>
+                        <motion.button 
+                            className="profile-mobile-toggle" 
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            whileTap={{ scale: 0.9 }}
+                        >
                             <i className="fa-solid fa-bars"></i>
-                        </button>
-                        <div className="header-title">{activeMenu}</div>
+                        </motion.button>
+                        <motion.div 
+                            key={activeMenu}
+                            className="header-title"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                        >
+                            {activeMenu}
+                        </motion.div>
                     </div>
                     <div className="header-actions">
                         {/* Search and Notifications removed */}
@@ -188,27 +297,86 @@ const Profile = () => {
                 </header>
 
                 <div className="content-area">
-                    {renderContent()}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeMenu}
+                            initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -15, scale: 0.98 }}
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ height: '100%', width: '100%' }}
+                        >
+                            {renderContent()}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </main>
 
             {/* Logout Modal Overlay */}
-            {isLogoutModalOpen && (
-                <div className="profile-modal-overlay">
-                    <div className="profile-logout-modal">
-                        <div className="profile-logout-icon-container">
-                            <LogOut size={32} strokeWidth={2.5} />
-                        </div>
-                        <h3 className="profile-logout-title">Logout</h3>
-                        <p className="profile-logout-text">Are you want to logout ?</p>
+            <AnimatePresence>
+                {isLogoutModalOpen && (
+                    <motion.div
+                        className="profile-modal-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                        <motion.div
+                            className="profile-logout-modal"
+                            initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 30 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                        >
+                            <motion.div
+                                className="profile-logout-icon-container"
+                                initial={{ scale: 0, rotate: -45 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 15 }}
+                            >
+                                <LogOut size={32} strokeWidth={2.5} />
+                            </motion.div>
+                            <motion.h3 
+                                className="profile-logout-title"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.25 }}
+                            >
+                                Logout
+                            </motion.h3>
+                            <motion.p 
+                                className="profile-logout-text"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.35 }}
+                            >
+                                Are you want to logout ?
+                            </motion.p>
 
-                        <div className="profile-logout-actions">
-                            <button className="profile-btn-no" onClick={() => setIsLogoutModalOpen(false)}>No</button>
-                            <button className="profile-btn-yes" onClick={handleLogout}>Yes</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                            <motion.div 
+                                className="profile-logout-actions"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.45 }}
+                            >
+                                <motion.button
+                                    className="profile-btn-no"
+                                    onClick={() => setIsLogoutModalOpen(false)}
+                                    whileHover={{ scale: 1.05, backgroundColor: "#f1f5f9" }}
+                                    whileTap={{ scale: 0.95 }}
+                                >No</motion.button>
+                                <motion.button
+                                    className="profile-btn-yes"
+                                    onClick={handleLogout}
+                                    whileHover={{ scale: 1.05, boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }}
+                                    whileTap={{ scale: 0.95 }}
+                                >Yes</motion.button>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
