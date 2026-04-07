@@ -110,14 +110,63 @@ const ServiceForm = ({ onBack }) => {
         closePicker();
     };
 
-    const handlePickerAddNew = () => {
+    const handlePickerAddNew = async () => {
         const v = newItemInput.trim();
         if (!v || !activePicker) return;
-        const newObj = { id: '0', label: v };
-        setExtraOptions(prev => ({ ...prev, [activePicker]: [...(prev[activePicker] || []), newObj] }));
-        FIELD_SETTERS[activePicker](v);
-        FIELD_ID_SETTERS[activePicker]('0');
-        closePicker();
+
+        // Map activePicker to LookupFrom
+        const lookupMap = {
+            brand: 'PhoneDetails',
+            model: 'Model',
+            color: 'Colour',
+            collect: 'Accessories',
+            status: 'DeviceState',
+            complaint: 'Complaint'
+        };
+
+        const lookupFrom = lookupMap[activePicker];
+        if (!lookupFrom) return;
+
+        try {
+            // InternalLookupID=0 as requested for new items
+            const url = `/api2025/InPackService.asmx/saveLookupDetails?InternalLookupID=0&LookupFrom=${lookupFrom}&LookupData=${encodeURIComponent(v)}&InternalUserID=41&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
+            
+            const res = await fetch(url);
+            const text = await res.text();
+
+            // API returns XML → extract string → parse JSON if present
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, 'text/xml');
+            const stringEl = xmlDoc.getElementsByTagName('string')[0];
+            let newId = '0';
+
+            if (stringEl && stringEl.textContent) {
+                try {
+                    // Try parsing as JSON first
+                    const data = JSON.parse(stringEl.textContent);
+                    // Match the key from loadLookup if available
+                    newId = String(data.internal_lookup_id || '0');
+                } catch (e) {
+                    // If not JSON, maybe it's just the ID string?
+                    const possibleId = stringEl.textContent.trim();
+                    if (!isNaN(possibleId)) newId = possibleId;
+                }
+            }
+
+            const newObj = { id: newId, label: v };
+            setExtraOptions(prev => ({ ...prev, [activePicker]: [...(prev[activePicker] || []), newObj] }));
+            FIELD_SETTERS[activePicker](v);
+            FIELD_ID_SETTERS[activePicker](newId);
+            closePicker();
+        } catch (err) {
+            console.error('saveLookupDetails error:', err);
+            // Fallback to local-only save on error, but notify
+            const newObj = { id: '0', label: v };
+            setExtraOptions(prev => ({ ...prev, [activePicker]: [...(prev[activePicker] || []), newObj] }));
+            FIELD_SETTERS[activePicker](v);
+            FIELD_ID_SETTERS[activePicker]('0');
+            closePicker();
+        }
     };
 
     const activeOptions = activePicker
