@@ -90,7 +90,7 @@ export default function Customers({ setActiveTab }) {
                         
                         <div className="cust-modal-body">
                             {/* Bounding box formatting 9 inputs smartly for desktop */}
-                            <div className="cust-input-group">
+                            <div className="cust-form-group">
                                 
                                 <div className="cust-input-row">
                                     <span className="cust-input-icon cust-sub-text">123</span>
@@ -208,7 +208,7 @@ export default function Customers({ setActiveTab }) {
                         </div>
                         
                         <div className="cust-modal-body">
-                            <div className="cust-input-group">
+                            <div className="cust-form-group">
                                 
                                 <div className="cust-input-row">
                                     <span className="cust-input-icon cust-sub-text">123</span>
@@ -276,7 +276,7 @@ export default function Customers({ setActiveTab }) {
                         </div>
                         
                         <div className="cust-modal-body">
-                            <div className="cust-input-group">
+                            <div className="cust-form-group">
                                 
                                 <div className="cust-input-row">
                                     <i className="fa-regular fa-credit-card cust-input-icon"></i>
@@ -358,7 +358,7 @@ export default function Customers({ setActiveTab }) {
                         </div>
                         
                         <div className="cust-modal-body">
-                            <div className="cust-input-group">
+                            <div className="cust-form-group">
                                 
                                 <div className="cust-input-row">
                                     <i className="fa-regular fa-id-card cust-input-icon"></i>
@@ -429,7 +429,7 @@ export default function Customers({ setActiveTab }) {
                         </div>
                         
                         <div className="cust-modal-body">
-                            <div className="cust-input-group">
+                            <div className="cust-form-group">
                                 
                                 <div className="cust-input-row">
                                     <i className="fa-solid fa-location-dot cust-input-icon"></i>

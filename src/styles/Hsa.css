@@ -160,7 +160,7 @@
 }
 
 /* Grouped Input matching the screenshot */
-.hsa-input-group {
+.hsa-form-group {
     border: 1px solid #4b9596; 
     border-radius: 20px; 
     background-color: #ffffff;
@@ -170,7 +170,7 @@
     transition: box-shadow 0.2s;
 }
 
-.hsa-input-group:focus-within {
+.hsa-form-group:focus-within {
     box-shadow: 0 0 0 3px rgba(75, 149, 150, 0.15);
 }
 

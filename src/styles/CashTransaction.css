@@ -235,7 +235,7 @@
 }
 
 /* ─── Input Groups ────────────────────────────────────── */
-.ct-input-group {
+.ct-form-group {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -246,11 +246,11 @@
     position: relative;
 }
 
-.ct-input-group:last-child {
+.ct-form-group:last-child {
     border-bottom: none;
 }
 
-.ct-input-group:focus-within {
+.ct-form-group:focus-within {
     background: #f8fffe;
 }
 
@@ -520,7 +520,7 @@
     }
 
     /* Form card inputs */
-    .ct-input-group {
+    .ct-form-group {
         padding: 6px 16px;
         min-height: 60px;
         gap: 10px;

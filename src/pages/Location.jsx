@@ -71,7 +71,7 @@ export default function Location({ setActiveTab }) {
                             {modalPage === 'MAIN' ? (
                                 <>
                                     {/* MAIN PAGE fields */}
-                                    <div className="loc-input-group">
+                                    <div className="loc-form-group">
                                         <div className="loc-input-row">
                                             <span className="loc-input-icon loc-sub-text">123</span>
                                             <input type="text" className="loc-input-field" value={locationId} onChange={(e) => setLocationId(e.target.value)} placeholder="Location ID" />
@@ -101,7 +101,7 @@ export default function Location({ setActiveTab }) {
                             ) : (
                                 <>
                                     {/* MORE PAGE fields inside their own bounding box */}
-                                    <div className="loc-input-group">
+                                    <div className="loc-form-group">
                                         
                                         <div className="loc-input-row">
                                             <i className="fa-solid fa-location-dot loc-input-icon"></i>

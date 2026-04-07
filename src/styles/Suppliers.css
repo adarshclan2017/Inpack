@@ -178,7 +178,7 @@
 }
 
 /* The teal outer bounding box */
-.sup-input-group {
+.sup-form-group {
     border: 1px solid #4b9596;
     border-radius: 20px;
     padding: 24px;
@@ -334,7 +334,7 @@
         max-height: 85vh;
     }
 
-    .sup-input-group {
+    .sup-form-group {
         padding: 20px;
         gap: 14px;
     }
@@ -365,7 +365,7 @@
         margin: auto;
     }
 
-    .sup-input-group {
+    .sup-form-group {
         grid-template-columns: 1fr;
         padding: 16px;
         gap: 14px;
@@ -427,7 +427,7 @@
         font-size: 14px;
     }
 
-    .sup-input-group {
+    .sup-form-group {
         padding: 14px;
         gap: 12px;
         border-radius: 16px;
@@ -474,7 +474,7 @@
         border-radius: 12px;
     }
 
-    .sup-input-group {
+    .sup-form-group {
         padding: 12px;
         gap: 10px;
     }

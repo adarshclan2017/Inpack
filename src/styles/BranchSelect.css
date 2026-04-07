@@ -101,12 +101,12 @@
   line-height: 1.5;
 }
 
-.input-group {
+.login-form-group {
   margin-bottom: 24px;
   text-align: left;
 }
 
-.input-group label {
+.login-form-group label {
   display: block;
   font-size: 14px;
   font-weight: 600;

@@ -148,7 +148,7 @@ const BankTransaction = () => {
                     <div className="ct-form-card">
 
                         {/* Cheque Date */}
-                        <div className="ct-input-group">
+                        <div className="ct-form-group">
                             <i className="fa-regular fa-calendar ct-input-icon"></i>
                             <div className="ct-float-wrap">
                                 <input
@@ -164,7 +164,7 @@ const BankTransaction = () => {
                         </div>
 
                         {/* Cheque / UTR No */}
-                        <div className="ct-input-group bt-utr-group">
+                        <div className="ct-form-group bt-utr-group">
                             <i className="fa-regular fa-file ct-input-icon"></i>
                             <div className="bt-utr-wrap">
                                 <div className="ct-float-wrap">
@@ -184,7 +184,7 @@ const BankTransaction = () => {
                         </div>
 
                         {/* Narration */}
-                        <div className="ct-input-group">
+                        <div className="ct-form-group">
                             <i className="fa-solid fa-pen-to-square ct-input-icon"></i>
                             <div className="ct-float-wrap">
                                 <input
@@ -200,7 +200,7 @@ const BankTransaction = () => {
                         </div>
 
                         {/* Received Against / Paid Against */}
-                        <div className="ct-input-group">
+                        <div className="ct-form-group">
                             <i className="fa-solid fa-table-cells-large ct-input-icon"></i>
                             <div className="ct-float-wrap">
                                 <input

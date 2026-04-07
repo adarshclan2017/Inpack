@@ -94,7 +94,7 @@ export default function Otp() {
             <p className="instructions">Enter the 4-digit code sent to your phone.</p>
 
             <form onSubmit={verifyOtp}>
-              <div className="input-group">
+              <div className="login-form-group">
                 <label>Verification Code</label>
                 <div className="otpBoxes">
                   {otp.map((d, i) => (

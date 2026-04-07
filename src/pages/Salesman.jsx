@@ -43,7 +43,7 @@ export default function Salesman({ setActiveTab }) {
                         
                         <div className="sales-modal-body">
                             {/* Bounding box formatted natively as a 2-column desktop grid for the 6 inputs */}
-                            <div className="sales-input-group">
+                            <div className="sales-form-group">
                                 
                                 {/* 1. Salesman ID */}
                                 <div className="sales-input-row">

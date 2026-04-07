@@ -330,9 +330,10 @@
 }
 
 .search-bar input {
-  border: none;
-  background: transparent;
-  outline: none;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
   width: 100%;
   font-size: 14px;
   color: #1e293b;

@@ -43,7 +43,7 @@ function Category({ setActiveTab }) {
                         
                         <div className="cat-modal-body">
                             {/* The teal outer bounding box configured as a 2-column grid */}
-                            <div className="cat-input-group">
+                            <div className="cat-form-group">
                                 
                                 {/* 1. Category Name */}
                                 <div className="cat-input-row">

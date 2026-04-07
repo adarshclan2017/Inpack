@@ -101,12 +101,12 @@
   line-height: 1.5;
 }
 
-.input-group {
+.login-form-group {
   margin-bottom: 24px;
   text-align: left;
 }
 
-.input-group label {
+.login-form-group label {
   display: block;
   font-size: 14px;
   font-weight: 600;
@@ -143,9 +143,10 @@
 
 .loginInput {
   flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
   font-size: 16px;
   color: #1f2937;
   width: 100%;

@@ -44,7 +44,7 @@ export default function Suppliers({ setActiveTab }) {
                         
                         <div className="sup-modal-body">
                             {/* Bounding box for the 7 inputs */}
-                            <div className="sup-input-group">
+                            <div className="sup-form-group">
                                 
                                 {/* 1. GST IN */}
                                 <div className="sup-input-row">

@@ -37,7 +37,7 @@ export default function Hsa({ setActiveTab }) {
                         
                         <div className="hsa-modal-body">
                             {/* Grouped Input matching the screenshot with a middle divider line */}
-                            <div className="hsa-input-group">
+                            <div className="hsa-form-group">
                                 {/* Top Row - Code */}
                                 <div className="hsa-input-row">
                                     <span className="hsa-input-icon">H</span>

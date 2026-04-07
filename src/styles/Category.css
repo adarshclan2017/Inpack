@@ -146,7 +146,7 @@
     color: #ef4444 !important;
 }
 
-.cat-input-group {
+.cat-form-group {
     border: 1px solid #4b9596; 
     border-radius: 20px; 
     padding: 24px;
@@ -291,7 +291,7 @@
         width: 95%;
     }
 
-    .cat-input-group {
+    .cat-form-group {
         padding: 16px;
         gap: 12px;
     }

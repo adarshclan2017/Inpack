@@ -137,7 +137,7 @@ const CashTransaction = () => {
                     {/* Form Card */}
                     <div className="ct-form-card">
                         {/* Narration */}
-                        <div className="ct-input-group">
+                        <div className="ct-form-group">
                             <i className="fa-solid fa-pen-to-square ct-input-icon"></i>
                             <div className="ct-float-wrap">
                                 <input
@@ -153,7 +153,7 @@ const CashTransaction = () => {
                         </div>
 
                         {/* Paid Against */}
-                        <div className="ct-input-group">
+                        <div className="ct-form-group">
                             <i className="fa-solid fa-table-cells-large ct-input-icon"></i>
                             <div className="ct-float-wrap">
                                 <input
@@ -176,7 +176,7 @@ const CashTransaction = () => {
                         </div>
 
                         {/* Amount */}
-                        <div className="ct-input-group">
+                        <div className="ct-form-group">
                             <span className="ct-input-icon ct-rupee-icon">₹</span>
                             <div className="ct-float-wrap">
                                 <input

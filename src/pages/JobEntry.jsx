@@ -31,11 +31,11 @@ const ServiceForm = ({ onBack }) => {
 
     // ── Generic Field Picker ──────────────────────────────────
     const [PICKER_OPTIONS, setPickerOptions] = useState({
-        brand:     [],
-        model:     [],
-        color:     [],
-        collect:   [],
-        status:    [],
+        brand: [],
+        model: [],
+        color: [],
+        collect: [],
+        status: [],
         complaint: [],
     });
     const [lookupLoading, setLookupLoading] = useState(true);
@@ -45,7 +45,7 @@ const ServiceForm = ({ onBack }) => {
         const fetchLookup = async () => {
             try {
                 const url = '/api2025/InPackService.asmx/loadLookup?InternalUserID=41&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255';
-                const res  = await fetch(url);
+                const res = await fetch(url);
                 const text = await res.text();
 
                 // Parse XML wrapper → extract inner JSON string
@@ -64,18 +64,18 @@ const ServiceForm = ({ onBack }) => {
                     const data = JSON.parse(jsonStr);
                     const extract = (key) =>
                         (data[key] || [])
-                            .map(item => ({ 
-                                id: String(item.internal_lookup_id || ''), 
-                                label: String(item.lookup_data || '') 
+                            .map(item => ({
+                                id: String(item.internal_lookup_id || ''),
+                                label: String(item.lookup_data || '')
                             }))
                             .filter(i => i.label);
 
                     setPickerOptions({
-                        brand:     extract('PhoneDetails'),   // PhoneDetails → Brand
-                        model:     extract('Model'),
-                        color:     extract('Colour'),
-                        collect:   extract('Accessories'),    // Accessories → Collect
-                        status:    extract('DeviceState'),    // DeviceState → Status
+                        brand: extract('PhoneDetails'),   // PhoneDetails → Brand
+                        model: extract('Model'),
+                        color: extract('Colour'),
+                        collect: extract('Accessories'),    // Accessories → Collect
+                        status: extract('DeviceState'),    // DeviceState → Status
                         complaint: extract('Complaint'),
                     });
                 }
@@ -96,8 +96,8 @@ const ServiceForm = ({ onBack }) => {
 
     const FIELD_SETTERS = { brand: setBrand, model: setModel, color: setColor, collect: setCollect, status: setStatus, complaint: setComplaint };
     const FIELD_ID_SETTERS = { brand: setBrandId, model: setModelId, color: setColorId, collect: setCollectId, status: setStatusId, complaint: setComplaintId };
-    const FIELD_VALUES  = { brand, model, color, collect, status, complaint };
-    const FIELD_LABELS  = { brand: 'Brand', model: 'Model', color: 'Color', collect: 'Collect', status: 'Status', complaint: 'Complaint' };
+    const FIELD_VALUES = { brand, model, color, collect, status, complaint };
+    const FIELD_LABELS = { brand: 'Brand', model: 'Model', color: 'Color', collect: 'Collect', status: 'Status', complaint: 'Complaint' };
 
     const openPicker = (field) => { setActivePicker(field); setPickerSearch(''); setShowAddItem(false); setNewItemInput(''); };
     const closePicker = () => { setActivePicker(null); setPickerSearch(''); setShowAddItem(false); setNewItemInput(''); };
@@ -122,21 +122,21 @@ const ServiceForm = ({ onBack }) => {
 
     const activeOptions = activePicker
         ? [...(PICKER_OPTIONS[activePicker] || []), ...(extraOptions[activePicker] || [])].filter(
-              o => o.label.toLowerCase().includes(pickerSearch.toLowerCase())
-          )
+            o => o.label.toLowerCase().includes(pickerSearch.toLowerCase())
+        )
         : [];
 
     // ── Signature pad ───────────────────────────────────────
-    const canvasRef   = useRef(null);
-    const isDrawing   = useRef(false);
-    const lastPos     = useRef(null);
-    const ctxRef      = useRef(null);
+    const canvasRef = useRef(null);
+    const isDrawing = useRef(false);
+    const lastPos = useRef(null);
+    const ctxRef = useRef(null);
 
     // Return position in CSS-space coords relative to canvas
     const getCSSPos = (e) => {
         const canvas = canvasRef.current;
-        const rect   = canvas.getBoundingClientRect();
-        const src    = e.touches ? e.touches[0] : e;
+        const rect = canvas.getBoundingClientRect();
+        const src = e.touches ? e.touches[0] : e;
         return {
             x: src.clientX - rect.left,
             y: src.clientY - rect.top,
@@ -153,19 +153,19 @@ const ServiceForm = ({ onBack }) => {
             if (!canvas) return;
 
             const dpr = window.devicePixelRatio || 1;
-            const w   = canvas.offsetWidth;
-            const h   = canvas.offsetHeight;
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
 
-            canvas.width  = w * dpr;
+            canvas.width = w * dpr;
             canvas.height = h * dpr;
 
             const ctx = canvas.getContext('2d');
             ctx.scale(dpr, dpr);           // coordinate space = CSS pixels
             ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth   = 2.5;
-            ctx.lineCap     = 'round';
-            ctx.lineJoin    = 'round';
-            ctxRef.current  = ctx;
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctxRef.current = ctx;
         });
 
         return () => cancelAnimationFrame(frame);
@@ -198,18 +198,18 @@ const ServiceForm = ({ onBack }) => {
         const onTouchEnd = (e) => {
             e.preventDefault();
             isDrawing.current = false;
-            lastPos.current   = null;
+            lastPos.current = null;
         };
 
         // { passive: false } lets us call preventDefault() to stop the page scrolling
         canvas.addEventListener('touchstart', onTouchStart, { passive: false });
-        canvas.addEventListener('touchmove',  onTouchMove,  { passive: false });
-        canvas.addEventListener('touchend',   onTouchEnd,   { passive: false });
+        canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+        canvas.addEventListener('touchend', onTouchEnd, { passive: false });
 
         return () => {
             canvas.removeEventListener('touchstart', onTouchStart);
-            canvas.removeEventListener('touchmove',  onTouchMove);
-            canvas.removeEventListener('touchend',   onTouchEnd);
+            canvas.removeEventListener('touchmove', onTouchMove);
+            canvas.removeEventListener('touchend', onTouchEnd);
         };
     }, [showSignature]);
 
@@ -217,7 +217,7 @@ const ServiceForm = ({ onBack }) => {
     const startDraw = useCallback((e) => {
         if (e.type !== 'mousedown') return;
         isDrawing.current = true;
-        lastPos.current   = getCSSPos(e);
+        lastPos.current = getCSSPos(e);
     }, []);
 
     const draw = useCallback((e) => {
@@ -234,14 +234,14 @@ const ServiceForm = ({ onBack }) => {
 
     const stopDraw = useCallback(() => {
         isDrawing.current = false;
-        lastPos.current   = null;
+        lastPos.current = null;
     }, []);
 
     const clearSignature = useCallback(() => {
         const canvas = canvasRef.current;
-        const ctx    = ctxRef.current;
+        const ctx = ctxRef.current;
         if (!canvas || !ctx) return;
-        
+
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -262,7 +262,7 @@ const ServiceForm = ({ onBack }) => {
     const handleCustomerSearch = async (query) => {
         setCustName(query);
         setFetchError('');
-        
+
         // Reset phone and other details whenever the name is changed
         setCustPhone('');
         setCustAddress('');
@@ -278,14 +278,14 @@ const ServiceForm = ({ onBack }) => {
         try {
             // Use relative path; Vite (dev) or Vercel (prod) will handle the proxy
             const apiUrl = `/api2025/InPackService.asmx/loadOldCustomerDetails?CustomerName=${encodeURIComponent(query)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
-            
+
             const response = await fetch(apiUrl);
             const text = await response.text();
-            
+
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(text, "text/xml");
             const stringElement = xmlDoc.getElementsByTagName("string")[0];
-            
+
             let jsonStr = "";
             if (stringElement && stringElement.textContent) {
                 jsonStr = stringElement.textContent;
@@ -293,7 +293,7 @@ const ServiceForm = ({ onBack }) => {
                 const match = text.match(/\{[\s\S]*\}/);
                 if (match) jsonStr = match[0];
             }
-            
+
             if (jsonStr) {
                 const data = JSON.parse(jsonStr);
                 setSearchResults(data.customers || []);
@@ -551,7 +551,7 @@ const ServiceForm = ({ onBack }) => {
                                         <input
                                             type="date"
                                             className="je-terms-native-input"
-                                            value={jobReceived || new Date().toISOString().slice(0,10)}
+                                            value={jobReceived || new Date().toISOString().slice(0, 10)}
                                             onChange={e => setJobReceived(e.target.value)}
                                             onClick={(e) => e.target.showPicker?.()}
                                         />
@@ -589,12 +589,12 @@ const ServiceForm = ({ onBack }) => {
                             {/* Payment Split Rows */}
                             <div className="je-splits-list">
                                 {[
-                                    { id: '1', method: 'Cash',                icon: 'fa-regular fa-money-bill-1',   hasDropdown: true  },
-                                    { id: '2', method: 'Federal Bank Swiping',icon: 'fa-regular fa-credit-card',    hasDropdown: true  },
-                                    { id: '3', method: 'Google Pay',           icon: 'fa-brands fa-google-pay',      hasDropdown: true  },
-                                    { id: '4', method: 'Bajaj FinServ',        icon: 'fa-regular fa-credit-card',    hasDropdown: true  },
-                                    { id: '5', method: 'Margin Free',          icon: 'fa-solid fa-gift',             hasDropdown: true  },
-                                    { id: '6', method: 'Credit',               icon: 'fa-regular fa-credit-card',    hasDropdown: false }
+                                    { id: '1', method: 'Cash', icon: 'fa-regular fa-money-bill-1', hasDropdown: true },
+                                    { id: '2', method: 'Federal Bank Swiping', icon: 'fa-regular fa-credit-card', hasDropdown: true },
+                                    { id: '3', method: 'Google Pay', icon: 'fa-brands fa-google-pay', hasDropdown: true },
+                                    { id: '4', method: 'Bajaj FinServ', icon: 'fa-regular fa-credit-card', hasDropdown: true },
+                                    { id: '5', method: 'Margin Free', icon: 'fa-solid fa-gift', hasDropdown: true },
+                                    { id: '6', method: 'Credit', icon: 'fa-regular fa-credit-card', hasDropdown: false }
                                 ].filter(s => multiMode ? true : s.id === '1').map(split => (
                                     <div key={split.id} className="je-split-row-wrap">
                                         <div className="je-split-row">
@@ -637,8 +637,8 @@ const ServiceForm = ({ onBack }) => {
                                                     type="text"
                                                     maxLength={19}
                                                     onChange={(e) => {
-                                                        let v = e.target.value.replace(/\D/g,'');
-                                                        v = v.replace(/(.{4})/g,'$1 ').trim();
+                                                        let v = e.target.value.replace(/\D/g, '');
+                                                        v = v.replace(/(.{4})/g, '$1 ').trim();
                                                         e.target.value = v;
                                                     }}
                                                 />
@@ -662,7 +662,7 @@ const ServiceForm = ({ onBack }) => {
                             </label>
                             <span className="je-toggle-label je-blue-label">Tap to see Signature pad</span>
                         </div>
-                        
+
                         {/* Signature Pad Box */}
                         {showSignature && (
                             <div className="je-signature-pad-wrapper">
@@ -722,8 +722,8 @@ const ServiceForm = ({ onBack }) => {
                                     onKeyDown={e => e.key === 'Enter' && showAddItem && handlePickerAddNew()}
                                 />
                                 {showAddItem ? (
-                                    <button 
-                                        className="je-picker-save-btn" 
+                                    <button
+                                        className="je-picker-save-btn"
                                         onClick={handlePickerAddNew}
                                         disabled={!newItemInput.trim()}
                                         title="Save New"
@@ -731,8 +731,8 @@ const ServiceForm = ({ onBack }) => {
                                         <i className="fa-solid fa-check"></i>
                                     </button>
                                 ) : (
-                                    <button 
-                                        className="je-picker-add-toggle-btn" 
+                                    <button
+                                        className="je-picker-add-toggle-btn"
                                         onClick={() => { setShowAddItem(true); setNewItemInput(pickerSearch); }}
                                         title="Add New"
                                     >
@@ -784,21 +784,21 @@ const ServiceForm = ({ onBack }) => {
                         <div className="je-modal-card" style={{ overflow: 'visible' }}>
                             <div className="je-modal-field" style={{ position: 'relative', zIndex: searchResults.length > 0 ? 100 : 1 }}>
                                 <i className="fa-regular fa-user je-field-icon"></i>
-                                <input 
-                                    className="je-input" 
-                                    placeholder="Customer Name" 
-                                    value={custName} 
-                                    onChange={e => handleCustomerSearch(e.target.value)} 
+                                <input
+                                    className="je-input"
+                                    placeholder="Customer Name"
+                                    value={custName}
+                                    onChange={e => handleCustomerSearch(e.target.value)}
                                     autoComplete="off"
                                 />
                                 {custName && <button className="je-modal-x" onClick={() => handleCustomerSearch('')}><i className="fa-solid fa-xmark"></i></button>}
-                                
+
                                 {fetchError && (
                                     <div style={{ position: 'absolute', top: '100%', left: 0, padding: '8px', background: '#fee2e2', color: '#ef4444', fontSize: '12px', border: '1px solid #f87171', borderRadius: '4px', zIndex: 100, marginTop: '4px' }}>
                                         {fetchError}
                                     </div>
                                 )}
-                                
+
                                 {searchResults.length > 0 && (
                                     <div style={{
                                         position: 'absolute',
@@ -817,11 +817,11 @@ const ServiceForm = ({ onBack }) => {
                                         flexDirection: 'column'
                                     }}>
                                         {searchResults.map((cust, idx) => (
-                                            <div 
-                                                key={idx} 
-                                                style={{ 
-                                                    padding: '12px 16px', 
-                                                    borderBottom: '1px solid #f1f5f9', 
+                                            <div
+                                                key={idx}
+                                                style={{
+                                                    padding: '12px 16px',
+                                                    borderBottom: '1px solid #f1f5f9',
                                                     cursor: 'pointer',
                                                     display: 'flex',
                                                     alignItems: 'center'

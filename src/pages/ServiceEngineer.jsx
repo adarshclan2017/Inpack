@@ -76,7 +76,7 @@ export default function ServiceEngineer({ setActiveTab }) {
                             {modalPage === 'MAIN' ? (
                                 <>
                                     {/* MAIN PAGE fields */}
-                                    <div className="seng-input-group">
+                                    <div className="seng-form-group">
                                         <div className="seng-input-row">
                                             <span className="seng-input-icon seng-sub-text">123</span>
                                             <input type="text" className="seng-input-field" value={engineerId} onChange={(e) => setEngineerId(e.target.value)} placeholder="Engineer ID" />
@@ -103,7 +103,7 @@ export default function ServiceEngineer({ setActiveTab }) {
                             ) : (
                                 <>
                                     {/* MORE PAGE fields inside their own bounding box */}
-                                    <div className="seng-input-group">
+                                    <div className="seng-form-group">
                                         
                                         <div className="seng-input-row">
                                             <i className="fa-solid fa-location-dot seng-input-icon"></i>

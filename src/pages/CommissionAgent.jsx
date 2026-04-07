@@ -43,7 +43,7 @@ export default function CommissionAgent({ setActiveTab }) {
                         
                         <div className="comm-modal-body">
                             {/* Bounding box formatted natively as a 2-column desktop grid for the 6 inputs */}
-                            <div className="comm-input-group">
+                            <div className="comm-form-group">
                                 
                                 {/* 1. Agent ID */}
                                 <div className="comm-input-row">

@@ -80,7 +80,7 @@ function AdddProduct({ setActiveTab }) {
                         <div className="prod-modal-body">
                             
                             {/* The main input form bounding box aligned into 2 desktop columns */}
-                            <div className="prod-input-group">
+                            <div className="prod-form-group">
                         
                         {/* 1. Product Id */}
                         <div className="prod-input-row">
@@ -235,7 +235,7 @@ function AdddProduct({ setActiveTab }) {
                         </div>
 
                         <div className="prod-modal-body">
-                            <div className="prod-input-group">
+                            <div className="prod-form-group">
                                 
                                 {/* 1. Unit */}
                                 <div className="prod-input-row">
@@ -319,7 +319,7 @@ function AdddProduct({ setActiveTab }) {
                         </div>
 
                         <div className="prod-modal-body">
-                            <div className="prod-input-group" style={{ gridTemplateColumns: '1fr' }}>
+                            <div className="prod-form-group" style={{ gridTemplateColumns: '1fr' }}>
                                 
                                 {/* 1. Category Name */}
                                 <div className="prod-input-row" style={{ paddingRight: '48px' }}>

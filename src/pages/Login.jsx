@@ -11,7 +11,7 @@ export default function Login() {
     phoneRef.current?.focus();
   }, []);
 
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("8137028080");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOtpPopup, setShowOtpPopup] = useState(false);
@@ -85,8 +85,8 @@ export default function Login() {
             <p className="instructions">Login to continue managing your branches securely.</p>
 
             <form className="loginForm" onSubmit={handleLogin}>
-              <div className="input-group">
-                <label>Phone Number 8137028080</label>
+              <div className="login-form-group">
+                <label>Phone Number</label>
                 <div className="phoneInputWrapper">
                   <span className="prefix">+91</span>
                   <input
@@ -119,10 +119,10 @@ export default function Login() {
               <span className="otp-icon-shield"></span>
               <div className="otp-success-glow"></div>
             </div>
-            
+
             <h2 className="otp-popup-title">OTP Received</h2>
             <p className="otp-popup-msg">Your verification code is ready. Use the code below to complete your login.</p>
-            
+
             <div className="otp-code-display">
               {otpData.otp.split('').map((char, index) => (
                 <span key={index} className="otp-digit">{char}</span>
@@ -132,7 +132,7 @@ export default function Login() {
             <button className="otp-proceed-btn" onClick={handleProceed}>
               Verify & Proceed
             </button>
-            
+
             <p className="otp-footer-hint">Security powered by Inpack Authenticator</p>
           </div>
         </div>

@@ -183,7 +183,7 @@
 }
 
 /* The teal outer bounding box configured as a 2-column grid */
-.seng-input-group {
+.seng-form-group {
     border: 1px solid #4b9596;
     border-radius: 20px;
     padding: 24px;
@@ -340,7 +340,7 @@
         max-height: 85vh;
     }
 
-    .seng-input-group {
+    .seng-form-group {
         padding: 20px;
         gap: 14px;
     }
@@ -371,7 +371,7 @@
         margin: auto;
     }
 
-    .seng-input-group {
+    .seng-form-group {
         grid-template-columns: 1fr;
         padding: 16px;
         gap: 14px;
@@ -419,7 +419,7 @@
         font-size: 14px;
     }
 
-    .seng-input-group {
+    .seng-form-group {
         padding: 14px;
         gap: 12px;
         border-radius: 16px;
@@ -472,7 +472,7 @@
         border-radius: 12px;
     }
 
-    .seng-input-group {
+    .seng-form-group {
         padding: 12px;
         gap: 10px;
     }

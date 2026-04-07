@@ -91,7 +91,7 @@ export default function BranchSelect() {
             <h2 className="title">Select Branch</h2>
             <p className="instructions">Please select your company and enter your 4-digit PIN to continue.</p>
 
-            <div className="input-group">
+            <div className="login-form-group">
               <label>Select Company</label>
               <select
                 ref={selectRef}
@@ -105,7 +105,7 @@ export default function BranchSelect() {
               </select>
             </div>
 
-            <div className="input-group">
+            <div className="login-form-group">
               <label>Enter PIN code</label>
               <div className="pinBox">
                 {pin.map((d, i) => (
