@@ -708,6 +708,7 @@ const ServiceForm = ({ onBack }) => {
                                     <i className="fa-solid fa-qrcode je-field-icon-right"></i>
                                 </div>
                                 <div className="je-input-row">
+                                    <i className="fa-solid fa-table-cells-large je-field-icon"></i>
                                     <input className="je-input" placeholder="Serial number" value={serial2} onChange={e => setSerial2(e.target.value)} />
                                     <i className="fa-solid fa-qrcode je-field-icon-right"></i>
                                 </div>
