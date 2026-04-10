@@ -130,7 +130,7 @@ const ServiceForm = ({ onBack }) => {
         try {
             // InternalLookupID=0 as requested for new items
             const url = `/api2025/InPackService.asmx/saveLookupDetails?InternalLookupID=0&LookupFrom=${lookupFrom}&LookupData=${encodeURIComponent(v)}&InternalUserID=41&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
-            
+
             const res = await fetch(url);
             const text = await res.text();
 
@@ -306,7 +306,27 @@ const ServiceForm = ({ onBack }) => {
     const [custClass, setCustClass] = useState('');
     const [custState, setCustState] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [phoneSearchResults, setPhoneSearchResults] = useState([]);
+    const [phoneLoading, setPhoneLoading] = useState(false);
     const [fetchError, setFetchError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+
+    const phoneContainerRef = useRef(null);
+    const modalPhoneContainerRef = useRef(null);
+
+    // Close phone dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const insideMain = phoneContainerRef.current && phoneContainerRef.current.contains(event.target);
+            const insideModal = modalPhoneContainerRef.current && modalPhoneContainerRef.current.contains(event.target);
+            
+            if (!insideMain && !insideModal) {
+                setPhoneSearchResults([]);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const handleCustomerSearch = async (query) => {
         setCustName(query);
@@ -360,6 +380,99 @@ const ServiceForm = ({ onBack }) => {
         }
     };
 
+    const handlePhoneSearch = async (query, valueSetter) => {
+        if (valueSetter) valueSetter(query);
+        else setPhone(query);
+
+        setPhoneError(''); // Clear error on new search
+
+        if (!query) {
+            setPhoneSearchResults([]);
+            return;
+        }
+
+        setPhoneLoading(true);
+        try {
+            const apiUrl = `/api2025/InPackService.asmx/loadContactNo?ContactNo=${encodeURIComponent(query)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
+            const response = await fetch(apiUrl);
+            const text = await response.text();
+
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, "text/xml");
+            const stringElement = xmlDoc.getElementsByTagName("string")[0];
+
+            let jsonStr = "";
+            if (stringElement && stringElement.textContent) {
+                jsonStr = stringElement.textContent;
+            } else {
+                const match = text.match(/\{[\s\S]*\}/);
+                if (match) jsonStr = match[0];
+            }
+
+            if (jsonStr) {
+                const data = JSON.parse(jsonStr);
+                // Correct key is 'contactno'
+                const results = data.contactno || data.customers || data.Table || (Array.isArray(data) ? data : []);
+                setPhoneSearchResults(results);
+                
+                if (results.length === 0 && query.length > 2) {
+                    setPhoneError('No matches found.');
+                }
+            } else {
+                setPhoneSearchResults([]);
+                setPhoneError('Failed to parse response.');
+            }
+        } catch (error) {
+            console.error("Error fetching phone numbers:", error);
+            setPhoneError('Connection error.');
+        } finally {
+            setPhoneLoading(false);
+        }
+    };
+
+    const selectCustomerByPhone = async (contact_no) => {
+        setPhone(contact_no);
+        setPhoneSearchResults([]);
+        
+        // After selecting phone, try to find full details
+        try {
+            // We'll search by phone number using the same loadOldCustomerDetails API
+            // assuming it can match phone numbers in the CustomerName search or similar
+            const apiUrl = `/api2025/InPackService.asmx/loadOldCustomerDetails?CustomerName=${encodeURIComponent(contact_no)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
+            
+            const response = await fetch(apiUrl);
+            const text = await response.text();
+            
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, "text/xml");
+            const stringElement = xmlDoc.getElementsByTagName("string")[0];
+            
+            let jsonStr = "";
+            if (stringElement && stringElement.textContent) {
+                jsonStr = stringElement.textContent;
+            }
+            
+            if (jsonStr) {
+                const data = JSON.parse(jsonStr);
+                const customers = data.customers || [];
+                if (customers.length > 0) {
+                    const cust = customers[0];
+                    setCustName(cust.customername || '');
+                    setCustPhone(cust.mobile || '');
+                    setCustAddress(cust.address || '');
+                    setCustGst(cust.gstin || '');
+                    setCustRoute(cust.route || '');
+                    setCustClass(cust.class || '');
+                    setCustState(cust.state || '');
+                    // Since we found full details, let's open the modal to show them
+                    setShowCustomerModal(true);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching full details by phone:", error);
+        }
+    };
+
     return (
         <>
             <div className="je-form-page">
@@ -400,16 +513,73 @@ const ServiceForm = ({ onBack }) => {
                     {/* ── Customer Details ──────────────────────────── */}
                     <div className="je-section">
                         <h2 className="je-section-title">Customer Details</h2>
-                        <div className="je-card">
-                            <div className="je-input-row">
+                        <div className="je-card" style={{ overflow: 'visible' }}>
+                            <div className="je-input-row" style={{ position: 'relative' }} ref={phoneContainerRef}>
                                 <i className="fa-solid fa-phone je-field-icon"></i>
                                 <input
                                     type="tel"
                                     className="je-input"
                                     placeholder="Customer Phone number"
                                     value={phone}
-                                    onChange={e => setPhone(e.target.value)}
+                                    onChange={e => handlePhoneSearch(e.target.value)}
+                                    autoComplete="off"
                                 />
+                                {phone && (
+                                    <button
+                                        type="button"
+                                        className="je-phone-reset-btn"
+                                        onClick={() => {
+                                            setPhone('');
+                                            setPhoneSearchResults([]);
+                                            setPhoneError('');
+                                        }}
+                                    >
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                )}
+                                {phoneSearchResults.length > 0 && !showCustomerModal && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#fff',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        zIndex: 1000,
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        marginTop: '4px',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {phoneSearchResults.map((res, idx) => (
+                                            <div
+                                                key={idx}
+                                                style={{
+                                                    padding: '12px 16px',
+                                                    borderBottom: '1px solid #f1f5f9',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between'
+                                                }}
+                                                onMouseDown={() => selectCustomerByPhone(res.contact_no || res.Mobile || res)}
+                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                            >
+                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{res.contact_no || res.Mobile || res}</span>
+                                                <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#94a3b8' }}></i>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {phoneError && !showCustomerModal && (
+                                    <div style={{ position: 'absolute', top: '100%', left: 0, padding: '8px', background: '#fee2e2', color: '#ef4444', fontSize: '12px', border: '1px solid #f87171', borderRadius: '4px', zIndex: 100, marginTop: '4px' }}>
+                                        {phoneError}
+                                    </div>
+                                )}
                                 <button className="je-add-customer-btn" onClick={() => setShowCustomerModal(true)}>
                                     <i className="fa-solid fa-user-plus"></i>
                                 </button>
@@ -422,7 +592,7 @@ const ServiceForm = ({ onBack }) => {
                         <h2 className="je-section-title">Product Details</h2>
                         <div className="je-card je-product-card">
                             {/* Brand + Model */}
-                            <div className="je-grid-2">
+                            <div className="je-grid-2 je-grid-2-persist">
                                 <div className="je-input-row je-border-right">
                                     <i className="fa-regular fa-square je-field-icon"></i>
                                     <input
@@ -456,7 +626,7 @@ const ServiceForm = ({ onBack }) => {
                             </div>
 
                             {/* Color + Collect */}
-                            <div className="je-grid-2 je-border-top">
+                            <div className="je-grid-2 je-grid-2-persist je-border-top">
                                 <div className="je-input-row je-border-right">
                                     <i className="fa-solid fa-palette je-field-icon"></i>
                                     <input
@@ -485,38 +655,53 @@ const ServiceForm = ({ onBack }) => {
                                 </div>
                             </div>
 
-                            {/* Status */}
-                            <div className="je-input-row je-border-top">
-                                <i className="fa-solid fa-circle-info je-field-icon"></i>
-                                <input
-                                    className="je-input"
-                                    placeholder="Status"
-                                    value={status}
-                                    readOnly
-                                    style={{ cursor: 'pointer' }}
-                                    onDoubleClick={() => openPicker('status')}
-                                    title="Double-click to pick a status"
-                                />
-                                {status && <button className="je-modal-x" onClick={() => setStatus('')}><i className="fa-solid fa-xmark"></i></button>}
+                            {/* Status and Complaint */}
+                            <div className="je-grid-2 je-grid-2-persist je-border-top">
+                                <div className="je-input-row je-border-right">
+                                    <i className="fa-solid fa-circle-info je-field-icon"></i>
+                                    <input
+                                        className="je-input"
+                                        placeholder="Status"
+                                        value={status}
+                                        readOnly
+                                        style={{ cursor: 'pointer' }}
+                                        onDoubleClick={() => openPicker('status')}
+                                        title="Double-click to pick a status"
+                                    />
+                                    {status && <button className="je-modal-x" onClick={() => setStatus('')}><i className="fa-solid fa-xmark"></i></button>}
+                                </div>
+                                <div className="je-input-row">
+                                    <i className="fa-solid fa-triangle-exclamation je-field-icon"></i>
+                                    <input
+                                        className="je-input"
+                                        placeholder="Complaint"
+                                        value={complaint}
+                                        readOnly
+                                        style={{ cursor: 'pointer' }}
+                                        onDoubleClick={() => openPicker('complaint')}
+                                        title="Double-click to pick a complaint"
+                                    />
+                                    {complaint && <button className="je-modal-x" onClick={() => setComplaint('')}><i className="fa-solid fa-xmark"></i></button>}
+                                </div>
                             </div>
 
                             {/* Warranty Radio */}
-                            <div className="je-warranty-row je-border-top">
+                            <div className="je-radio-group je-warranty-pills je-border-top">
                                 {[
                                     { val: 'warranty', label: 'Warranty' },
                                     { val: 'out', label: 'Out of warranty' },
                                     { val: 'non', label: 'Non warranty' },
                                 ].map(w => (
-                                    <label key={w.val} className={`je-warranty-option ${warranty === w.val ? 'active' : ''}`}>
+                                    <label key={w.val} className={`je-radio-pill ${warranty === w.val ? 'active' : ''}`}>
                                         <input type="radio" name="warranty" value={w.val} checked={warranty === w.val} onChange={() => setWarranty(w.val)} />
-                                        <span className="je-warranty-dot"></span>
+                                        <span className="je-radio-dot"></span>
                                         <span>{w.label}</span>
                                     </label>
                                 ))}
                             </div>
 
                             {/* Serial Numbers */}
-                            <div className="je-grid-2 je-border-top">
+                            <div className="je-grid-2 je-grid-2-persist je-border-top">
                                 <div className="je-input-row je-border-right">
                                     <i className="fa-solid fa-table-cells-large je-field-icon"></i>
                                     <input className="je-input" placeholder="Serial number" value={serial1} onChange={e => setSerial1(e.target.value)} />
@@ -528,20 +713,7 @@ const ServiceForm = ({ onBack }) => {
                                 </div>
                             </div>
 
-                            {/* Complaint */}
-                            <div className="je-input-row je-border-top">
-                                <i className="fa-solid fa-triangle-exclamation je-field-icon"></i>
-                                <input
-                                    className="je-input"
-                                    placeholder="Complaint"
-                                    value={complaint}
-                                    readOnly
-                                    style={{ cursor: 'pointer' }}
-                                    onDoubleClick={() => openPicker('complaint')}
-                                    title="Double-click to pick a complaint"
-                                />
-                                {complaint && <button className="je-modal-x" onClick={() => setComplaint('')}><i className="fa-solid fa-xmark"></i></button>}
-                            </div>
+                            {/* Complaint moved up beside Status */}
 
                             {/* Technician */}
                             <div className="je-input-row je-border-top">
@@ -579,7 +751,7 @@ const ServiceForm = ({ onBack }) => {
                         <div className="je-terms-card">
 
                             {/* Row: Expected date + Job received */}
-                            <div className="je-terms-row-2">
+                            <div className="je-terms-row-2 je-terms-row-2-persist">
                                 <div className="je-terms-field">
                                     <label className="je-terms-label">Expected Date</label>
                                     <div className="je-terms-input-wrap">
@@ -609,7 +781,7 @@ const ServiceForm = ({ onBack }) => {
                             </div>
 
                             {/* Row: Estimated + Advance */}
-                            <div className="je-terms-row-2">
+                            <div className="je-terms-row-2 je-terms-row-2-persist">
                                 <div className="je-terms-field">
                                     <label className="je-terms-label">Estimated Amount</label>
                                     <div className="je-terms-input-wrap">
@@ -894,10 +1066,70 @@ const ServiceForm = ({ onBack }) => {
                                     </div>
                                 )}
                             </div>
-                            <div className="je-modal-field je-border-top">
+                            <div className="je-modal-field je-border-top" style={{ position: 'relative' }} ref={modalPhoneContainerRef}>
                                 <i className="fa-solid fa-phone je-field-icon"></i>
-                                <input type="tel" className="je-input" placeholder="Customer Phone number" value={custPhone} onChange={e => setCustPhone(e.target.value)} />
-                                {custPhone && <button className="je-modal-x" onClick={() => setCustPhone('')}><i className="fa-solid fa-xmark"></i></button>}
+                                <input
+                                    type="tel"
+                                    className="je-input"
+                                    placeholder="Customer Phone number"
+                                    value={custPhone}
+                                    onChange={e => handlePhoneSearch(e.target.value, setCustPhone)}
+                                    autoComplete="off"
+                                />
+                                {custPhone && (
+                                    <button className="je-modal-x" onClick={() => { setCustPhone(''); setPhoneSearchResults([]); }}>
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                )}
+                                {phoneSearchResults.length > 0 && showCustomerModal && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#fff',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        zIndex: 2000,
+                                        maxHeight: '180px',
+                                        overflowY: 'auto',
+                                        marginTop: '4px',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {phoneSearchResults.map((res, idx) => (
+                                            <div
+                                                key={idx}
+                                                style={{
+                                                    padding: '12px 16px',
+                                                    borderBottom: '1px solid #f1f5f9',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between'
+                                                }}
+                                                onMouseDown={() => {
+                                                    const p = res.contact_no || res.Mobile || res;
+                                                    setCustPhone(p);
+                                                    setPhoneSearchResults([]);
+                                                    // Trigger full record fetch
+                                                    selectCustomerByPhone(p);
+                                                }}
+                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                            >
+                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{res.contact_no || res.Mobile || res}</span>
+                                                <i className="fa-solid fa-chevron-right" style={{ fontSize: '10px', color: '#94a3b8' }}></i>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {phoneError && (
+                                    <div style={{ position: 'absolute', top: '100%', left: 0, padding: '8px', background: '#fee2e2', color: '#ef4444', fontSize: '12px', border: '1px solid #f87171', borderRadius: '4px', zIndex: 2100, marginTop: '4px' }}>
+                                        {phoneError}
+                                    </div>
+                                )}
                             </div>
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-solid fa-location-dot je-field-icon"></i>
