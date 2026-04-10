@@ -319,7 +319,7 @@ const ServiceForm = ({ onBack }) => {
         const handleClickOutside = (event) => {
             const insideMain = phoneContainerRef.current && phoneContainerRef.current.contains(event.target);
             const insideModal = modalPhoneContainerRef.current && modalPhoneContainerRef.current.contains(event.target);
-            
+
             if (!insideMain && !insideModal) {
                 setPhoneSearchResults([]);
             }
@@ -414,7 +414,7 @@ const ServiceForm = ({ onBack }) => {
                 // Correct key is 'contactno'
                 const results = data.contactno || data.customers || data.Table || (Array.isArray(data) ? data : []);
                 setPhoneSearchResults(results);
-                
+
                 if (results.length === 0 && query.length > 2) {
                     setPhoneError('No matches found.');
                 }
@@ -433,25 +433,26 @@ const ServiceForm = ({ onBack }) => {
     const selectCustomerByPhone = async (contact_no) => {
         setPhone(contact_no);
         setPhoneSearchResults([]);
-        
+        setPhoneError(''); // Clear error when selecting a result
+
         // After selecting phone, try to find full details
         try {
             // We'll search by phone number using the same loadOldCustomerDetails API
             // assuming it can match phone numbers in the CustomerName search or similar
             const apiUrl = `/api2025/InPackService.asmx/loadOldCustomerDetails?CustomerName=${encodeURIComponent(contact_no)}&PageNo=1&LicenseKey=ILT_LIC_9988056&IMEI=ILTUKAInpackPro1&PIN=2255`;
-            
+
             const response = await fetch(apiUrl);
             const text = await response.text();
-            
+
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(text, "text/xml");
             const stringElement = xmlDoc.getElementsByTagName("string")[0];
-            
+
             let jsonStr = "";
             if (stringElement && stringElement.textContent) {
                 jsonStr = stringElement.textContent;
             }
-            
+
             if (jsonStr) {
                 const data = JSON.parse(jsonStr);
                 const customers = data.customers || [];
@@ -576,11 +577,17 @@ const ServiceForm = ({ onBack }) => {
                                     </div>
                                 )}
                                 {phoneError && !showCustomerModal && (
-                                    <div style={{ position: 'absolute', top: '100%', left: 0, padding: '8px', background: '#fee2e2', color: '#ef4444', fontSize: '12px', border: '1px solid #f87171', borderRadius: '4px', zIndex: 100, marginTop: '4px' }}>
+                                    <div className="je-phone-error-msg">
+                                        <i className="fa-solid fa-circle-exclamation" style={{ marginRight: '6px' }}></i>
                                         {phoneError}
                                     </div>
                                 )}
-                                <button className="je-add-customer-btn" onClick={() => setShowCustomerModal(true)}>
+                                <button
+                                    type="button"
+                                    className="je-modal-plus-btn"
+                                    onClick={() => setShowCustomerModal(true)}
+                                    title="Add/Search Customer"
+                                >
                                     <i className="fa-solid fa-user-plus"></i>
                                 </button>
                             </div>
@@ -591,10 +598,10 @@ const ServiceForm = ({ onBack }) => {
                     <div className="je-section">
                         <h2 className="je-section-title">Product Details</h2>
                         <div className="je-card je-product-card">
-                            {/* Brand + Model */}
-                            <div className="je-grid-2 je-grid-2-persist">
-                                <div className="je-input-row je-border-right">
-                                    <i className="fa-regular fa-square je-field-icon"></i>
+                            <div className="je-unified-grid-container">
+                                {/* Row 1: Brand + Model */}
+                                <div className="je-input-row je-grid-left-item">
+                                    <i className="fa-solid fa-tag je-field-icon"></i>
                                     <input
                                         className="je-input"
                                         placeholder="Brand"
@@ -604,14 +611,17 @@ const ServiceForm = ({ onBack }) => {
                                         onDoubleClick={() => openPicker('brand')}
                                         title="Double-click to pick a brand"
                                     />
-                                    {brand && (
+                                    {brand ? (
                                         <button className="je-modal-x" onClick={() => setBrand('')}>
                                             <i className="fa-solid fa-xmark"></i>
                                         </button>
+                                    ) : (
+                                        <i className="fa-solid fa-chevron-right je-field-icon-right"></i>
                                     )}
                                 </div>
-                                <div className="je-input-row">
-                                    <i className="fa-solid fa-person-running je-field-icon"></i>
+                                <div className="je-v-line"></div>
+                                <div className="je-input-row je-grid-right-item">
+                                    <i className="fa-solid fa-mobile-screen-button je-field-icon"></i>
                                     <input
                                         className="je-input"
                                         placeholder="Model"
@@ -621,13 +631,17 @@ const ServiceForm = ({ onBack }) => {
                                         onDoubleClick={() => openPicker('model')}
                                         title="Double-click to pick a model"
                                     />
-                                    {model && <button className="je-modal-x" onClick={() => setModel('')}><i className="fa-solid fa-xmark"></i></button>}
+                                    {model ? (
+                                        <button className="je-modal-x" onClick={() => setModel('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    ) : (
+                                        <i className="fa-solid fa-chevron-right je-field-icon-right"></i>
+                                    )}
                                 </div>
-                            </div>
 
-                            {/* Color + Collect */}
-                            <div className="je-grid-2 je-grid-2-persist je-border-top">
-                                <div className="je-input-row je-border-right">
+                                {/* Row 2: Color + Collect */}
+                                <div className="je-input-row je-grid-left-item je-border-top">
                                     <i className="fa-solid fa-palette je-field-icon"></i>
                                     <input
                                         className="je-input"
@@ -638,9 +652,16 @@ const ServiceForm = ({ onBack }) => {
                                         onDoubleClick={() => openPicker('color')}
                                         title="Double-click to pick a color"
                                     />
-                                    {color && <button className="je-modal-x" onClick={() => setColor('')}><i className="fa-solid fa-xmark"></i></button>}
+                                    {color ? (
+                                        <button className="je-modal-x" onClick={() => setColor('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    ) : (
+                                        <i className="fa-solid fa-chevron-right je-field-icon-right"></i>
+                                    )}
                                 </div>
-                                <div className="je-input-row">
+                                <div className="je-v-line je-border-top"></div>
+                                <div className="je-input-row je-grid-right-item je-border-top">
                                     <i className="fa-solid fa-box je-field-icon"></i>
                                     <input
                                         className="je-input"
@@ -651,13 +672,17 @@ const ServiceForm = ({ onBack }) => {
                                         onDoubleClick={() => openPicker('collect')}
                                         title="Double-click to pick collect type"
                                     />
-                                    {collect && <button className="je-modal-x" onClick={() => setCollect('')}><i className="fa-solid fa-xmark"></i></button>}
+                                    {collect ? (
+                                        <button className="je-modal-x" onClick={() => setCollect('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    ) : (
+                                        <i className="fa-solid fa-chevron-right je-field-icon-right"></i>
+                                    )}
                                 </div>
-                            </div>
 
-                            {/* Status and Complaint */}
-                            <div className="je-grid-2 je-grid-2-persist je-border-top">
-                                <div className="je-input-row je-border-right">
+                                {/* Row 3: Status + Complaint */}
+                                <div className="je-input-row je-grid-left-item je-border-top">
                                     <i className="fa-solid fa-circle-info je-field-icon"></i>
                                     <input
                                         className="je-input"
@@ -668,9 +693,16 @@ const ServiceForm = ({ onBack }) => {
                                         onDoubleClick={() => openPicker('status')}
                                         title="Double-click to pick a status"
                                     />
-                                    {status && <button className="je-modal-x" onClick={() => setStatus('')}><i className="fa-solid fa-xmark"></i></button>}
+                                    {status ? (
+                                        <button className="je-modal-x" onClick={() => setStatus('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    ) : (
+                                        <i className="fa-solid fa-chevron-right je-field-icon-right"></i>
+                                    )}
                                 </div>
-                                <div className="je-input-row">
+                                <div className="je-v-line je-border-top"></div>
+                                <div className="je-input-row je-grid-right-item je-border-top">
                                     <i className="fa-solid fa-triangle-exclamation je-field-icon"></i>
                                     <input
                                         className="je-input"
@@ -681,67 +713,70 @@ const ServiceForm = ({ onBack }) => {
                                         onDoubleClick={() => openPicker('complaint')}
                                         title="Double-click to pick a complaint"
                                     />
-                                    {complaint && <button className="je-modal-x" onClick={() => setComplaint('')}><i className="fa-solid fa-xmark"></i></button>}
+                                    {complaint ? (
+                                        <button className="je-modal-x" onClick={() => setComplaint('')}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    ) : (
+                                        <i className="fa-solid fa-chevron-right je-field-icon-right"></i>
+                                    )}
                                 </div>
-                            </div>
 
-                            {/* Warranty Radio */}
-                            <div className="je-radio-group je-warranty-pills je-border-top">
-                                {[
-                                    { val: 'warranty', label: 'Warranty' },
-                                    { val: 'out', label: 'Out of warranty' },
-                                    { val: 'non', label: 'Non warranty' },
-                                ].map(w => (
-                                    <label key={w.val} className={`je-radio-pill ${warranty === w.val ? 'active' : ''}`}>
-                                        <input type="radio" name="warranty" value={w.val} checked={warranty === w.val} onChange={() => setWarranty(w.val)} />
-                                        <span className="je-radio-dot"></span>
-                                        <span>{w.label}</span>
-                                    </label>
-                                ))}
-                            </div>
+                                {/* Row 4: Warranty (Full Width spanning 3 cols) */}
+                                <div className="je-grid-full-width je-radio-group je-warranty-pills je-border-top">
+                                    {[
+                                        { val: 'warranty', label: 'Warranty' },
+                                        { val: 'out', label: 'Out of warranty' },
+                                        { val: 'non', label: 'Non warranty' },
+                                    ].map(w => (
+                                        <label key={w.val} className={`je-radio-pill ${warranty === w.val ? 'active' : ''}`}>
+                                            <input type="radio" name="warranty" value={w.val} checked={warranty === w.val} onChange={() => setWarranty(w.val)} />
+                                            <span className="je-radio-dot"></span>
+                                            <span>{w.label}</span>
+                                        </label>
+                                    ))}
+                                </div>
 
-                            {/* Serial Numbers */}
-                            <div className="je-grid-2 je-grid-2-persist je-border-top">
-                                <div className="je-input-row je-border-right">
+                                {/* Row 5: Serials */}
+                                <div className="je-input-row je-grid-left-item je-border-top">
                                     <i className="fa-solid fa-table-cells-large je-field-icon"></i>
                                     <input className="je-input" placeholder="Serial number" value={serial1} onChange={e => setSerial1(e.target.value)} />
                                     <i className="fa-solid fa-qrcode je-field-icon-right"></i>
                                 </div>
-                                <div className="je-input-row">
+                                <div className="je-v-line je-border-top"></div>
+                                <div className="je-input-row je-grid-right-item je-border-top">
                                     <i className="fa-solid fa-table-cells-large je-field-icon"></i>
                                     <input className="je-input" placeholder="Serial number" value={serial2} onChange={e => setSerial2(e.target.value)} />
                                     <i className="fa-solid fa-qrcode je-field-icon-right"></i>
                                 </div>
-                            </div>
 
-                            {/* Complaint moved up beside Status */}
+                                {/* Row 6: Technician (Full Width) */}
+                                <div className="je-grid-full-width je-input-row je-border-top">
+                                    <i className="fa-solid fa-user-gear je-field-icon"></i>
+                                    <input className="je-input" placeholder="Technician" value={technician} onChange={e => setTechnician(e.target.value)} />
+                                </div>
 
-                            {/* Technician */}
-                            <div className="je-input-row je-border-top">
-                                <i className="fa-solid fa-user-gear je-field-icon"></i>
-                                <input className="je-input" placeholder="Technician" value={technician} onChange={e => setTechnician(e.target.value)} />
-                            </div>
-
-                            {/* Attachment Buttons */}
-                            <div className="je-attach-row je-border-top">
-                                <button className="je-attach-btn" title="Camera">
-                                    <div className="je-attach-icon-wrap">
-                                        <i className="fa-solid fa-camera"></i>
-                                    </div>
-                                    <span>Camera</span>
-                                </button>
-                                <button className="je-attach-btn" title="Gallery">
-                                    <div className="je-attach-icon-wrap">
-                                        <i className="fa-regular fa-image"></i>
-                                    </div>
-                                    <span>Gallery</span>
-                                </button>
-                                <button className="je-attach-btn" title="Lock">
-                                    <div className="je-attach-icon-wrap">
-                                        <i className="fa-solid fa-lock"></i>
-                                    </div>
-                                    <span>Lock</span>
-                                </button>
+                                {/* Row 7: Attachments (Full Width) */}
+                                <div className="je-grid-full-width je-attach-row je-border-top">
+                                    <button className="je-attach-btn" title="Camera">
+                                        <div className="je-attach-icon-wrap">
+                                            <i className="fa-solid fa-camera"></i>
+                                        </div>
+                                        <span>Camera</span>
+                                    </button>
+                                    <button className="je-attach-btn" title="Gallery">
+                                        <div className="je-attach-icon-wrap">
+                                            <i className="fa-regular fa-image"></i>
+                                        </div>
+                                        <span>Gallery</span>
+                                    </button>
+                                    <button className="je-attach-btn" title="Lock">
+                                        <div className="je-attach-icon-wrap">
+                                            <i className="fa-solid fa-lock"></i>
+                                        </div>
+                                        <span>Lock</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -749,11 +784,10 @@ const ServiceForm = ({ onBack }) => {
                     {/* ── Terms ─────────────────────────────────────── */}
                     <div className="je-section">
                         <h2 className="je-section-title">Terms</h2>
-                        <div className="je-terms-card">
-
-                            {/* Row: Expected date + Job received */}
-                            <div className="je-terms-row-2 je-terms-row-2-persist">
-                                <div className="je-terms-field">
+                        <div className="je-card je-terms-card" style={{ padding: 0 }}>
+                            <div className="je-unified-grid-container">
+                                {/* Row 1: Expected date + Job received */}
+                                <div className="je-terms-field je-grid-left-item" style={{ padding: '12px 14px' }}>
                                     <label className="je-terms-label">Expected Date</label>
                                     <div className="je-terms-input-wrap">
                                         <i className="fa-regular fa-calendar je-terms-fi"></i>
@@ -766,7 +800,8 @@ const ServiceForm = ({ onBack }) => {
                                         />
                                     </div>
                                 </div>
-                                <div className="je-terms-field">
+                                <div className="je-v-line"></div>
+                                <div className="je-terms-field je-grid-right-item" style={{ padding: '12px 14px' }}>
                                     <label className="je-terms-label">Job Received</label>
                                     <div className="je-terms-input-wrap">
                                         <i className="fa-regular fa-calendar je-terms-fi"></i>
@@ -779,18 +814,17 @@ const ServiceForm = ({ onBack }) => {
                                         />
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Row: Estimated + Advance */}
-                            <div className="je-terms-row-2 je-terms-row-2-persist">
-                                <div className="je-terms-field">
+                                {/* Row 2: Estimated + Advance */}
+                                <div className="je-terms-field je-grid-left-item je-border-top" style={{ padding: '12px 14px' }}>
                                     <label className="je-terms-label">Estimated Amount</label>
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
                                         <input className="je-terms-native-input" placeholder="0.00" type="number" value={estimatedAmount} onChange={e => setEstimatedAmount(e.target.value)} />
                                     </div>
                                 </div>
-                                <div className="je-terms-field">
+                                <div className="je-v-line je-border-top"></div>
+                                <div className="je-terms-field je-grid-right-item je-border-top" style={{ padding: '12px 14px' }}>
                                     <label className="je-terms-label">Advance Received</label>
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
@@ -799,13 +833,15 @@ const ServiceForm = ({ onBack }) => {
                                 </div>
                             </div>
 
-                            {/* Multi mode toggle */}
-                            <div className="je-terms-toggle-bar">
-                                <span className="je-terms-toggle-label">Multi mode payment splits</span>
-                                <label className="je-toggle-switch">
-                                    <input type="checkbox" checked={multiMode} onChange={e => setMultiMode(e.target.checked)} />
-                                    <span className="je-toggle-track"><span className="je-toggle-thumb"></span></span>
-                                </label>
+                            {/* Multi mode toggle & Splits (Outside grid container to keep standard padding) */}
+                            <div style={{ padding: '20px 24px' }}>
+                                <div className="je-terms-toggle-bar">
+                                    <span className="je-terms-toggle-label">Multi mode payment splits</span>
+                                    <label className="je-toggle-switch">
+                                        <input type="checkbox" checked={multiMode} onChange={e => setMultiMode(e.target.checked)} />
+                                        <span className="je-toggle-track"><span className="je-toggle-thumb"></span></span>
+                                    </label>
+                                </div>
                             </div>
 
                             {/* Payment Split Rows */}
@@ -1114,6 +1150,7 @@ const ServiceForm = ({ onBack }) => {
                                                     const p = res.contact_no || res.Mobile || res;
                                                     setCustPhone(p);
                                                     setPhoneSearchResults([]);
+                                                    setPhoneError('');
                                                     // Trigger full record fetch
                                                     selectCustomerByPhone(p);
                                                 }}
