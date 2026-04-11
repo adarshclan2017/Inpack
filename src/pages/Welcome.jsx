@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { extractJsonFromAsmx } from '../utils/asmx';
 import '../styles/welcome.css';
 
 export default function Welcome() {
@@ -8,6 +9,54 @@ export default function Welcome() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isWidgetModalOpen, setIsWidgetModalOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                // Retrieve required parameters from localStorage
+                const branchId = localStorage.getItem("branchId") || "";
+                const licenseKey = localStorage.getItem("licenseKey") || "";
+                const imei = localStorage.getItem("imei") || "";
+                const pin = localStorage.getItem("pin") || "";
+                const internalUserId = localStorage.getItem("internalUserId") || "41";
+
+                // Format current date as YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
+
+                // URL Construction (port 2025 matches /api2025 proxy)
+                // Note: BranchIDs expects single quotes around the ID
+                const branchParam = `'${branchId}'`;
+                const url = `/api2025/InPackService.asmx/loadDashBoard?BranchIDs=${encodeURIComponent(branchParam)}&FromDate=${today}&ToDate=${today}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}`;
+
+                const response = await fetch(url);
+                const text = await response.text();
+                const data = extractJsonFromAsmx(text);
+
+                if (data) {
+                    console.log("Dashboard data loaded successfully:", data);
+                    
+                    // Store details as requested by user
+                    if (data.branch_details) {
+                        localStorage.setItem("branch_details", JSON.stringify(data.branch_details));
+                    }
+                    if (data.settings) {
+                        localStorage.setItem("settings", JSON.stringify(data.settings));
+                    }
+                    
+                    // We can also store the full response if needed for other parts of the dashboard
+                    localStorage.setItem("dashboard_data", JSON.stringify(data));
+                }
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
+
+    const branchName = localStorage.getItem("branchName") || "Demo Branch";
+    const userObj = JSON.parse(localStorage.getItem("user") || "{}");
+    const displayUserName = userObj.userName || localStorage.getItem("userName") || branchName;
 
     const handleNavigation = (path) => {
         navigate(path);
@@ -172,8 +221,8 @@ export default function Welcome() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                             >
-                                <span className="user-name">DEMO TVM</span>
-                                <span className="user-role">Admin</span>
+                                <span className="user-name">{displayUserName}</span>
+                                <span className="user-role">Branch: {branchName}</span>
                             </motion.div>
                         )}
                         <i className="fa-solid fa-chevron-right chevron-icon"></i>
@@ -221,8 +270,8 @@ export default function Welcome() {
                                 <i className="fa-solid fa-user"></i>
                             </div>
                             <div className="topbar-user-info">
-                                <span className="topbar-user-name">DEMO TVM</span>
-                                <span className="topbar-user-role">Admin</span>
+                                <span className="topbar-user-name">{displayUserName}</span>
+                                <span className="topbar-user-role">{branchName}</span>
                             </div>
                             <i className="fa-solid fa-chevron-down topbar-caret"></i>
                         </motion.div>
@@ -244,7 +293,7 @@ export default function Welcome() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
                             >
-                                Welcome back, DEMO TVM! 👋
+                                Welcome back, {displayUserName}! 👋
                             </motion.h1>
                             <motion.p
                                 initial={{ opacity: 0 }}

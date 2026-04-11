@@ -1,0 +1,1034 @@
+
+
+<html>
+
+    <head><link rel="alternate" type="text/xml" href="/InPackService.asmx?disco" />
+
+    <style type="text/css">
+    
+		BODY { color: #000000; background-color: white; font-family: Verdana; margin-left: 0px; margin-top: 0px; }
+		#content { margin-left: 30px; font-size: .70em; padding-bottom: 2em; }
+		A:link { color: #336699; font-weight: bold; text-decoration: underline; }
+		A:visited { color: #6699cc; font-weight: bold; text-decoration: underline; }
+		A:active { color: #336699; font-weight: bold; text-decoration: underline; }
+		A:hover { color: cc3300; font-weight: bold; text-decoration: underline; }
+		P { color: #000000; margin-top: 0px; margin-bottom: 12px; font-family: Verdana; }
+		pre { background-color: #e5e5cc; padding: 5px; font-family: Courier New; font-size: x-small; margin-top: -5px; border: 1px #f0f0e0 solid; }
+		td { color: #000000; font-family: Verdana; font-size: .7em; }
+		h2 { font-size: 1.5em; font-weight: bold; margin-top: 25px; margin-bottom: 10px; border-top: 1px solid #003366; margin-left: -15px; color: #003366; }
+		h3 { font-size: 1.1em; color: #000000; margin-left: -15px; margin-top: 10px; margin-bottom: 10px; }
+		ul { margin-top: 10px; margin-left: 20px; }
+		ol { margin-top: 10px; margin-left: 20px; }
+		li { margin-top: 10px; color: #000000; }
+		font.value { color: darkblue; font: bold; }
+		font.key { color: darkgreen; font: bold; }
+		font.error { color: darkred; font: bold; }
+		.heading1 { color: #ffffff; font-family: Tahoma; font-size: 26px; font-weight: normal; background-color: #003366; margin-top: 0px; margin-bottom: 0px; margin-left: -30px; padding-top: 10px; padding-bottom: 3px; padding-left: 15px; width: 105%; }
+		.button { background-color: #dcdcdc; font-family: Verdana; font-size: 1em; border-top: #cccccc 1px solid; border-bottom: #666666 1px solid; border-left: #cccccc 1px solid; border-right: #666666 1px solid; }
+		.frmheader { color: #000000; background: #dcdcdc; font-family: Verdana; font-size: .7em; font-weight: normal; border-bottom: 1px solid #dcdcdc; padding-top: 2px; padding-bottom: 2px; }
+		.frmtext { font-family: Verdana; font-size: .7em; margin-top: 8px; margin-bottom: 0px; margin-left: 32px; }
+		.frmInput { font-family: Verdana; font-size: 1em; }
+		.intro { margin-left: -15px; }
+           
+    </style>
+
+    <title>
+	Service Web Service
+</title></head>
+
+  <body>
+
+    <div id="content">
+
+      <p class="heading1">Service</p><br>
+
+      
+
+      <span>
+
+          <p class="intro">The following operations are supported.  For a formal definition, please review the <a href="InPackService.asmx?WSDL">Service Description</a>. </p>
+          
+          
+              <ul>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteCommissionAgent">DeleteCommissionAgent</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteCustomer">DeleteCustomer</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteHSNSACCode">DeleteHSNSACCode</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteLocation">DeleteLocation</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteSalesman">DeleteSalesman</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteServiceEngineer">DeleteServiceEngineer</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteSuppliers">DeleteSuppliers</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=DeleteUnits">DeleteUnits</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=Followup">Followup</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=GetImage">GetImage</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=GetJobDoneProducts">GetJobDoneProducts</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadCommissionAgentList">LoadCommissionAgentList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadCommissionAgents">LoadCommissionAgents</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadCustomerList">LoadCustomerList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadCustomers">LoadCustomers</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadHSNSACList">LoadHSNSACList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadLocationList">LoadLocationList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=LoadSalesmanList">LoadSalesmanList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveAccountHeads">SaveAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveCommissionAgent">SaveCommissionAgent</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveHSNCode">SaveHSNCode</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveImage">SaveImage</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveLocation">SaveLocation</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveProducts">SaveProducts</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveSalesman">SaveSalesman</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveServiceEngineer">SaveServiceEngineer</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveSuppliers">SaveSuppliers</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=SaveUnits">SaveUnits</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=XXXXXXXXXX">XXXXXXXXXX</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=deleteAccountHeads">deleteAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=deleteCategory">deleteCategory</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=deleteFavouriteAccountHeads">deleteFavouriteAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=deleteUser">deleteUser</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=fillAccountHeads">fillAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=fillCategoryForTile">fillCategoryForTile</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=fillProductForTile">fillProductForTile</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=fillServiceJobDelivery">fillServiceJobDelivery</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=getJobEntryDetails">getJobEntryDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=getPeriodwiseSalesDetails">getPeriodwiseSalesDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=getSales">getSales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=getSalesDetails">getSalesDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=getVoucherDetails">getVoucherDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=getsalesdetailsforprintgst">getsalesdetailsforprintgst</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadAccountHeadDetails">loadAccountHeadDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadAccountHeadsByGroup">loadAccountHeadsByGroup</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadAccountsName">loadAccountsName</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadAppVersion">loadAppVersion</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadAutoFill">loadAutoFill</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadBillNo">loadBillNo</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadBillToAccountHeads">loadBillToAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadBillwiseProfit">loadBillwiseProfit</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadBillwiseSales">loadBillwiseSales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadBranches">loadBranches</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadBrand">loadBrand</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadCarouselSlider">loadCarouselSlider</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadCategories">loadCategories</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadCategory">loadCategory</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadCess">loadCess</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadChildAccountHeads">loadChildAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadClass">loadClass</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadContactNo">loadContactNo</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadContactNoDetails">loadContactNoDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadDashBoard">loadDashBoard</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadDaywiseProfit">loadDaywiseProfit</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadDaywiseSales">loadDaywiseSales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadEWayMasterCodes">loadEWayMasterCodes</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadFavouriteAccountHeads">loadFavouriteAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadGST">loadGST</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadHSNSAC">loadHSNSAC</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadItemwiseProfit">loadItemwiseProfit</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadItemwiseSales">loadItemwiseSales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadJobDoneDetails">loadJobDoneDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadLocation">loadLocation</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadLookup">loadLookup</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadMaster">loadMaster</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadMonthwiseProfit">loadMonthwiseProfit</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadMonthwiseSales">loadMonthwiseSales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadOldCustomerDetails">loadOldCustomerDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadParentAccountHeads">loadParentAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadPaymentMethod">loadPaymentMethod</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadProductId">loadProductId</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadProductName">loadProductName</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadProducts">loadProducts</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadProfitAnalysis">loadProfitAnalysis</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRack">loadRack</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRoute">loadRoute</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptCustomerWiseSales">loadRptCustomerWiseSales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptDailySales">loadRptDailySales</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptJobStatus">loadRptJobStatus</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptLedger">loadRptLedger</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptPeriodicCollectionFromVoucher">loadRptPeriodicCollectionFromVoucher</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptSalesValueAndVolumeAnalysis">loadRptSalesValueAndVolumeAnalysis</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptServiceDetails">loadRptServiceDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadRptStockStatementAsOnDate">loadRptStockStatementAsOnDate</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSaleBillNo">loadSaleBillNo</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSalesAnalysis">loadSalesAnalysis</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSalesForm">loadSalesForm</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSalesman">loadSalesman</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSalesmanDetails">loadSalesmanDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSerialNo">loadSerialNo</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadServiceDashBoard">loadServiceDashBoard</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadServiceDetailsType">loadServiceDetailsType</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadServiceEngineerList">loadServiceEngineerList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadServiceEngineers">loadServiceEngineers</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadServiceForm">loadServiceForm</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadShippedToAddressDetails">loadShippedToAddressDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadShippedToCustomerAddress">loadShippedToCustomerAddress</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSupplierList">loadSupplierList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSupplierType">loadSupplierType</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadSuppliers">loadSuppliers</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadTransactionSchedule">loadTransactionSchedule</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadUnitList">loadUnitList</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=loadVehicles">loadVehicles</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveAdvancePayment">saveAdvancePayment</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveCategories">saveCategories</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveCustomers">saveCustomers</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveFavouriteAccountHeads">saveFavouriteAccountHeads</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveJobDeliveryDetails">saveJobDeliveryDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveJobDoneDetails">saveJobDoneDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveJobEntryDetails">saveJobEntryDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveLookupDetails">saveLookupDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveRegistrationLog">saveRegistrationLog</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveSalesDetails">saveSalesDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveSalesmanold">saveSalesmanold</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveUserInfo">saveUserInfo</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveVehicle">saveVehicle</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=saveVoucherDetails">saveVoucherDetails</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=searchProductAferSelection">searchProductAferSelection</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=validateAccountsName">validateAccountsName</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=validateContactNo">validateContactNo</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=validateLicenseKey">validateLicenseKey</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=validatePhone">validatePhone</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=validatePhoneno">validatePhoneno</a>
+                
+                
+              </li>
+              <p>
+            
+              <li>
+                <a href="InPackService.asmx?op=validateUserFromLoginPage">validateUserFromLoginPage</a>
+                
+                
+              </li>
+              <p>
+            
+              </ul>
+            
+      </span>
+
+      
+      
+
+    <span>
+        
+    </span>
+    
+      <span>
+          <hr>
+          <h3>This web service is using http://tempuri.org/ as its default namespace.</h3>
+          <h3>Recommendation: Change the default namespace before the XML Web service is made public.</h3>
+          <p class="intro">Each XML Web service needs a unique namespace in order for client applications to distinguish it from other services on the Web. http://tempuri.org/ is available for XML Web services that are under development, but published XML Web services should use a more permanent namespace.</p>
+          <p class="intro">Your XML Web service should be identified by a namespace that you control. For example, you can use your company's Internet domain name as part of the namespace. Although many XML Web service namespaces look like URLs, they need not point to actual resources on the Web. (XML Web service namespaces are URIs.)</p>
+          <p class="intro">For XML Web services creating using ASP.NET, the default namespace can be changed using the WebService attribute's Namespace property. The WebService attribute is an attribute applied to the class that contains the XML Web service methods. Below is a code example that sets the namespace to "http://microsoft.com/webservices/":</p>
+          <p class="intro">C#</p>
+          <pre>[WebService(Namespace="http://microsoft.com/webservices/")]
+public class MyWebService {
+    // implementation
+}</pre>
+          <p class="intro">Visual Basic</p>
+          <pre>&lt;WebService(Namespace:="http://microsoft.com/webservices/")&gt; Public Class MyWebService
+    ' implementation
+End Class</pre>
+
+          <p class="intro">C++</p>
+          <pre>[WebService(Namespace="http://microsoft.com/webservices/")]
+public ref class MyWebService {
+    // implementation
+};</pre>
+          <p class="intro">For more details on XML namespaces, see the W3C recommendation on <a href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML</A>.</p>
+          <p class="intro">For more details on WSDL, see the <a href="http://www.w3.org/TR/wsdl">WSDL Specification</a>.</p>
+          <p class="intro">For more details on URIs, see <a href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396</a>.</p>
+      </span>
+
+      
+
+    
+  </body>
+</html>

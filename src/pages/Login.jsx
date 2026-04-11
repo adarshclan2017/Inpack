@@ -40,15 +40,17 @@ export default function Login() {
 
       const text = await res.text();
       const data = extractJsonFromAsmx(text);
+      console.log("LOGIN API RESPONSE DATA:", data);
 
-      const otp = String(data?.OTP ?? "").trim();
-      const imei = String(data?.IMEI ?? "").trim();
+      const otp = String(data?.OTP || data?.otp || "").trim();
+      const imei = String(data?.IMEI || data?.imei || "").trim();
 
       if (!otp) {
         setErr("OTP not received");
         return;
       }
 
+      localStorage.setItem("phone", p);
       setOtpData({ otp, imei, phone: p });
       setShowOtpPopup(true);
     } catch {

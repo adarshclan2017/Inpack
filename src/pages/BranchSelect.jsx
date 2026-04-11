@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { extractJsonFromAsmx } from "../utils/asmx";
 import "../styles/BranchSelect.css";
 
 export default function BranchSelect() {
@@ -7,12 +8,38 @@ export default function BranchSelect() {
   const inputs = useRef([]);
   const selectRef = useRef(null);
 
-  const [company, setCompany] = useState("");
+  const [selectedBranchId, setSelectedBranchId] = useState("");
   const [pin, setPin] = useState(["", "", "", ""]);
   const [msg, setMsg] = useState("");
 
+  const [companies, setCompanies] = useState([]);
+  const [branches, setBranches] = useState([]);
+
   useEffect(() => {
     selectRef.current?.focus();
+
+    // Fetch dynamic companies and branch data
+    const fetchCompanies = async () => {
+      const imei = localStorage.getItem("imei") || "";
+      if (!imei) return;
+
+      try {
+        const res = await fetch(`/asmx/InPackService.asmx/validatePhone?IMEI=${imei}`);
+        const text = await res.text();
+        const data = extractJsonFromAsmx(text);
+
+        if (data?.success && data?.companies) {
+          setCompanies(data.companies);
+        }
+        if (data?.success && data?.Branches) {
+          setBranches(data.Branches);
+        }
+      } catch (error) {
+        console.error("Failed to load companies", error);
+      }
+    };
+
+    fetchCompanies();
   }, []);
 
   const handleSelectKeyDown = (e) => {
@@ -49,26 +76,47 @@ export default function BranchSelect() {
   };
 
   const handleLogin = () => {
-    if (!company) {
-      setMsg("Select company");
+    if (!selectedBranchId) {
+      setMsg("Please select a branch");
       return;
     }
 
-    if (pin.join("").length !== 4) {
-      setMsg("Enter 4 digit PIN");
+    const enteredPin = pin.join("");
+    if (enteredPin.length !== 4) {
+      setMsg("Enter 4-digit PIN");
       return;
     }
 
-    localStorage.setItem(
-      "branch",
-      JSON.stringify({ company, pin: pin.join("") })
-    );
+    // Find the branch data
+    const selectedBranch = branches.find(b => b.branch_id === selectedBranchId);
 
-    if (company === "HOME") {
-      nav("/welcome");
-    } else {
-      setMsg("Login Successful!");
+    if (!selectedBranch) {
+      setMsg("Branch details not found.");
+      return;
     }
+
+    if (enteredPin !== selectedBranch.pin) {
+      setMsg("Incorrect PIN");
+      return;
+    }
+
+    // Persist all branch details to localStorage as requested ("balance stored in local storage")
+    localStorage.setItem("selectedBranch", JSON.stringify(selectedBranch));
+    localStorage.setItem("branchId", selectedBranch.branch_id);
+    localStorage.setItem("branchName", selectedBranch.branch_name);
+    localStorage.setItem("licenseKey", selectedBranch.license_key);
+    localStorage.setItem("internalCompanyId", selectedBranch.internal_company_id);
+    localStorage.setItem("pin", enteredPin);
+
+    // Update user object in localStorage
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    user.pin = enteredPin;
+    user.licenseKey = selectedBranch.license_key;
+    user.branchId = selectedBranch.branch_id;
+    user.branchName = selectedBranch.branch_name;
+    localStorage.setItem("user", JSON.stringify(user));
+
+    nav("/welcome");
   };
 
   return (
@@ -92,16 +140,20 @@ export default function BranchSelect() {
             <p className="instructions">Please select your company and enter your 4-digit PIN to continue.</p>
 
             <div className="login-form-group">
-              <label>Select Company</label>
+              <label>Select Branch</label>
               <select
                 ref={selectRef}
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
+                value={selectedBranchId}
+                onChange={(e) => setSelectedBranchId(e.target.value)}
                 onKeyDown={handleSelectKeyDown}
                 className="select"
               >
-                <option value="">Select Company</option>
-                <option>HOME</option>
+                <option value="">Select Branch</option>
+                {branches.map((br, idx) => (
+                  <option key={idx} value={br.branch_id}>
+                    {br.branch_name}
+                  </option>
+                ))}
               </select>
             </div>
 
