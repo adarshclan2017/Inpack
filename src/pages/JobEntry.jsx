@@ -29,6 +29,23 @@ const ServiceForm = ({ onBack }) => {
     const [multiMode, setMultiMode] = useState(false);
     const [showSignature, setShowSignature] = useState(false);
 
+    // ── Payment Groups (from loadSalesForm API) ─────────────
+    const [paymentGroups, setPaymentGroups] = useState({
+        cash_group: [],
+        upi_group: [],
+        card_group: [],
+        financier_group: [],
+        wallet_group: []
+    });
+
+    const [paymentSelections, setPaymentSelections] = useState({
+        Cash: { name: 'Cash', id: '' },
+        'Federal Bank Swiping': { name: 'Federal Bank Swiping', id: '' },
+        'Google Pay': { name: 'Google Pay', id: '' },
+        'Bajaj FinServ': { name: 'Bajaj FinServ', id: '' },
+        'Margin Free': { name: 'Margin Free', id: '' }
+    });
+
     // ── Generic Field Picker ──────────────────────────────────
     const [PICKER_OPTIONS, setPickerOptions] = useState({
         brand: [],
@@ -86,6 +103,77 @@ const ServiceForm = ({ onBack }) => {
             }
         };
         fetchLookup();
+    }, []);
+
+    // Fetch sales form payment groups
+    useEffect(() => {
+        const fetchSalesForm = async () => {
+            try {
+                const branchName = localStorage.getItem("branchId") || ""; 
+                const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
+                const branchObj = branchDetails.find(b => b.branch_id === branchName);
+                const branchId = branchObj ? branchObj.internal_branch_id : "2";
+
+                const licenseKey = localStorage.getItem("licenseKey") || "ILT_LIC_9988056";
+                const imei = localStorage.getItem("imei") || "ILTUKAInpackPro1";
+                const pin = localStorage.getItem("pin") || "2255";
+                const internalUserId = localStorage.getItem("internalUserId") || "41";
+
+                const url = `/api2025/InPackService.asmx/loadSalesForm?LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalBranchID=${branchId}`;
+                const res = await fetch(url);
+                const text = await res.text();
+
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const stringEl = xmlDoc.getElementsByTagName('string')[0];
+                let jsonStr = '';
+                if (stringEl && stringEl.textContent) {
+                    jsonStr = stringEl.textContent;
+                } else {
+                    const m = text.match(/\{[\s\S]*\}/);
+                    if (m) jsonStr = m[0];
+                }
+
+                if (jsonStr) {
+                    const data = JSON.parse(jsonStr);
+                    setPaymentGroups({
+                        cash_group: data.cash_group || [],
+                        upi_group: data.upi_group || [],
+                        card_group: data.card_group || [],
+                        financier_group: data.financier_group || [],
+                        wallet_group: data.wallet_group || []
+                    });
+
+                    // Set initial selections if groups are not empty
+                    setPaymentSelections(prev => ({
+                        ...prev,
+                        Cash: {
+                            name: data.cash_group?.[0]?.AccountsName || 'Cash',
+                            id: data.cash_group?.[0]?.InternalAccountsID || ''
+                        },
+                        'Federal Bank Swiping': {
+                            name: data.card_group?.[0]?.AccountsName || 'Federal Bank Swiping',
+                            id: data.card_group?.[0]?.InternalAccountsID || ''
+                        },
+                        'Google Pay': {
+                            name: data.upi_group?.[0]?.AccountsName || 'Google Pay',
+                            id: data.upi_group?.[0]?.InternalAccountsID || ''
+                        },
+                        'Bajaj FinServ': {
+                            name: data.financier_group?.[0]?.AccountsName || 'Bajaj FinServ',
+                            id: data.financier_group?.[0]?.InternalAccountsID || ''
+                        },
+                        'Margin Free': {
+                            name: data.wallet_group?.[0]?.AccountsName || 'Margin Free',
+                            id: data.wallet_group?.[0]?.InternalAccountsID || ''
+                        }
+                    }));
+                }
+            } catch (err) {
+                console.error('loadSalesForm error:', err);
+            }
+        };
+        fetchSalesForm();
     }, []);
 
     const [activePicker, setActivePicker] = useState(null); // 'brand' | 'model' | 'color' | 'collect' | 'status' | 'complaint'
@@ -303,13 +391,99 @@ const ServiceForm = ({ onBack }) => {
     const [custAddress, setCustAddress] = useState('');
     const [custGst, setCustGst] = useState('');
     const [custRoute, setCustRoute] = useState('');
+    const [custRouteId, setCustRouteId] = useState('');
     const [custClass, setCustClass] = useState('');
+    const [custClassId, setCustClassId] = useState('');
     const [custState, setCustState] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [phoneSearchResults, setPhoneSearchResults] = useState([]);
     const [phoneLoading, setPhoneLoading] = useState(false);
     const [fetchError, setFetchError] = useState('');
     const [phoneError, setPhoneError] = useState('');
+    const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
+    const [stateSearch, setStateSearch] = useState('');
+    const stateDropdownRef = useRef(null);
+
+    // Route autocomplete state
+    const [routesList, setRoutesList] = useState([]);
+    const [routeDropdownOpen, setRouteDropdownOpen] = useState(false);
+
+    // Class autocomplete state
+    const [classList, setClassList] = useState([]);
+    const [classDropdownOpen, setClassDropdownOpen] = useState(false);
+
+    // States for dropdown — stored by Welcome.jsx from dashboard API (data.data.states)
+    const statesList = JSON.parse(localStorage.getItem("states") || "[]").map(s => s.state_name).filter(Boolean);
+
+    // Fetch routes from API on mount
+    useEffect(() => {
+        const fetchRoutes = async () => {
+            try {
+                const licenseKey = localStorage.getItem('license_key') || 'ILT_LIC_9988056';
+                const pin = localStorage.getItem('pin') || '2255';
+                const url = `/api2025/InPackService.asmx/loadRoute?LicenseKey=${licenseKey}&IMEI=ILTUKAInpackPro1&PIN=${pin}`;
+                const res = await fetch(url);
+                const text = await res.text();
+
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const stringEl = xmlDoc.getElementsByTagName('string')[0];
+                let jsonStr = '';
+                if (stringEl && stringEl.textContent) {
+                    jsonStr = stringEl.textContent;
+                } else {
+                    const m = text.match(/\{[\s\S]*\}/);
+                    if (m) jsonStr = m[0];
+                }
+
+                if (jsonStr) {
+                    const data = JSON.parse(jsonStr);
+                    const routes = (data.routes || []).map(r => ({
+                        id: String(r.internal_route_id || ''),
+                        name: String(r.route || '')
+                    })).filter(r => r.name);
+                    setRoutesList(routes);
+                }
+            } catch (err) {
+                console.error('loadRoute error:', err);
+            }
+        };
+
+        const fetchClasses = async () => {
+            try {
+                const licenseKey = localStorage.getItem('license_key') || 'ILT_LIC_9988056';
+                const pin = localStorage.getItem('pin') || '2255';
+                const url = `/api2025/InPackService.asmx/loadClass?LicenseKey=${licenseKey}&IMEI=ILTUKAInpackPro1&PIN=${pin}`;
+                const res = await fetch(url);
+                const text = await res.text();
+
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const stringEl = xmlDoc.getElementsByTagName('string')[0];
+                let jsonStr = '';
+                if (stringEl && stringEl.textContent) {
+                    jsonStr = stringEl.textContent;
+                } else {
+                    const m = text.match(/\{[\s\S]*\}/);
+                    if (m) jsonStr = m[0];
+                }
+
+                if (jsonStr) {
+                    const data = JSON.parse(jsonStr);
+                    const classes = (data.class || []).map(c => ({
+                        id: String(c.internal_class_id || ''),
+                        name: String(c.class || '')
+                    })).filter(c => c.name);
+                    setClassList(classes);
+                }
+            } catch (err) {
+                console.error('loadClass error:', err);
+            }
+        };
+
+        fetchRoutes();
+        fetchClasses();
+    }, []);
 
     const phoneContainerRef = useRef(null);
     const modalPhoneContainerRef = useRef(null);
@@ -337,7 +511,9 @@ const ServiceForm = ({ onBack }) => {
         setCustAddress('');
         setCustGst('');
         setCustRoute('');
+        setCustRouteId('');
         setCustClass('');
+        setCustClassId('');
         setCustState('');
 
         if (!query) {
@@ -847,12 +1023,12 @@ const ServiceForm = ({ onBack }) => {
                             {/* Payment Split Rows */}
                             <div className="je-splits-list">
                                 {[
-                                    { id: '1', method: 'Cash', icon: 'fa-regular fa-money-bill-1', hasDropdown: true },
-                                    { id: '2', method: 'Federal Bank Swiping', icon: 'fa-regular fa-credit-card', hasDropdown: true },
-                                    { id: '3', method: 'Google Pay', icon: 'fa-brands fa-google-pay', hasDropdown: true },
-                                    { id: '4', method: 'Bajaj FinServ', icon: 'fa-regular fa-credit-card', hasDropdown: true },
-                                    { id: '5', method: 'Margin Free', icon: 'fa-solid fa-gift', hasDropdown: true },
-                                    { id: '6', method: 'Credit', icon: 'fa-regular fa-credit-card', hasDropdown: false }
+                                    { id: '1', method: 'Cash', icon: 'fa-regular fa-money-bill-1', hasDropdown: true, groupKey: 'cash_group' },
+                                    { id: '2', method: 'Federal Bank Swiping', icon: 'fa-regular fa-credit-card', hasDropdown: true, groupKey: 'card_group' },
+                                    { id: '3', method: 'Google Pay', icon: 'fa-brands fa-google-pay', hasDropdown: true, groupKey: 'upi_group' },
+                                    { id: '4', method: 'Bajaj FinServ', icon: 'fa-regular fa-credit-card', hasDropdown: true, groupKey: 'financier_group' },
+                                    { id: '5', method: 'Margin Free', icon: 'fa-solid fa-gift', hasDropdown: true, groupKey: 'wallet_group' },
+                                    { id: '6', method: 'Credit', icon: 'fa-regular fa-credit-card', hasDropdown: false, groupKey: '' }
                                 ].filter(s => multiMode ? true : s.id === '1').map(split => (
                                     <div key={split.id} className="je-split-row-wrap">
                                         <div className="je-split-row">
@@ -861,12 +1037,30 @@ const ServiceForm = ({ onBack }) => {
                                             <div className="je-split-pill je-split-pill--method">
                                                 <span className="je-split-pill-icon"><i className={split.icon}></i></span>
                                                 {split.hasDropdown ? (
-                                                    <select className="je-split-pill-select" defaultValue={split.method}>
-                                                        <option>Cash</option>
-                                                        <option>Federal Bank Swiping</option>
-                                                        <option>Google Pay</option>
-                                                        <option>Bajaj FinServ</option>
-                                                        <option>Margin Free</option>
+                                                    <select
+                                                        className="je-split-pill-select"
+                                                        value={paymentSelections[split.method]?.id || paymentSelections[split.method]?.name || ''}
+                                                        onChange={(e) => {
+                                                            const selectedId = e.target.value;
+                                                            const group = paymentGroups[split.groupKey] || [];
+                                                            const selectedItem = group.find(item => item.InternalAccountsID === selectedId);
+                                                            if (selectedItem) {
+                                                                setPaymentSelections(prev => ({
+                                                                    ...prev,
+                                                                    [split.method]: { name: selectedItem.AccountsName, id: selectedId }
+                                                                }));
+                                                            }
+                                                        }}
+                                                    >
+                                                        {(paymentGroups[split.groupKey] || []).length > 0 ? (
+                                                            paymentGroups[split.groupKey].map((item) => (
+                                                                <option key={item.InternalAccountsID} value={item.InternalAccountsID}>
+                                                                    {item.AccountsName}
+                                                                </option>
+                                                            ))
+                                                        ) : (
+                                                            <option value="">{split.method}</option>
+                                                        )}
                                                     </select>
                                                 ) : (
                                                     <span className="je-split-pill-name">{split.method}</span>
@@ -1179,17 +1373,204 @@ const ServiceForm = ({ onBack }) => {
                                 <span className="je-modal-divider"></span>
                                 <button className="je-modal-download"><i className="fa-solid fa-download"></i></button>
                             </div>
-                            <div className="je-modal-field je-border-top">
+                            {/* Route — searchable autocomplete */}
+                            <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: routeDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-route je-field-icon"></i>
-                                <input className="je-input" placeholder="Select Route" value={custRoute} onChange={e => setCustRoute(e.target.value)} />
+                                <input
+                                    className="je-input"
+                                    placeholder="Select Route"
+                                    value={custRoute}
+                                    autoComplete="off"
+                                    onChange={e => {
+                                        setCustRoute(e.target.value);
+                                        setCustRouteId('');
+                                        setRouteDropdownOpen(true);
+                                    }}
+                                    onFocus={() => setRouteDropdownOpen(true)}
+                                    onBlur={() => setTimeout(() => setRouteDropdownOpen(false), 150)}
+                                />
+                                {custRoute && (
+                                    <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setCustRoute(''); setCustRouteId(''); setRouteDropdownOpen(false); }}>
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                )}
+
+                                {routeDropdownOpen && routesList.filter(r => r.name.toLowerCase().includes(custRoute.toLowerCase())).length > 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#fff',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        zIndex: 50,
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        marginTop: '4px',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {routesList
+                                            .filter(r => r.name.toLowerCase().includes(custRoute.toLowerCase()))
+                                            .map((r, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onMouseDown={e => {
+                                                        e.preventDefault();
+                                                        setCustRoute(r.name);
+                                                        setCustRouteId(r.id);
+                                                        setRouteDropdownOpen(false);
+                                                    }}
+                                                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                    style={{
+                                                        padding: '12px 16px',
+                                                        borderBottom: '1px solid #f1f5f9',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <span style={{ fontWeight: '600', color: '#1e293b' }}>{r.name}</span>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
                             </div>
-                            <div className="je-modal-field je-border-top">
+                            {/* Class — searchable autocomplete */}
+                            <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: classDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-layer-group je-field-icon"></i>
-                                <input className="je-input" placeholder="Select class" value={custClass} onChange={e => setCustClass(e.target.value)} />
+                                <input
+                                    className="je-input"
+                                    placeholder="Select Class"
+                                    value={custClass}
+                                    autoComplete="off"
+                                    onChange={e => {
+                                        setCustClass(e.target.value);
+                                        setCustClassId('');
+                                        setClassDropdownOpen(true);
+                                    }}
+                                    onFocus={() => setClassDropdownOpen(true)}
+                                    onBlur={() => setTimeout(() => setClassDropdownOpen(false), 150)}
+                                />
+                                {custClass && (
+                                    <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setCustClass(''); setCustClassId(''); setClassDropdownOpen(false); }}>
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                )}
+
+                                {classDropdownOpen && classList.filter(c => c.name.toLowerCase().includes(custClass.toLowerCase())).length > 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#fff',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        zIndex: 50,
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        marginTop: '4px',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {classList
+                                            .filter(c => c.name.toLowerCase().includes(custClass.toLowerCase()))
+                                            .map((c, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onMouseDown={e => {
+                                                        e.preventDefault();
+                                                        setCustClass(c.name);
+                                                        setCustClassId(c.id);
+                                                        setClassDropdownOpen(false);
+                                                    }}
+                                                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                    style={{
+                                                        padding: '12px 16px',
+                                                        borderBottom: '1px solid #f1f5f9',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <span style={{ fontWeight: '600', color: '#1e293b' }}>{c.name}</span>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
                             </div>
-                            <div className="je-modal-field je-border-top">
+                            {/* State — same style as Customer Name */}
+                            <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: stateDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-map je-field-icon"></i>
-                                <input className="je-input" placeholder="Select state" value={custState} onChange={e => setCustState(e.target.value)} />
+                                <input
+                                    className="je-input"
+                                    placeholder="Select state"
+                                    value={custState}
+                                    autoComplete="off"
+                                    onChange={e => {
+                                        setCustState(e.target.value);
+                                        setStateDropdownOpen(true);
+                                    }}
+                                    onFocus={() => setStateDropdownOpen(true)}
+                                    onBlur={() => setTimeout(() => setStateDropdownOpen(false), 150)}
+                                />
+                                {custState && (
+                                    <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setCustState(''); setStateDropdownOpen(false); }}>
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                )}
+
+                                {stateDropdownOpen && statesList.filter(s => s.toLowerCase().includes(custState.toLowerCase())).length > 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '100%',
+                                        left: 0,
+                                        right: 0,
+                                        background: '#fff',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        zIndex: 50,
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        marginTop: '4px',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {statesList
+                                            .filter(s => s.toLowerCase().includes(custState.toLowerCase()))
+                                            .map((s, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onMouseDown={e => {
+                                                        e.preventDefault();
+                                                        setCustState(s);
+                                                        setStateDropdownOpen(false);
+                                                    }}
+                                                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                    style={{
+                                                        padding: '12px 16px',
+                                                        borderBottom: '1px solid #f1f5f9',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center'
+                                                    }}
+                                                >
+                                                    <span style={{ fontWeight: '600', color: '#1e293b' }}>{s}</span>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
                             </div>
                         </div>
 

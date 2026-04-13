@@ -229,14 +229,16 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 12px; /* Slightly tighter padding to prevent line collisions */
-    min-height: 46px; 
+    padding: 0 12px;
+    /* Slightly tighter padding to prevent line collisions */
+    min-height: 46px;
     transition: background 0.15s;
     position: relative;
 }
 
 .je-input-row:focus-within {
-    background: transparent; /* Keep grid background visible */
+    background: transparent;
+    /* Keep grid background visible */
 }
 
 .je-unified-grid-container {
@@ -253,25 +255,31 @@
     height: 100%;
 }
 
-.je-grid-left-item { 
-    grid-column: 1; 
-    min-width: 0; 
-    overflow: hidden; 
-}
-.je-grid-right-item { 
-    grid-column: 3; 
-    min-width: 0; 
-    overflow: hidden; 
+.je-grid-left-item {
+    grid-column: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
-.je-grid-full-width { grid-column: span 3; }
+.je-grid-right-item {
+    grid-column: 3;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.je-grid-full-width {
+    grid-column: span 3;
+}
 
 /* Compact Grid for Mobile (< 480px) */
 @media (max-width: 480px) {
-    .je-input-row, 
+
+    .je-input-row,
     .je-terms-field {
-        padding: 0 8px; /* Tighter padding */
-        gap: 6px;       /* Smaller gaps */
+        padding: 0 8px;
+        /* Tighter padding */
+        gap: 6px;
+        /* Smaller gaps */
         min-height: 42px;
     }
 
@@ -280,7 +288,8 @@
     .je-terms-fi,
     .je-terms-rupee,
     .je-modal-x {
-        width: 18px !important;  /* Scaled down icons */
+        width: 18px !important;
+        /* Scaled down icons */
         height: 18px !important;
         font-size: 11px !important;
     }
@@ -288,15 +297,18 @@
     .je-input,
     .je-terms-native-input,
     .je-terms-label {
-        font-size: 11.5px !important; /* Smaller text */
+        font-size: 11.5px !important;
+        /* Smaller text */
     }
 }
 
 /* Ultra-Compact Grid for Tiny Mobile (< 380px) */
 @media (max-width: 380px) {
-    .je-input-row, 
+
+    .je-input-row,
     .je-terms-field {
-        padding: 0 4px; /* Ultra tight */
+        padding: 0 4px;
+        /* Ultra tight */
         gap: 4px;
     }
 

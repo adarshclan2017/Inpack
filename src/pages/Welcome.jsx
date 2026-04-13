@@ -32,19 +32,11 @@ export default function Welcome() {
                 const text = await response.text();
                 const data = extractJsonFromAsmx(text);
 
-                if (data) {
-                    console.log("Dashboard data loaded successfully:", data);
-                    
-                    // Store details as requested by user
-                    if (data.branch_details) {
-                        localStorage.setItem("branch_details", JSON.stringify(data.branch_details));
-                    }
-                    if (data.settings) {
-                        localStorage.setItem("settings", JSON.stringify(data.settings));
-                    }
-                    
-                    // We can also store the full response if needed for other parts of the dashboard
-                    localStorage.setItem("dashboard_data", JSON.stringify(data));
+                if (data?.data) {
+                    const payload = data.data;
+                    localStorage.setItem("branch_details", JSON.stringify(payload.branch_details || []));
+                    localStorage.setItem("settings", JSON.stringify(payload.settings || []));
+                    localStorage.setItem("states", JSON.stringify(payload.states || []));
                 }
             } catch (error) {
                 console.error("Error loading dashboard data:", error);
@@ -70,9 +62,9 @@ export default function Welcome() {
 
     const cardContainerVariants = {
         hidden: { opacity: 0 },
-        visible: { 
+        visible: {
             opacity: 1,
-            transition: { 
+            transition: {
                 staggerChildren: 0.08,
                 delayChildren: 0.1
             }
@@ -81,9 +73,9 @@ export default function Welcome() {
 
     const cardItemVariants = {
         hidden: { y: 20, opacity: 0, scale: 0.95 },
-        visible: { 
-            y: 0, 
-            opacity: 1, 
+        visible: {
+            y: 0,
+            opacity: 1,
             scale: 1,
             transition: { type: "spring", stiffness: 100, damping: 15 }
         }
@@ -92,9 +84,9 @@ export default function Welcome() {
     return (
         <div className="admin-dashboard">
             {/* Decorative ambient background blur */}
-            <motion.div 
+            <motion.div
                 className="ambient-glow glow-1"
-                animate={{ 
+                animate={{
                     scale: [1, 1.2, 1],
                     opacity: [0.3, 0.5, 0.3],
                     x: [0, 30, 0],
@@ -102,9 +94,9 @@ export default function Welcome() {
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
             ></motion.div>
-            <motion.div 
+            <motion.div
                 className="ambient-glow glow-2"
-                animate={{ 
+                animate={{
                     scale: [1.2, 1, 1.2],
                     opacity: [0.2, 0.4, 0.2],
                     x: [0, -40, 0],
@@ -116,8 +108,8 @@ export default function Welcome() {
             {/* Side Menu Overlay for Mobile */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
-                    <motion.div 
-                        className="sidebar-overlay" 
+                    <motion.div
+                        className="sidebar-overlay"
                         onClick={() => setIsMobileMenuOpen(false)}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -127,7 +119,7 @@ export default function Welcome() {
             </AnimatePresence>
 
             {/* SIDEBAR */}
-            <motion.aside 
+            <motion.aside
                 layout
                 className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}
                 initial={false}
@@ -152,7 +144,7 @@ export default function Welcome() {
                         )}
                     </AnimatePresence>
                     <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-                        <motion.i 
+                        <motion.i
                             layout
                             className={`fa-solid ${isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'}`}
                         ></motion.i>
@@ -161,7 +153,7 @@ export default function Welcome() {
 
                 <nav className="sidebar-nav">
                     {!isCollapsed && (
-                        <motion.div 
+                        <motion.div
                             className="nav-label"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -170,9 +162,9 @@ export default function Welcome() {
                         </motion.div>
                     )}
                     <ul>
-                        <motion.li 
+                        <motion.li
                             layout
-                            className="active" 
+                            className="active"
                             onClick={() => setIsMobileMenuOpen(false)}
                             whileHover={{ x: 5 }}
                             whileTap={{ scale: 0.98 }}
@@ -181,9 +173,9 @@ export default function Welcome() {
                             {!isCollapsed && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Home</motion.span>}
                             <motion.div layoutId="active-nav" className="active-indicator"></motion.div>
                         </motion.li>
-                        <motion.li 
+                        <motion.li
                             layout
-                            onClick={() => handleNavigation('/dashboard')} 
+                            onClick={() => handleNavigation('/dashboard')}
                             style={{ cursor: 'pointer' }}
                             whileHover={{ x: 5 }}
                             whileTap={{ scale: 0.98 }}
@@ -191,9 +183,9 @@ export default function Welcome() {
                             <i className="fa-solid fa-chart-pie"></i>
                             {!isCollapsed && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Dashboard</motion.span>}
                         </motion.li>
-                        <motion.li 
+                        <motion.li
                             layout
-                            onClick={() => handleNavigation('/profile')} 
+                            onClick={() => handleNavigation('/profile')}
                             style={{ cursor: 'pointer' }}
                             whileHover={{ x: 5 }}
                             whileTap={{ scale: 0.98 }}
@@ -205,10 +197,10 @@ export default function Welcome() {
                 </nav>
 
                 <div className="sidebar-footer">
-                    <motion.div 
+                    <motion.div
                         layout
-                        className="user-profile" 
-                        onClick={() => handleNavigation('/profile')} 
+                        className="user-profile"
+                        onClick={() => handleNavigation('/profile')}
                         style={{ cursor: 'pointer' }}
                         whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
                     >
@@ -216,7 +208,7 @@ export default function Welcome() {
                             <i className="fa-solid fa-user"></i>
                         </div>
                         {!isCollapsed && (
-                            <motion.div 
+                            <motion.div
                                 className="user-info"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
@@ -238,7 +230,7 @@ export default function Welcome() {
                         <button className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(true)}>
                             <i className="fa-solid fa-bars"></i>
                         </button>
-                        <motion.div 
+                        <motion.div
                             className="search-bar"
                             whileFocusWithin={{ scale: 1.02, boxShadow: "0 4px 20px -5px rgba(0,0,0,0.1)" }}
                         >
@@ -253,7 +245,7 @@ export default function Welcome() {
                             <span>Today, Mar 19</span>
                         </div>
                         <div className="separator desktop-only"></div>
-                        <motion.button 
+                        <motion.button
                             className="icon-btn notif-btn"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -261,8 +253,8 @@ export default function Welcome() {
                             <i className="fa-regular fa-bell"></i>
                             <span className="badge">3</span>
                         </motion.button>
-                        <motion.div 
-                            className="topbar-user-chip" 
+                        <motion.div
+                            className="topbar-user-chip"
                             onClick={() => handleNavigation('/profile')}
                             whileHover={{ scale: 1.02 }}
                         >
@@ -280,14 +272,14 @@ export default function Welcome() {
 
                 {/* DASHBOARD CONTENT */}
                 <div className="dashboard-content">
-                    <motion.div 
+                    <motion.div
                         className="welcome-banner"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ type: "spring", stiffness: 100, damping: 15 }}
                     >
                         <div>
-                            <motion.h1 
+                            <motion.h1
                                 className="gradient-text"
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -307,15 +299,15 @@ export default function Welcome() {
 
                     {/* QUICK ACCESS GRID */}
                     <section className="dashboard-section">
-                        <motion.div 
+                        <motion.div
                             className="section-header"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
                             <h2 className="section-title">Quick Access</h2>
-                            <motion.button 
-                                className="text-btn" 
+                            <motion.button
+                                className="text-btn"
                                 onClick={() => setIsWidgetModalOpen(true)}
                                 whileHover={{ scale: 1.05, x: 5 }}
                             >
@@ -323,13 +315,13 @@ export default function Welcome() {
                             </motion.button>
                         </motion.div>
 
-                        <motion.div 
+                        <motion.div
                             className="quick-access-grid"
                             initial="hidden"
                             animate="visible"
                             variants={cardContainerVariants}
                         >
-                            {[ 
+                            {[
                                 { path: '/invoice', icon: 'fa-file-invoice', color: 'blue', title: 'Invoice', desc: 'Create & manage' },
                                 { path: '/cash', icon: 'fa-money-bill-wave', color: 'green', title: 'Cash', desc: 'Transactions' },
                                 { path: '/bank', icon: 'fa-building-columns', color: 'purple', title: 'Bank', desc: 'Transfers & deposits' },
@@ -337,21 +329,21 @@ export default function Welcome() {
                                 { path: '/job-done', icon: 'fa-circle-check', color: 'teal', title: 'Job done', desc: 'Completed jobs' },
                                 { path: '/job-delivery', icon: 'fa-truck-fast', color: 'indigo', title: 'Job Delivery', desc: 'Dispatch details' }
                             ].map((item, index) => (
-                                <motion.div 
+                                <motion.div
                                     key={index}
-                                    className="action-card" 
-                                    onClick={() => navigate(item.path)} 
+                                    className="action-card"
+                                    onClick={() => navigate(item.path)}
                                     style={{ cursor: 'pointer' }}
                                     variants={cardItemVariants}
-                                    whileHover={{ 
-                                        scale: 1.04, 
-                                        y: -10, 
+                                    whileHover={{
+                                        scale: 1.04,
+                                        y: -10,
                                         boxShadow: "0 20px 40px -15px rgba(0,0,0,0.15)",
                                         borderColor: "var(--primary-color)"
                                     }}
                                     whileTap={{ scale: 0.96 }}
                                 >
-                                    <motion.div 
+                                    <motion.div
                                         className={`icon-wrapper ${item.color}`}
                                         whileHover={{ rotate: [0, -10, 10, 0] }}
                                         transition={{ duration: 0.4 }}
@@ -362,7 +354,7 @@ export default function Welcome() {
                                         <h3>{item.title}</h3>
                                         <p>{item.desc}</p>
                                     </div>
-                                    <motion.i 
+                                    <motion.i
                                         className="fa-solid fa-arrow-right action-arrow"
                                         initial={{ x: 0 }}
                                         whileHover={{ x: 8 }}
@@ -374,7 +366,7 @@ export default function Welcome() {
 
                     <div className="dashboard-split">
                         {/* LARGE PROMO BANNER */}
-                        <motion.div 
+                        <motion.div
                             className="promo-banner-wide"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -383,7 +375,7 @@ export default function Welcome() {
                         >
                             <div className="promo-glass-effect"></div>
                             <div className="promo-info">
-                                <motion.span 
+                                <motion.span
                                     className="promo-badge"
                                     animate={{ scale: [1, 1.05, 1] }}
                                     transition={{ duration: 2, repeat: Infinity }}
@@ -392,7 +384,7 @@ export default function Welcome() {
                                 </motion.span>
                                 <h2>Thermal Printers – Save Up to 50%!</h2>
                                 <p>Get crisp, reliable prints without the ink hassle. Speed up your checkout process instantly.</p>
-                                <motion.button 
+                                <motion.button
                                     className="promo-btn"
                                     whileHover={{ scale: 1.05, gap: "12px" }}
                                     whileTap={{ scale: 0.95 }}
@@ -401,17 +393,17 @@ export default function Welcome() {
                                 </motion.button>
                             </div>
                             <div className="promo-graphics">
-                                <motion.i 
+                                <motion.i
                                     className="fa-solid fa-print promo-icon-bg"
-                                    animate={{ 
+                                    animate={{
                                         rotate: [0, -8, 8, 0],
                                         y: [0, -10, 10, 0]
                                     }}
                                     transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
                                 ></motion.i>
-                                <motion.div 
+                                <motion.div
                                     className="floating-receipt"
-                                    animate={{ 
+                                    animate={{
                                         y: [0, -20, 0],
                                         rotate: [15, 10, 20, 15]
                                     }}
@@ -421,7 +413,7 @@ export default function Welcome() {
                         </motion.div>
 
                         {/* TOP SALES WIDGET */}
-                        <motion.div 
+                        <motion.div
                             className="top-sales-card"
                             initial={{ opacity: 0, x: 30 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -429,13 +421,13 @@ export default function Welcome() {
                         >
                             <div className="card-header">
                                 <h2 className="section-title">Top Sales Metrics</h2>
-                                <motion.i 
+                                <motion.i
                                     className="fa-solid fa-ellipsis-vertical more-icon"
                                     whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
                                 ></motion.i>
                             </div>
 
-                            <motion.div 
+                            <motion.div
                                 className="sales-list"
                                 initial="hidden"
                                 animate="visible"
@@ -452,8 +444,8 @@ export default function Welcome() {
                                     { color: "light-green", icon: "fa-cubes", title: "Top Volume", desc: "Most items sold", amount: "1,240 pkgs", trend: "+8%", trendClass: "positive", trendIcon: "fa-arrow-trend-up", percent: "65%", fillClass: "green-fill" },
                                     { color: "light-orange", icon: "fa-print", title: "Print", desc: "Direct sales", amount: "342 units", trend: "-2%", trendClass: "negative", trendIcon: "fa-arrow-trend-down", percent: "40%", fillClass: "orange-fill" }
                                 ].map((item, index) => (
-                                    <motion.div 
-                                        key={index} 
+                                    <motion.div
+                                        key={index}
                                         className="sales-item"
                                         variants={{
                                             hidden: { x: 20, opacity: 0 },
@@ -462,7 +454,7 @@ export default function Welcome() {
                                         whileHover={{ x: 5 }}
                                     >
                                         <div className="sales-header-row">
-                                            <motion.div 
+                                            <motion.div
                                                 className={`icon-box ${item.color}`}
                                                 whileHover={{ rotate: 15, scale: 1.1 }}
                                             >
@@ -480,8 +472,8 @@ export default function Welcome() {
                                             </div>
                                         </div>
                                         <div className="progress-bg">
-                                            <motion.div 
-                                                className={`progress-fill ${item.fillClass}`} 
+                                            <motion.div
+                                                className={`progress-fill ${item.fillClass}`}
                                                 initial={{ width: 0 }}
                                                 animate={{ width: item.percent }}
                                                 transition={{ duration: 1.8, type: "spring", stiffness: 35, damping: 12, delay: 1.3 + (index * 0.2) }}
@@ -498,15 +490,15 @@ export default function Welcome() {
             {/* MANAGE WIDGETS MODAL */}
             <AnimatePresence>
                 {isWidgetModalOpen && (
-                    <motion.div 
-                        className="widget-modal-overlay" 
+                    <motion.div
+                        className="widget-modal-overlay"
                         onClick={() => setIsWidgetModalOpen(false)}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                        <motion.div 
-                            className="widget-modal-content" 
+                        <motion.div
+                            className="widget-modal-content"
                             onClick={(e) => e.stopPropagation()}
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -515,8 +507,8 @@ export default function Welcome() {
                         >
                             <div className="widget-modal-header">
                                 <h3>Manage Widgets</h3>
-                                <motion.button 
-                                    className="widget-modal-close" 
+                                <motion.button
+                                    className="widget-modal-close"
                                     onClick={() => setIsWidgetModalOpen(false)}
                                     whileHover={{ rotate: 90, scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
@@ -526,8 +518,8 @@ export default function Welcome() {
                             </div>
                             <div className="widget-modal-body">
                                 <p className="widget-modal-desc">Customize your dashboard by toggling widgets on or off.</p>
-                                
-                                <motion.div 
+
+                                <motion.div
                                     className="widget-toggle-list"
                                     initial="hidden"
                                     animate="visible"
@@ -541,7 +533,7 @@ export default function Welcome() {
                                         { title: "Promo Banner", desc: "Latest offers & announcements", icon: "fa-bullhorn", class: "success-light" },
                                         { title: "Top Sales Metrics", desc: "Performance data insights", icon: "fa-chart-line", class: "info-light" }
                                     ].map((widget, i) => (
-                                        <motion.div 
+                                        <motion.div
                                             key={i}
                                             className="widget-toggle-item"
                                             variants={{
@@ -566,8 +558,8 @@ export default function Welcome() {
                             </div>
                             <div className="widget-modal-footer">
                                 <button className="widget-btn-cancel" onClick={() => setIsWidgetModalOpen(false)}>Cancel</button>
-                                <motion.button 
-                                    className="widget-btn-save" 
+                                <motion.button
+                                    className="widget-btn-save"
                                     onClick={() => setIsWidgetModalOpen(false)}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
