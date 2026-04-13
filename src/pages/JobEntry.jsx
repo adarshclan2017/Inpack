@@ -1395,7 +1395,7 @@ const ServiceForm = ({ onBack }) => {
                                     </button>
                                 )}
 
-                                {routeDropdownOpen && routesList.filter(r => r.name.toLowerCase().includes(custRoute.toLowerCase())).length > 0 && (
+                                {routeDropdownOpen && custRoute.trim().length > 0 && routesList.filter(r => r.name.toLowerCase().includes(custRoute.toLowerCase())).length > 0 && (
                                     <div style={{
                                         position: 'absolute',
                                         top: '100%',
@@ -1462,7 +1462,7 @@ const ServiceForm = ({ onBack }) => {
                                     </button>
                                 )}
 
-                                {classDropdownOpen && classList.filter(c => c.name.toLowerCase().includes(custClass.toLowerCase())).length > 0 && (
+                                {classDropdownOpen && custClass.trim().length > 0 && classList.filter(c => c.name.toLowerCase().includes(custClass.toLowerCase())).length > 0 && (
                                     <div style={{
                                         position: 'absolute',
                                         top: '100%',
@@ -1528,7 +1528,7 @@ const ServiceForm = ({ onBack }) => {
                                     </button>
                                 )}
 
-                                {stateDropdownOpen && statesList.filter(s => s.toLowerCase().includes(custState.toLowerCase())).length > 0 && (
+                                {stateDropdownOpen && custState.trim().length > 0 && statesList.filter(s => s.toLowerCase().includes(custState.toLowerCase())).length > 0 && (
                                     <div style={{
                                         position: 'absolute',
                                         top: '100%',
