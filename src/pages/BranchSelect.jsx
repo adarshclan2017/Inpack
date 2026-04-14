@@ -9,6 +9,7 @@ export default function BranchSelect() {
   const selectRef = useRef(null);
 
   const [selectedBranchId, setSelectedBranchId] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [pin, setPin] = useState(["", "", "", ""]);
   const [msg, setMsg] = useState("");
 
@@ -139,22 +140,63 @@ export default function BranchSelect() {
             <h2 className="title">Select Branch</h2>
             <p className="instructions">Please select your company and enter your 4-digit PIN to continue.</p>
 
-            <div className="login-form-group">
+            <div className="login-form-group" style={{ position: "relative" }}>
               <label>Select Branch</label>
-              <select
+              <div
+                className="custom-select-trigger"
+                tabIndex="0"
                 ref={selectRef}
-                value={selectedBranchId}
-                onChange={(e) => setSelectedBranchId(e.target.value)}
-                onKeyDown={handleSelectKeyDown}
-                className="select"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (!isDropdownOpen && selectedBranchId) {
+                      inputs.current[0]?.focus();
+                    } else {
+                      setIsDropdownOpen(!isDropdownOpen);
+                    }
+                  } else if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const curIdx = branches.findIndex((b) => b.branch_id === selectedBranchId);
+                    if (curIdx < branches.length - 1) {
+                      setSelectedBranchId(branches[curIdx + 1].branch_id);
+                    } else if (curIdx === -1 && branches.length > 0) {
+                      setSelectedBranchId(branches[0].branch_id);
+                    }
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const curIdx = branches.findIndex((b) => b.branch_id === selectedBranchId);
+                    if (curIdx > 0) {
+                      setSelectedBranchId(branches[curIdx - 1].branch_id);
+                    }
+                  }
+                }}
               >
-                <option value="">Select Branch</option>
-                {branches.map((br, idx) => (
-                  <option key={idx} value={br.branch_id}>
-                    {br.branch_name}
-                  </option>
-                ))}
-              </select>
+                <span className="custom-select-value">
+                  {branches.find(b => b.branch_id === selectedBranchId)?.branch_name || "Select Branch"}
+                </span>
+                <i className={`fa-solid fa-chevron-down custom-select-chevron ${isDropdownOpen ? "open" : ""}`}></i>
+              </div>
+
+              {isDropdownOpen && (
+                <div className="custom-select-options">
+                  <div
+                    className={`custom-select-option ${!selectedBranchId ? 'active' : ''}`}
+                    onClick={() => { setSelectedBranchId(""); setIsDropdownOpen(false); }}
+                  >
+                    Select Branch
+                  </div>
+                  {branches.map((br, idx) => (
+                    <div
+                      key={idx}
+                      className={`custom-select-option ${br.branch_id === selectedBranchId ? 'active' : ''}`}
+                      onClick={() => { setSelectedBranchId(br.branch_id); setIsDropdownOpen(false); inputs.current[0]?.focus(); }}
+                    >
+                      {br.branch_name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="login-form-group">
