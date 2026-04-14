@@ -28,6 +28,11 @@ const ServiceForm = ({ onBack }) => {
     const [advanceReceived, setAdvanceReceived] = useState('');
     const [multiMode, setMultiMode] = useState(false);
     const [showSignature, setShowSignature] = useState(false);
+    const [technicianId, setTechnicianId] = useState('');
+    const [technicianSearchResults, setTechnicianSearchResults] = useState([]);
+    const [techLoading, setTechLoading] = useState(false);
+    const [techDropdownOpen, setTechDropdownOpen] = useState(false);
+    const technicianContainerRef = useRef(null);
 
     // ── Payment Groups (from loadSalesForm API) ─────────────
     const [paymentGroups, setPaymentGroups] = useState({
@@ -56,6 +61,20 @@ const ServiceForm = ({ onBack }) => {
         complaint: [],
     });
     const [lookupLoading, setLookupLoading] = useState(true);
+
+    // -- Saving State --
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveMessage, setSaveMessage] = useState({ text: '', type: '' }); // type: 'success' | 'error'
+
+    // -- Payment Split Amounts --
+    const [paymentAmounts, setPaymentAmounts] = useState({
+        Cash: '',
+        'Federal Bank Swiping': '',
+        'Google Pay': '',
+        'Bajaj FinServ': '',
+        'Margin Free': '',
+        Credit: ''
+    });
 
     // Fetch lookup data from API on mount
     useEffect(() => {
@@ -191,11 +210,28 @@ const ServiceForm = ({ onBack }) => {
     const closePicker = () => { setActivePicker(null); setPickerSearch(''); setShowAddItem(false); setNewItemInput(''); };
 
     const handlePickerSelect = (opt) => {
-        if (activePicker) {
+        if (!activePicker) return;
+
+        if (activePicker === 'collect') {
+            const currentLabels = collect ? collect.split(', ') : [];
+            const currentIds = collectId ? collectId.split(', ') : [];
+
+            if (currentLabels.includes(opt.label)) {
+                const newLabels = currentLabels.filter(l => l !== opt.label);
+                const newIds = currentIds.filter(id => id !== opt.id);
+                setCollect(newLabels.join(', '));
+                setCollectId(newIds.join(', '));
+            } else {
+                const newLabels = [...currentLabels, opt.label];
+                const newIds = [...currentIds, opt.id];
+                setCollect(newLabels.join(', '));
+                setCollectId(newIds.join(', '));
+            }
+        } else {
             FIELD_SETTERS[activePicker](opt.label);
             FIELD_ID_SETTERS[activePicker](opt.id);
+            closePicker();
         }
-        closePicker();
     };
 
     const handlePickerAddNew = async () => {
@@ -243,17 +279,36 @@ const ServiceForm = ({ onBack }) => {
 
             const newObj = { id: newId, label: v };
             setExtraOptions(prev => ({ ...prev, [activePicker]: [...(prev[activePicker] || []), newObj] }));
-            FIELD_SETTERS[activePicker](v);
-            FIELD_ID_SETTERS[activePicker](newId);
-            closePicker();
+
+            if (activePicker === 'collect') {
+                const currentLabels = collect ? collect.split(', ') : [];
+                const currentIds = collectId ? collectId.split(', ') : [];
+                setCollect([...currentLabels, v].join(', '));
+                setCollectId([...currentIds, newId].join(', '));
+                setNewItemInput('');
+                setShowAddItem(false);
+            } else {
+                FIELD_SETTERS[activePicker](v);
+                FIELD_ID_SETTERS[activePicker](newId);
+                closePicker();
+            }
         } catch (err) {
             console.error('saveLookupDetails error:', err);
-            // Fallback to local-only save on error, but notify
             const newObj = { id: '0', label: v };
             setExtraOptions(prev => ({ ...prev, [activePicker]: [...(prev[activePicker] || []), newObj] }));
-            FIELD_SETTERS[activePicker](v);
-            FIELD_ID_SETTERS[activePicker]('0');
-            closePicker();
+
+            if (activePicker === 'collect') {
+                const currentLabels = collect ? collect.split(', ') : [];
+                const currentIds = collectId ? collectId.split(', ') : [];
+                setCollect([...currentLabels, v].join(', '));
+                setCollectId([...currentIds, '0'].join(', '));
+                setNewItemInput('');
+                setShowAddItem(false);
+            } else {
+                FIELD_SETTERS[activePicker](v);
+                FIELD_ID_SETTERS[activePicker]('0');
+                closePicker();
+            }
         }
     };
 
@@ -493,9 +548,13 @@ const ServiceForm = ({ onBack }) => {
         const handleClickOutside = (event) => {
             const insideMain = phoneContainerRef.current && phoneContainerRef.current.contains(event.target);
             const insideModal = modalPhoneContainerRef.current && modalPhoneContainerRef.current.contains(event.target);
+            const insideTech = technicianContainerRef.current && technicianContainerRef.current.contains(event.target);
 
             if (!insideMain && !insideModal) {
                 setPhoneSearchResults([]);
+            }
+            if (!insideTech) {
+                setTechDropdownOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -562,7 +621,7 @@ const ServiceForm = ({ onBack }) => {
 
         setPhoneError(''); // Clear error on new search
 
-        if (!query) {
+        if (!query || query.length < 3) {
             setPhoneSearchResults([]);
             return;
         }
@@ -650,6 +709,194 @@ const ServiceForm = ({ onBack }) => {
         }
     };
 
+    const handleTechnicianSearch = async (query) => {
+        setTechnician(query);
+        setTechnicianId('');
+        
+        // Always open dropdown if there's any text or on focused empty search
+        setTechDropdownOpen(true);
+
+        if (!query.trim()) {
+            setTechnicianSearchResults([]);
+            // Optionally: could load all technicians here if API supports it
+            // For now, just clear results
+            setTechDropdownOpen(false);
+            return;
+        }
+
+        setTechLoading(true);
+        try {
+            const licenseKey = localStorage.getItem("licenseKey") || "ILT_LIC_9988056";
+            const imei = localStorage.getItem("imei") || "ILTUKAInpackPro1";
+            const pin = localStorage.getItem("pin") || "2255";
+            const internalUserId = localStorage.getItem("internalUserId") || "41";
+
+            const branchName = localStorage.getItem("branchId") || "";
+            const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
+            const branchObj = branchDetails.find(b => b.branch_id === branchName);
+            const branchId = branchObj ? branchObj.internal_branch_id : "2";
+
+            const url = `/api2025/InPackService.asmx/loadAutoFill?SearchFrom=serviceengineers&SearchField=ServiceEngineerName&InternalBranchID=${branchId}&InternalUserID=${internalUserId}&PageNo=1&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&ServiceEngineerName=${encodeURIComponent(query)}&Query=${encodeURIComponent(query)}`;
+            
+            const res = await fetch(url);
+            const text = await res.text();
+
+            let jsonStr = '';
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const stringEl = xmlDoc.getElementsByTagName('string')[0];
+                if (stringEl && stringEl.textContent) {
+                    jsonStr = stringEl.textContent;
+                } else {
+                    const m = text.match(/\{[\s\S]*\}/);
+                    if (m) jsonStr = m[0];
+                    else jsonStr = text;
+                }
+            } catch (e) {
+                jsonStr = text;
+            }
+
+            if (jsonStr) {
+                try {
+                    const data = JSON.parse(jsonStr);
+                    if (data.success || data.ServiceEngineerName) {
+                        const allResults = data.ServiceEngineerName || [];
+                        
+                        // Robust mapping: check for 'value' OR 'ServiceEngineerName' OR 'Name'
+                        const mapped = allResults.map(tech => ({
+                            name: tech.value || tech.ServiceEngineerName || tech.Name || 'Unknown',
+                            id: tech.InternalID || tech.internal_service_engineer_id || tech.ID || ''
+                        }));
+
+                        // Client-side filter to be absolutely sure
+                        const filtered = mapped.filter(tech => 
+                            tech.name.toLowerCase().includes(query.toLowerCase())
+                        );
+
+                        setTechnicianSearchResults(filtered);
+                        setTechDropdownOpen(filtered.length > 0);
+                    } else {
+                        setTechnicianSearchResults([]);
+                        setTechDropdownOpen(false);
+                    }
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    setTechnicianSearchResults([]);
+                }
+            }
+        } catch (err) {
+            console.error('Technician search error:', err);
+        } finally {
+            setTechLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        setSaveMessage({ text: 'Saving job entry...', type: '' });
+
+        try {
+            const licenseKey = localStorage.getItem("licenseKey") || "ILT_LIC_9988056";
+            const imei = localStorage.getItem("imei") || "ILTUKAInpackPro1";
+            const pin = localStorage.getItem("pin") || "2255";
+            const internalUserId = localStorage.getItem("internalUserId") || "41";
+            
+            const branchName = localStorage.getItem("branchId") || "";
+            const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
+            const branchObj = branchDetails.find(b => b.branch_id === branchName);
+            const internalBranchId = branchObj ? branchObj.internal_branch_id : "2";
+
+            const serviceTypeMap = { quick: 1, backend: 2, field: 3 };
+            const warrantyMap = { warranty: 1, out: 2, non: 3 };
+
+            const details = {
+                Status: status || "New Job",
+                InternalServiceID: "0",
+                ServiceID: "",
+                InternalLocationID: String(internalBranchId),
+                BillDate: jobReceived || new Date().toISOString().slice(0, 10),
+                Warranty: String(warrantyMap[warranty] || 1),
+                QuickService: String(serviceTypeMap[serviceType] || 2),
+                DueDate: expectedDate || new Date().toISOString().slice(0, 10),
+                Name: custName || "Walk-in Customer",
+                Address1: custAddress || "",
+                PhoneNo: phone || "",
+                ProductType: "0",
+                InternalPhoneDetailsID: brandId || "0",
+                InternalColourID: colorId || "0",
+                InternalModelID: modelId || "0",
+                InternalComplaintID: complaintId || "0",
+                Accessory: collect || "",
+                IMEI: serial1 || "",
+                InnerIMEI: serial2 || "",
+                InternalAccessoryID: "0",
+                AccessorySerialNo: "",
+                ModificationDate: new Date().toISOString().slice(0, 10),
+                InternalTechnicianID: technicianId || "0",
+                AdvanceAmount: advanceReceived || "0",
+                EstimatedAmount: estimatedAmount || "0",
+                InternalAccountsID: "0",
+                InternalAdvanceCashAccountID: paymentSelections['Cash']?.id || "0",
+                InternalAdvanceCardAccountID: paymentSelections['Federal Bank Swiping']?.id || "0",
+                InternalAdvanceUPIAccountID: paymentSelections['Google Pay']?.id || "0",
+                InternalAdvanceFinancierAccountID: paymentSelections['Bajaj FinServ']?.id || "0",
+                InternalAdvanceWalletAccountID: paymentSelections['Margin Free']?.id || "0",
+                AdvanceCashAmount: paymentAmounts['Cash'] || "0",
+                AdvanceCardAmount: paymentAmounts['Federal Bank Swiping'] || "0",
+                AdvanceUPIAmount: paymentAmounts['Google Pay'] || "0",
+                AdvanceFinancierAmount: paymentAmounts['Bajaj FinServ'] || "0",
+                AdvanceWalletAmount: paymentAmounts['Margin Free'] || "0",
+                InternalUserID: internalUserId,
+                RecMod: "N",
+                RecFlag: "0",
+                InternalSeriesID: "0",
+                GenerateNo: "TRUE",
+                Pattern: "",
+                Password: "",
+                InternalImageID: "",
+                PinNumber: ""
+            };
+
+            console.log('Saving Job Entry Details:', details);
+
+            const url = `/api2025/InPackService.asmx/saveJobEntryDetails?JobEntryDetails=${encodeURIComponent(JSON.stringify(details))}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}`;
+
+            const res = await fetch(url);
+            const text = await res.text();
+
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, 'text/xml');
+            const stringEl = xmlDoc.getElementsByTagName('string')[0];
+            let jsonStr = '';
+            if (stringEl && stringEl.textContent) {
+                jsonStr = stringEl.textContent;
+            } else {
+                const m = text.match(/\{[\s\S]*\}/);
+                if (m) jsonStr = m[0];
+            }
+
+            if (jsonStr) {
+                const data = JSON.parse(jsonStr);
+                if (data.success) {
+                    setSaveMessage({ text: `Job entry saved successfully! (ID: ${data.internal_service_id})`, type: 'success' });
+                    setTimeout(() => {
+                        onBack();
+                    }, 2000);
+                } else {
+                    setSaveMessage({ text: data.message || 'Failed to save job entry.', type: 'error' });
+                }
+            } else {
+                setSaveMessage({ text: 'Internal Server Error or Invalid Response.', type: 'error' });
+            }
+        } catch (err) {
+            console.error('saveJobEntryDetails error:', err);
+            setSaveMessage({ text: 'Network error. Please try again.', type: 'error' });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     return (
         <>
             <div className="je-form-page">
@@ -697,7 +944,7 @@ const ServiceForm = ({ onBack }) => {
                                     type="tel"
                                     className="je-input"
                                     placeholder="Customer Phone number"
-                                    value={phone}
+                                    value={phone || ''}
                                     onChange={e => handlePhoneSearch(e.target.value)}
                                     autoComplete="off"
                                 />
@@ -773,7 +1020,7 @@ const ServiceForm = ({ onBack }) => {
                     {/* ── Product Details ───────────────────────────── */}
                     <div className="je-section">
                         <h2 className="je-section-title">Product Details</h2>
-                        <div className="je-card je-product-card">
+                        <div className="je-card je-product-card" style={{ overflow: 'visible' }}>
                             <div className="je-unified-grid-container">
                                 {/* Row 1: Brand + Model */}
                                 <div className="je-input-row je-grid-left-item">
@@ -781,7 +1028,7 @@ const ServiceForm = ({ onBack }) => {
                                     <input
                                         className="je-input"
                                         placeholder="Brand"
-                                        value={brand}
+                                        value={brand || ''}
                                         readOnly
                                         style={{ cursor: 'pointer' }}
                                         onDoubleClick={() => openPicker('brand')}
@@ -801,7 +1048,7 @@ const ServiceForm = ({ onBack }) => {
                                     <input
                                         className="je-input"
                                         placeholder="Model"
-                                        value={model}
+                                        value={model || ''}
                                         readOnly
                                         style={{ cursor: 'pointer' }}
                                         onDoubleClick={() => openPicker('model')}
@@ -822,7 +1069,7 @@ const ServiceForm = ({ onBack }) => {
                                     <input
                                         className="je-input"
                                         placeholder="Color"
-                                        value={color}
+                                        value={color || ''}
                                         readOnly
                                         style={{ cursor: 'pointer' }}
                                         onDoubleClick={() => openPicker('color')}
@@ -842,7 +1089,7 @@ const ServiceForm = ({ onBack }) => {
                                     <input
                                         className="je-input"
                                         placeholder="Collect"
-                                        value={collect}
+                                        value={collect || ''}
                                         readOnly
                                         style={{ cursor: 'pointer' }}
                                         onDoubleClick={() => openPicker('collect')}
@@ -863,7 +1110,7 @@ const ServiceForm = ({ onBack }) => {
                                     <input
                                         className="je-input"
                                         placeholder="Status"
-                                        value={status}
+                                        value={status || ''}
                                         readOnly
                                         style={{ cursor: 'pointer' }}
                                         onDoubleClick={() => openPicker('status')}
@@ -883,7 +1130,7 @@ const ServiceForm = ({ onBack }) => {
                                     <input
                                         className="je-input"
                                         placeholder="Complaint"
-                                        value={complaint}
+                                        value={complaint || ''}
                                         readOnly
                                         style={{ cursor: 'pointer' }}
                                         onDoubleClick={() => openPicker('complaint')}
@@ -927,9 +1174,71 @@ const ServiceForm = ({ onBack }) => {
                                 </div>
 
                                 {/* Row 6: Technician (Full Width) */}
-                                <div className="je-grid-full-width je-input-row je-border-top">
+                                <div className="je-grid-full-width je-input-row je-border-top" style={{ position: 'relative' }} ref={technicianContainerRef}>
                                     <i className="fa-solid fa-user-gear je-field-icon"></i>
-                                    <input className="je-input" placeholder="Technician" value={technician} onChange={e => setTechnician(e.target.value)} />
+                                    <input
+                                        className="je-input"
+                                        placeholder="Technician"
+                                        value={technician}
+                                        onChange={e => handleTechnicianSearch(e.target.value)}
+                                        onFocus={() => { if(technician) handleTechnicianSearch(technician); }}
+                                        autoComplete="off"
+                                    />
+                                    {techLoading ? (
+                                        <i className="fa-solid fa-spinner fa-spin je-field-icon-right"></i>
+                                    ) : technician && (
+                                        <button className="je-modal-x" onClick={() => { setTechnician(''); setTechnicianId(''); setTechnicianSearchResults([]); }}>
+                                            <i className="fa-solid fa-xmark"></i>
+                                        </button>
+                                    )}
+
+                                    {techDropdownOpen && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '100%',
+                                            left: 0,
+                                            right: 0,
+                                            background: '#fff',
+                                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                            border: '1px solid #e2e8f0',
+                                            borderRadius: '8px',
+                                            zIndex: 100,
+                                            maxHeight: '200px',
+                                            overflowY: 'auto',
+                                            marginTop: '4px',
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }}>
+                                            {technicianSearchResults.length > 0 ? (
+                                                technicianSearchResults.map((tech, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        style={{
+                                                            padding: '12px 16px',
+                                                            borderBottom: '1px solid #f1f5f9',
+                                                            cursor: 'pointer',
+                                                            display: 'flex',
+                                                            alignItems: 'center'
+                                                        }}
+                                                        onClick={() => {
+                                                            setTechnician(tech.name || '');
+                                                            setTechnicianId(tech.id || '');
+                                                            setTechnicianSearchResults([]);
+                                                            setTechDropdownOpen(false);
+                                                        }}
+                                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                    >
+                                                        <span style={{ fontWeight: '600', color: '#1e293b' }}>{tech.name}</span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div style={{ padding: '12px 16px', color: '#94a3b8', fontSize: '13px', textAlign: 'center' }}>
+                                                    No technicians found
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Row 7: Attachments (Full Width) */}
@@ -996,7 +1305,13 @@ const ServiceForm = ({ onBack }) => {
                                     <label className="je-terms-label">Estimated Amount</label>
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
-                                        <input className="je-terms-native-input" placeholder="0.00" type="number" value={estimatedAmount} onChange={e => setEstimatedAmount(e.target.value)} />
+                                        <input 
+                                            className="je-terms-native-input" 
+                                            placeholder="0.00" 
+                                            type="number" 
+                                            value={estimatedAmount || ''} 
+                                            onChange={e => setEstimatedAmount(e.target.value)} 
+                                        />
                                     </div>
                                 </div>
                                 <div className="je-v-line je-border-top"></div>
@@ -1004,7 +1319,13 @@ const ServiceForm = ({ onBack }) => {
                                     <label className="je-terms-label">Advance Received</label>
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
-                                        <input className="je-terms-native-input" placeholder="0.00" type="number" value={advanceReceived} onChange={e => setAdvanceReceived(e.target.value)} />
+                                        <input 
+                                            className="je-terms-native-input" 
+                                            placeholder="0.00" 
+                                            type="number" 
+                                            value={advanceReceived || ''} 
+                                            onChange={e => setAdvanceReceived(e.target.value)} 
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -1073,8 +1394,18 @@ const ServiceForm = ({ onBack }) => {
                                                     className="je-split-amt"
                                                     placeholder="0.00"
                                                     type="number"
+                                                    value={paymentAmounts[split.method] || ''}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setPaymentAmounts(prev => ({ ...prev, [split.method]: val }));
+                                                    }}
                                                 />
-                                                <button className="je-split-x-btn"><i className="fa-solid fa-xmark"></i></button>
+                                                <button 
+                                                    className="je-split-x-btn"
+                                                    onClick={() => setPaymentAmounts(prev => ({ ...prev, [split.method]: '' }))}
+                                                >
+                                                    <i className="fa-solid fa-xmark"></i>
+                                                </button>
                                             </div>
 
                                         </div>
@@ -1143,10 +1474,29 @@ const ServiceForm = ({ onBack }) => {
                         )}
                     </div>
 
+                    {/* Feedback Message */}
+                    {saveMessage.text && (
+                        <div className={`je-save-feedback ${saveMessage.type}`}>
+                            {saveMessage.type === 'success' ? <i className="fa-solid fa-circle-check"></i> : 
+                             saveMessage.type === 'error' ? <i className="fa-solid fa-circle-xmark"></i> :
+                             <i className="fa-solid fa-spinner fa-spin"></i>}
+                            <span>{saveMessage.text}</span>
+                        </div>
+                    )}
+
                     {/* Save Button */}
                     <div className="je-full-save-button-container">
-                        <button className="je-full-save-btn" onClick={onBack}>
-                            Save
+                        <button 
+                            className={`je-full-save-btn ${isSaving ? 'saving' : ''}`}
+                            onClick={handleSave}
+                            disabled={isSaving}
+                        >
+                            {isSaving ? (
+                                <>
+                                    <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: 8 }}></i>
+                                    Saving...
+                                </>
+                            ) : 'Save'}
                         </button>
                     </div>
                 </div>
@@ -1204,7 +1554,10 @@ const ServiceForm = ({ onBack }) => {
                             ) : activeOptions.length > 0 ? activeOptions.map((opt, i) => (
                                 <button
                                     key={i}
-                                    className={`je-brand-chip ${FIELD_VALUES[activePicker] === opt.label ? 'active' : ''}`}
+                                    className={`je-brand-chip ${activePicker === 'collect'
+                                        ? (collect.split(', ').includes(opt.label) ? 'active' : '')
+                                        : (FIELD_VALUES[activePicker] === opt.label ? 'active' : '')
+                                        }`}
                                     onClick={() => handlePickerSelect(opt)}
                                 >
                                     {opt.label}
@@ -1214,10 +1567,15 @@ const ServiceForm = ({ onBack }) => {
                             )}
                         </div>
 
-                        {/* Cancel */}
-                        <button className="je-brand-cancel-btn" onClick={closePicker}>
-                            Cancel
-                        </button>
+                        {/* Actions */}
+                        <div className="je-picker-actions">
+                            <button
+                                className={`je-brand-cancel-btn ${activePicker === 'collect' ? 'je-brand-done-btn' : ''}`}
+                                onClick={closePicker}
+                            >
+                                {activePicker === 'collect' ? 'Done' : 'Cancel'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -1239,7 +1597,7 @@ const ServiceForm = ({ onBack }) => {
                                 <input
                                     className="je-input"
                                     placeholder="Customer Name"
-                                    value={custName}
+                                    value={custName || ''}
                                     onChange={e => handleCustomerSearch(e.target.value)}
                                     autoComplete="off"
                                 />
@@ -1365,7 +1723,7 @@ const ServiceForm = ({ onBack }) => {
                             </div>
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-solid fa-location-dot je-field-icon"></i>
-                                <input className="je-input" placeholder="Address" value={custAddress} onChange={e => setCustAddress(e.target.value)} />
+                                <input className="je-input" placeholder="Address" value={custAddress || ''} onChange={e => setCustAddress(e.target.value)} />
                             </div>
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-regular fa-id-card je-field-icon"></i>
@@ -1598,8 +1956,9 @@ const JobEntry = () => {
     const [filterType, setFilterType] = useState('All');
     const [filterPhone, setFilterPhone] = useState('');
     const [filterName, setFilterName] = useState('');
-    const [filterImei, setFilterImei] = useState('');
+     const [filterImei, setFilterImei] = useState('');
     const [filterBill, setFilterBill] = useState('');
+    const [filterTechnician, setFilterTechnician] = useState('');
 
     if (view === 'form') {
         return <ServiceForm onBack={() => setView('list')} />;
@@ -1742,9 +2101,13 @@ const JobEntry = () => {
                                 <input className="je-input" placeholder="IMEI Number" value={filterImei} onChange={e => setFilterImei(e.target.value)} />
                                 {filterImei && <button className="je-modal-x" onClick={() => setFilterImei('')}><i className="fa-solid fa-xmark"></i></button>}
                             </div>
-                            <div className="je-filter-field">
+                             <div className="je-filter-field">
                                 <input className="je-input" placeholder="Bill Number" value={filterBill} onChange={e => setFilterBill(e.target.value)} />
                                 {filterBill && <button className="je-modal-x" onClick={() => setFilterBill('')}><i className="fa-solid fa-xmark"></i></button>}
+                            </div>
+                            <div className="je-filter-field">
+                                <input className="je-input" placeholder="Technician Name" value={filterTechnician} onChange={e => setFilterTechnician(e.target.value)} />
+                                {filterTechnician && <button className="je-modal-x" onClick={() => setFilterTechnician('')}><i className="fa-solid fa-xmark"></i></button>}
                             </div>
                         </div>
 

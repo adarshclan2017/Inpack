@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Otp from "../pages/Otp";
 import BranchSelect from "../pages/BranchSelect";
@@ -23,6 +23,7 @@ export const router = createBrowserRouter([
   { path: "/cash", element: <CashTransaction /> },
   { path: "/bank", element: <BankTransaction /> },
   { path: "/job-entry", element: <JobEntry /> },
+  { path: "/jobentry", element: <Navigate to="/job-entry" replace /> },
   { path: "/job-done", element: <JobDone /> },
   { path: "/job-delivery", element: <JobDelivery /> },
 ]);
