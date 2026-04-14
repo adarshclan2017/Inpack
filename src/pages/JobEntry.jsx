@@ -33,6 +33,7 @@ const ServiceForm = ({ onBack }) => {
     const [techLoading, setTechLoading] = useState(false);
     const [techDropdownOpen, setTechDropdownOpen] = useState(false);
     const technicianContainerRef = useRef(null);
+    const [openPaymentDropdown, setOpenPaymentDropdown] = useState(null); // key: split.method
 
     // ── Payment Groups (from loadSalesForm API) ─────────────
     const [paymentGroups, setPaymentGroups] = useState({
@@ -128,7 +129,7 @@ const ServiceForm = ({ onBack }) => {
     useEffect(() => {
         const fetchSalesForm = async () => {
             try {
-                const branchName = localStorage.getItem("branchId") || ""; 
+                const branchName = localStorage.getItem("branchId") || "";
                 const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
                 const branchObj = branchDetails.find(b => b.branch_id === branchName);
                 const branchId = branchObj ? branchObj.internal_branch_id : "2";
@@ -549,12 +550,16 @@ const ServiceForm = ({ onBack }) => {
             const insideMain = phoneContainerRef.current && phoneContainerRef.current.contains(event.target);
             const insideModal = modalPhoneContainerRef.current && modalPhoneContainerRef.current.contains(event.target);
             const insideTech = technicianContainerRef.current && technicianContainerRef.current.contains(event.target);
+            const insidePaymentDropdown = event.target.closest('.je-split-custom-select');
 
             if (!insideMain && !insideModal) {
                 setPhoneSearchResults([]);
             }
             if (!insideTech) {
                 setTechDropdownOpen(false);
+            }
+            if (!insidePaymentDropdown) {
+                setOpenPaymentDropdown(null);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -712,7 +717,7 @@ const ServiceForm = ({ onBack }) => {
     const handleTechnicianSearch = async (query) => {
         setTechnician(query);
         setTechnicianId('');
-        
+
         // Always open dropdown if there's any text or on focused empty search
         setTechDropdownOpen(true);
 
@@ -737,7 +742,7 @@ const ServiceForm = ({ onBack }) => {
             const branchId = branchObj ? branchObj.internal_branch_id : "2";
 
             const url = `/api2025/InPackService.asmx/loadAutoFill?SearchFrom=serviceengineers&SearchField=ServiceEngineerName&InternalBranchID=${branchId}&InternalUserID=${internalUserId}&PageNo=1&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&ServiceEngineerName=${encodeURIComponent(query)}&Query=${encodeURIComponent(query)}`;
-            
+
             const res = await fetch(url);
             const text = await res.text();
 
@@ -762,7 +767,7 @@ const ServiceForm = ({ onBack }) => {
                     const data = JSON.parse(jsonStr);
                     if (data.success || data.ServiceEngineerName) {
                         const allResults = data.ServiceEngineerName || [];
-                        
+
                         // Robust mapping: check for 'value' OR 'ServiceEngineerName' OR 'Name'
                         const mapped = allResults.map(tech => ({
                             name: tech.value || tech.ServiceEngineerName || tech.Name || 'Unknown',
@@ -770,7 +775,7 @@ const ServiceForm = ({ onBack }) => {
                         }));
 
                         // Client-side filter to be absolutely sure
-                        const filtered = mapped.filter(tech => 
+                        const filtered = mapped.filter(tech =>
                             tech.name.toLowerCase().includes(query.toLowerCase())
                         );
 
@@ -801,7 +806,7 @@ const ServiceForm = ({ onBack }) => {
             const imei = localStorage.getItem("imei") || "ILTUKAInpackPro1";
             const pin = localStorage.getItem("pin") || "2255";
             const internalUserId = localStorage.getItem("internalUserId") || "41";
-            
+
             const branchName = localStorage.getItem("branchId") || "";
             const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
             const branchObj = branchDetails.find(b => b.branch_id === branchName);
@@ -1181,7 +1186,7 @@ const ServiceForm = ({ onBack }) => {
                                         placeholder="Technician"
                                         value={technician}
                                         onChange={e => handleTechnicianSearch(e.target.value)}
-                                        onFocus={() => { if(technician) handleTechnicianSearch(technician); }}
+                                        onFocus={() => { if (technician) handleTechnicianSearch(technician); }}
                                         autoComplete="off"
                                     />
                                     {techLoading ? (
@@ -1269,7 +1274,7 @@ const ServiceForm = ({ onBack }) => {
                     {/* ── Terms ─────────────────────────────────────── */}
                     <div className="je-section">
                         <h2 className="je-section-title">Terms</h2>
-                        <div className="je-card je-terms-card" style={{ padding: 0 }}>
+                        <div className="je-card je-terms-card" style={{ padding: 0, overflow: 'visible' }}>
                             <div className="je-unified-grid-container">
                                 {/* Row 1: Expected date + Job received */}
                                 <div className="je-terms-field je-grid-left-item" style={{ padding: '12px 14px' }}>
@@ -1305,12 +1310,12 @@ const ServiceForm = ({ onBack }) => {
                                     <label className="je-terms-label">Estimated Amount</label>
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
-                                        <input 
-                                            className="je-terms-native-input" 
-                                            placeholder="0.00" 
-                                            type="number" 
-                                            value={estimatedAmount || ''} 
-                                            onChange={e => setEstimatedAmount(e.target.value)} 
+                                        <input
+                                            className="je-terms-native-input"
+                                            placeholder="0.00"
+                                            type="number"
+                                            value={estimatedAmount || ''}
+                                            onChange={e => setEstimatedAmount(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -1319,12 +1324,12 @@ const ServiceForm = ({ onBack }) => {
                                     <label className="je-terms-label">Advance Received</label>
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
-                                        <input 
-                                            className="je-terms-native-input" 
-                                            placeholder="0.00" 
-                                            type="number" 
-                                            value={advanceReceived || ''} 
-                                            onChange={e => setAdvanceReceived(e.target.value)} 
+                                        <input
+                                            className="je-terms-native-input"
+                                            placeholder="0.00"
+                                            type="number"
+                                            value={advanceReceived || ''}
+                                            onChange={e => setAdvanceReceived(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -1358,31 +1363,41 @@ const ServiceForm = ({ onBack }) => {
                                             <div className="je-split-pill je-split-pill--method">
                                                 <span className="je-split-pill-icon"><i className={split.icon}></i></span>
                                                 {split.hasDropdown ? (
-                                                    <select
-                                                        className="je-split-pill-select"
-                                                        value={paymentSelections[split.method]?.id || paymentSelections[split.method]?.name || ''}
-                                                        onChange={(e) => {
-                                                            const selectedId = e.target.value;
-                                                            const group = paymentGroups[split.groupKey] || [];
-                                                            const selectedItem = group.find(item => item.InternalAccountsID === selectedId);
-                                                            if (selectedItem) {
-                                                                setPaymentSelections(prev => ({
-                                                                    ...prev,
-                                                                    [split.method]: { name: selectedItem.AccountsName, id: selectedId }
-                                                                }));
-                                                            }
+                                                    <div
+                                                        className="je-split-custom-select"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setOpenPaymentDropdown(prev => prev === split.method ? null : split.method);
                                                         }}
                                                     >
-                                                        {(paymentGroups[split.groupKey] || []).length > 0 ? (
-                                                            paymentGroups[split.groupKey].map((item) => (
-                                                                <option key={item.InternalAccountsID} value={item.InternalAccountsID}>
-                                                                    {item.AccountsName}
-                                                                </option>
-                                                            ))
-                                                        ) : (
-                                                            <option value="">{split.method}</option>
+                                                        <span className="je-split-custom-value">
+                                                            {paymentSelections[split.method]?.name || split.method}
+                                                        </span>
+                                                        <i className="fa-solid fa-chevron-down je-split-custom-chevron"></i>
+                                                        {openPaymentDropdown === split.method && (
+                                                            <div className="je-split-custom-options" onClick={e => e.stopPropagation()}>
+                                                                {(paymentGroups[split.groupKey] || []).length > 0 ? (
+                                                                    paymentGroups[split.groupKey].map((item) => (
+                                                                        <div
+                                                                            key={item.InternalAccountsID}
+                                                                            className={`je-split-custom-option ${paymentSelections[split.method]?.id === item.InternalAccountsID ? 'active' : ''}`}
+                                                                            onClick={() => {
+                                                                                setPaymentSelections(prev => ({
+                                                                                    ...prev,
+                                                                                    [split.method]: { name: item.AccountsName, id: item.InternalAccountsID }
+                                                                                }));
+                                                                                setOpenPaymentDropdown(null);
+                                                                            }}
+                                                                        >
+                                                                            {item.AccountsName}
+                                                                        </div>
+                                                                    ))
+                                                                ) : (
+                                                                    <div className="je-split-custom-option">{split.method}</div>
+                                                                )}
+                                                            </div>
                                                         )}
-                                                    </select>
+                                                    </div>
                                                 ) : (
                                                     <span className="je-split-pill-name">{split.method}</span>
                                                 )}
@@ -1400,7 +1415,7 @@ const ServiceForm = ({ onBack }) => {
                                                         setPaymentAmounts(prev => ({ ...prev, [split.method]: val }));
                                                     }}
                                                 />
-                                                <button 
+                                                <button
                                                     className="je-split-x-btn"
                                                     onClick={() => setPaymentAmounts(prev => ({ ...prev, [split.method]: '' }))}
                                                 >
@@ -1477,16 +1492,16 @@ const ServiceForm = ({ onBack }) => {
                     {/* Feedback Message */}
                     {saveMessage.text && (
                         <div className={`je-save-feedback ${saveMessage.type}`}>
-                            {saveMessage.type === 'success' ? <i className="fa-solid fa-circle-check"></i> : 
-                             saveMessage.type === 'error' ? <i className="fa-solid fa-circle-xmark"></i> :
-                             <i className="fa-solid fa-spinner fa-spin"></i>}
+                            {saveMessage.type === 'success' ? <i className="fa-solid fa-circle-check"></i> :
+                                saveMessage.type === 'error' ? <i className="fa-solid fa-circle-xmark"></i> :
+                                    <i className="fa-solid fa-spinner fa-spin"></i>}
                             <span>{saveMessage.text}</span>
                         </div>
                     )}
 
                     {/* Save Button */}
                     <div className="je-full-save-button-container">
-                        <button 
+                        <button
                             className={`je-full-save-btn ${isSaving ? 'saving' : ''}`}
                             onClick={handleSave}
                             disabled={isSaving}
@@ -1956,7 +1971,7 @@ const JobEntry = () => {
     const [filterType, setFilterType] = useState('All');
     const [filterPhone, setFilterPhone] = useState('');
     const [filterName, setFilterName] = useState('');
-     const [filterImei, setFilterImei] = useState('');
+    const [filterImei, setFilterImei] = useState('');
     const [filterBill, setFilterBill] = useState('');
     const [filterTechnician, setFilterTechnician] = useState('');
 
@@ -2101,7 +2116,7 @@ const JobEntry = () => {
                                 <input className="je-input" placeholder="IMEI Number" value={filterImei} onChange={e => setFilterImei(e.target.value)} />
                                 {filterImei && <button className="je-modal-x" onClick={() => setFilterImei('')}><i className="fa-solid fa-xmark"></i></button>}
                             </div>
-                             <div className="je-filter-field">
+                            <div className="je-filter-field">
                                 <input className="je-input" placeholder="Bill Number" value={filterBill} onChange={e => setFilterBill(e.target.value)} />
                                 {filterBill && <button className="je-modal-x" onClick={() => setFilterBill('')}><i className="fa-solid fa-xmark"></i></button>}
                             </div>

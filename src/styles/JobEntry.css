@@ -126,8 +126,15 @@
 }
 
 @keyframes je-slide-up {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .je-empty-text {
@@ -1639,27 +1646,90 @@
     flex-shrink: 0;
 }
 
-.je-split-pill-select {
+/* ── Custom Payment Dropdown (replaces native select for mobile parity) ── */
+.je-split-custom-select {
     flex: 1;
-    border: none;
-    background: transparent;
-    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    position: relative;
+    min-width: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.je-split-custom-value {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.je-split-custom-chevron {
+    color: #0284c7;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.je-split-custom-select:has(.je-split-custom-options) .je-split-custom-chevron {
+    transform: rotate(180deg);
+}
+
+.je-split-custom-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: -46px; /* offset to cover the icon on the left */
+    width: calc(100% + 56px); /* 46px left offset + 10px right padding of pill */
+    background: #ffffff;
+    border: 1.5px solid #bae6fd;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 500;
+    max-height: 200px;
+    overflow-y: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    animation: je-slide-up 0.15s ease;
+}
+
+.je-split-custom-options::-webkit-scrollbar {
+    display: none;
+}
+
+.je-split-custom-option {
+    padding: 11px 16px;
     font-size: 13px;
     font-weight: 500;
     color: #1e293b;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%230284c7'%3e%3cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 2px center;
-    background-size: 14px;
-    padding-right: 18px;
-    min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    transition: background 0.12s;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.je-split-custom-option:last-child {
+    border-bottom: none;
+}
+
+.je-split-custom-option:hover {
+    background: #f0f9ff;
+    color: #0284c7;
+}
+
+.je-split-custom-option.active {
+    background: #0284c7;
+    color: #ffffff;
+}
+
+.je-split-custom-option.active:hover {
+    background: #0369a1;
 }
 
 .je-split-pill-name {
