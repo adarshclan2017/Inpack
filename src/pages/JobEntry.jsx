@@ -1986,6 +1986,24 @@ const JobEntry = () => {
     const [filterBillResults, setFilterBillResults] = useState([]);
     const [filterBillDropdown, setFilterBillDropdown] = useState(false);
 
+    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+    const statusDropdownRef = useRef(null);
+
+    // Close status dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+                setStatusDropdownOpen(false);
+            }
+        };
+        if (statusDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [statusDropdownOpen]);
+
     const fetchAutoFillInfo = async (query, searchField, setResults, setDropdown) => {
         if (!query.trim()) {
             setResults([]);
@@ -2245,19 +2263,36 @@ const JobEntry = () => {
                             </div>
                         </div>
 
-                        {/* Filter Type Dropdown */}
-                        <div className="je-filter-select-wrap">
+                        {/* Filter Type Dropdown (UPI Style) */}
+                        <div className="je-filter-select-wrap" ref={statusDropdownRef}>
                             <i className="fa-solid fa-filter je-field-icon"></i>
-                            <select
-                                className="je-filter-select"
-                                value={internalTypeId}
-                                onChange={e => setInternalTypeId(Number(e.target.value))}
+                            <div 
+                                className="je-split-custom-select"
+                                onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
                             >
-                                {STATUS_OPTIONS.map(opt => (
-                                    <option key={opt.id} value={opt.id}>{opt.label}</option>
-                                ))}
-                            </select>
-                            <i className="fa-solid fa-chevron-down je-filter-chevron"></i>
+                                <span className="je-split-custom-value" style={{ fontSize: '14px' }}>
+                                    {STATUS_OPTIONS.find(opt => opt.id === internalTypeId)?.label || 'All'}
+                                </span>
+                                <i className={`fa-solid fa-chevron-down je-split-custom-chevron ${statusDropdownOpen ? 'open' : ''}`} style={{ fontSize: '12px' }}></i>
+                                
+                                {statusDropdownOpen && (
+                                    <div className="je-split-custom-options" style={{ left: 0, width: '100%', top: 'calc(100% + 8px)' }}>
+                                        {STATUS_OPTIONS.map(opt => (
+                                            <div 
+                                                key={opt.id}
+                                                className={`je-split-custom-option ${internalTypeId === opt.id ? 'active' : ''}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setInternalTypeId(opt.id);
+                                                    setStatusDropdownOpen(false);
+                                                }}
+                                            >
+                                                {opt.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Search Fields */}
