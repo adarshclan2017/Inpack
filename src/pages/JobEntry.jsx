@@ -1973,6 +1973,7 @@ const JobEntry = () => {
     const [filterName, setFilterName] = useState('');
     const [filterImei, setFilterImei] = useState('');
     const [filterBill, setFilterBill] = useState('');
+    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
     
     const [filterPhoneResults, setFilterPhoneResults] = useState([]);
     const [filterPhoneDropdown, setFilterPhoneDropdown] = useState(false);
@@ -2246,18 +2247,44 @@ const JobEntry = () => {
                         </div>
 
                         {/* Filter Type Dropdown */}
-                        <div className="je-filter-select-wrap">
+                        <div className="je-filter-select-wrap" style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}>
                             <i className="fa-solid fa-filter je-field-icon"></i>
-                            <select
-                                className="je-filter-select"
-                                value={internalTypeId}
-                                onChange={e => setInternalTypeId(Number(e.target.value))}
-                            >
-                                {STATUS_OPTIONS.map(opt => (
-                                    <option key={opt.id} value={opt.id}>{opt.label}</option>
-                                ))}
-                            </select>
-                            <i className="fa-solid fa-chevron-down je-filter-chevron"></i>
+                            <div className="je-split-custom-select" style={{ flex: 1, border: 'none', background: 'transparent', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <span className="je-split-custom-value" style={{ fontSize: '14px', color: '#1e293b', fontWeight: '500' }}>
+                                    {STATUS_OPTIONS.find(opt => opt.id === internalTypeId)?.label || 'All'}
+                                </span>
+                                <i className={`fa-solid fa-chevron-down je-split-custom-chevron ${statusDropdownOpen ? 'open' : ''}`} style={{ fontSize: '12px', color: '#64748b', transition: 'transform 0.2s' }}></i>
+                            </div>
+                            
+                            {statusDropdownOpen && (
+                                <div className="je-split-custom-options" style={{ 
+                                    position: 'absolute',
+                                    top: 'calc(100% + 4px)', 
+                                    left: '-1.5px', 
+                                    right: '-1.5px', 
+                                    width: 'auto',
+                                    display: 'block', 
+                                    zIndex: 1000,
+                                    border: '1.5px solid #0d9488',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 10px 25px rgba(13, 148, 136, 0.15)'
+                                }}>
+                                    {STATUS_OPTIONS.map(opt => (
+                                        <div 
+                                            key={opt.id} 
+                                            className={`je-split-custom-option ${internalTypeId === opt.id ? 'active' : ''}`}
+                                            style={{ padding: '12px 16px' }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setInternalTypeId(opt.id);
+                                                setStatusDropdownOpen(false);
+                                            }}
+                                        >
+                                            {opt.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Search Fields */}
