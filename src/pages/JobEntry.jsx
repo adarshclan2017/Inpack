@@ -1973,7 +1973,6 @@ const JobEntry = () => {
     const [filterName, setFilterName] = useState('');
     const [filterImei, setFilterImei] = useState('');
     const [filterBill, setFilterBill] = useState('');
-    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
     
     const [filterPhoneResults, setFilterPhoneResults] = useState([]);
     const [filterPhoneDropdown, setFilterPhoneDropdown] = useState(false);
@@ -2223,7 +2222,7 @@ const JobEntry = () => {
 
             {/* ── Filter Modal ─────────────────────────────── */}
             {showFilter && (
-                <div className="je-modal-overlay" onClick={() => setShowFilter(false)}>
+                <div className="je-modal-overlay je-bottom" onClick={() => setShowFilter(false)}>
                     <div className="je-filter-modal" onClick={e => e.stopPropagation()}>
                         <div className="je-modal-header">
                             <h2 className="je-modal-title">Service List Statement</h2>
@@ -2293,6 +2292,7 @@ const JobEntry = () => {
                                         ))}
                                     </div>
                                 )}
+                            </div>
                         </div>
 
                         {/* Search Fields */}
