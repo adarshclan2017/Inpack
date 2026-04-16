@@ -2416,7 +2416,7 @@ const JobEntry = () => {
                         </div>
 
                         <button className="je-modal-save-btn" onClick={() => { fetchServiceData(); setShowFilter(false); }}>
-                            Filter
+                            Filter.
                         </button>
                     </div>
                 </div>
