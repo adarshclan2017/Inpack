@@ -1001,6 +1001,14 @@
         min-height: 46px;
         border-radius: 10px;
         padding: 0 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .je-filter-field:focus-within {
+        border-color: #0d9488;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
     }
 
     /* ── Brand / Picker modal ────────────────────────────── */
@@ -1379,15 +1387,26 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    border: 1.5px solid #e2e8f0;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 0 12px;
     min-height: 50px;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    background: #f8fafc;
 }
 
 .je-filter-date-inner:focus-within {
     border-color: #0d9488;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+.je-filter-date-inner .je-filter-date-input {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
 }
 
 .je-filter-divider {
@@ -1414,12 +1433,19 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1.5px solid #0d9488;
+    border: 1px solid #0d9488;
     border-radius: 12px;
     padding: 0 14px;
     min-height: 50px;
     position: relative;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    background: #ffffff;
+}
+
+.je-filter-select-wrap .je-split-custom-select {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
 }
 
 .je-filter-select {
@@ -1453,15 +1479,26 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1.5px solid #e2e8f0;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 0 14px;
     min-height: 50px;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    background: #f8fafc;
 }
 
 .je-filter-field:focus-within {
     border-color: #0d9488;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+.je-filter-field .je-input {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1694,15 +1731,18 @@
     transition: transform 0.2s;
 }
 
-.je-split-custom-select:has(.je-split-custom-options) .je-split-custom-chevron {
+.je-split-custom-select:has(.je-split-custom-options) .je-split-custom-chevron,
+.je-split-custom-chevron.open {
     transform: rotate(180deg);
 }
 
 .je-split-custom-options {
     position: absolute;
     top: calc(100% + 6px);
-    left: -46px; /* offset to cover the icon on the left */
-    width: calc(100% + 56px); /* 46px left offset + 10px right padding of pill */
+    left: -46px;
+    /* offset to cover the icon on the left */
+    width: calc(100% + 56px);
+    /* 46px left offset + 10px right padding of pill */
     background: #ffffff;
     border: 1.5px solid #bae6fd;
     border-radius: 12px;
@@ -1710,8 +1750,10 @@
     z-index: 500;
     max-height: 200px;
     overflow-y: auto;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
     animation: je-slide-up 0.15s ease;
 }
 
