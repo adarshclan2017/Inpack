@@ -4,9 +4,9 @@ import '../styles/Servicelist.css';
 
 const Servicelist = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    
+
     const getTodayDate = () => new Date().toISOString().split('T')[0];
-    
+
     // Form state
     const [fromDate, setFromDate] = useState(getTodayDate());
     const [toDate, setToDate] = useState(getTodayDate());
@@ -35,7 +35,7 @@ const Servicelist = () => {
                     <i className="fa-solid fa-download" style={{ fontSize: '18px' }}></i>
                 </button>
             </div>
-            
+
             <div className="empty-state-wrapper fade-in-up">
                 <div className="illustration-container">
                     <div className="speech-bubble">
@@ -75,7 +75,7 @@ const Servicelist = () => {
                             <h3>Filter Service Statement</h3>
                             <i className="fa-regular fa-circle-xmark sl-close-btn" onClick={() => setIsFilterOpen(false)}></i>
                         </div>
-                        
+
                         <div className="sl-modal-body">
                             <div className="sl-filter-grid">
                                 {/* From Date */}
@@ -83,18 +83,18 @@ const Servicelist = () => {
                                     <div className="sl-input-content">
                                         <i className="fa-regular fa-calendar sl-icon"></i>
                                         <span className="sl-divider"></span>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             className="sl-input"
                                             placeholder="From Date"
-                                            value={formatOrPlaceholder(fromDate)} 
-                                            readOnly 
+                                            value={formatOrPlaceholder(fromDate)}
+                                            readOnly
                                         />
-                                        <input 
-                                            type="date" 
+                                        <input
+                                            type="date"
                                             className="sl-hidden-date"
-                                            value={fromDate} 
-                                            onChange={(e) => setFromDate(e.target.value)} 
+                                            value={fromDate}
+                                            onChange={(e) => setFromDate(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -104,18 +104,18 @@ const Servicelist = () => {
                                     <div className="sl-input-content">
                                         <i className="fa-regular fa-calendar sl-icon"></i>
                                         <span className="sl-divider"></span>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             className="sl-input"
                                             placeholder="To Date"
-                                            value={formatOrPlaceholder(toDate)} 
-                                            readOnly 
+                                            value={formatOrPlaceholder(toDate)}
+                                            readOnly
                                         />
-                                        <input 
-                                            type="date" 
+                                        <input
+                                            type="date"
                                             className="sl-hidden-date"
-                                            value={toDate} 
-                                            onChange={(e) => setToDate(e.target.value)} 
+                                            value={toDate}
+                                            onChange={(e) => setToDate(e.target.value)}
                                         />
                                     </div>
                                 </div>
