@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ServiceList from '../components/ServiceList';
 import '../styles/JobEntry.css';
 
 /* ─── Sub-component: Service Form ───────────────────────── */
-const ServiceForm = ({ onBack }) => {
+const ServiceForm = ({ onBack, editData = null }) => {
     const [serviceType, setServiceType] = useState('backend');
     const [phone, setPhone] = useState('');
     const [brand, setBrand] = useState('');
@@ -66,6 +67,50 @@ const ServiceForm = ({ onBack }) => {
     // -- Saving State --
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState({ text: '', type: '' }); // type: 'success' | 'error'
+
+    // ── Helper: Format Date for <input type="date"> ────────
+    const formatForDateInput = (dateStr) => {
+        if (!dateStr) return '';
+        
+        try {
+            // Case 1: DD-MM-YYYY (e.g. 17-04-2026)
+            if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+                const [d, m, y] = dateStr.split('-');
+                return `${y}-${m}-${d}`;
+            }
+
+            // Case 2: MMM D YYYY or MMM DD YYYY (e.g. "Apr 17 2026" or "Apr  7 2026")
+            const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+            const cleanStr = dateStr.replace(/\s+/g, ' ').trim();
+            const parts = cleanStr.split(' ');
+            
+            if (parts.length >= 3) {
+                const mIdx = months.indexOf(parts[0].substring(0, 3).toLowerCase());
+                const day = parseInt(parts[1], 10);
+                const year = parseInt(parts[2], 10);
+                
+                if (mIdx !== -1 && !isNaN(day) && !isNaN(year)) {
+                    const d = new Date(year, mIdx, day);
+                    if (!isNaN(d.getTime())) {
+                        // Use local YYYY-MM-DD to avoid timezone shifts
+                        const yyyy = d.getFullYear();
+                        const mm = String(d.getMonth() + 1).padStart(2, '0');
+                        const dd = String(d.getDate()).padStart(2, '0');
+                        return `${yyyy}-${mm}-${dd}`;
+                    }
+                }
+            }
+
+            // Case 3: Fallback for standard ISO or other formats
+            const d = new Date(dateStr);
+            if (!isNaN(d.getTime())) {
+                return d.toISOString().split('T')[0];
+            }
+        } catch (e) {
+            console.warn('Date formatting error:', e);
+        }
+        return '';
+    };
 
     // -- Payment Split Amounts --
     const [paymentAmounts, setPaymentAmounts] = useState({
@@ -195,6 +240,69 @@ const ServiceForm = ({ onBack }) => {
         };
         fetchSalesForm();
     }, []);
+
+    // ── Pre-populate form if editData is provided ──────────
+    useEffect(() => {
+        if (!editData) return;
+
+        console.log('Populating form with editData:', editData);
+
+        // Basic Info
+        setPhone(editData.PhoneNo || '');
+        setCustName(editData.Name || '');
+        setCustAddress(editData.Address1 || '');
+        setCustPhone(editData.PhoneNo || '');
+
+        // Product Info
+        setBrand(editData.LookUpPhoneDetails || editData.PhoneDetails || '');
+        setBrandId(String(editData.InternalPhoneDetailsID || '0'));
+        setModel(editData.LookUPModel || editData.Model || '');
+        setModelId(String(editData.InternalModelID || '0'));
+        setColor(editData.LookUPColour || editData.Colour || '');
+        setColorId(String(editData.InternalColourID || '0'));
+        setCollect(editData.Accessory || '');
+        
+        // Status & Complaint
+        setStatus(editData.Status || 'New Job');
+        setStatusId(String(editData.InternalStatusID || '0')); 
+        setComplaint(editData.LookUPComplaint || editData.Complaint || '');
+        setComplaintId(String(editData.InternalComplaintID || '0'));
+        
+        // Technician
+        setTechnician(editData.ServiceEngineerName || '');
+        setTechnicianId(String(editData.InternalEngineerID || '0'));
+
+        // Serial Numbers
+        setSerial1(editData.IMEI || '');
+        setSerial2(editData.InnerIMEI || '');
+
+        // Terms
+        setExpectedDate(formatForDateInput(editData.DueDate || editData.ReturnedDate));
+        setJobReceived(formatForDateInput(editData.BillDate));
+        setEstimatedAmount(editData.EstimateAmount || editData.EstimatedAmount || '');
+        setAdvanceReceived(editData.AdvanceAmount || editData.AdvanceReceived || '');
+
+        // Mappings
+        const serviceTypeReverseMap = { '1': 'quick', '2': 'backend', '3': 'field' };
+        setServiceType(serviceTypeReverseMap[String(editData.QuickService)] || 'backend');
+
+        const warrantyReverseMap = { '1': 'warranty', '2': 'out', '3': 'non' };
+        setWarranty(warrantyReverseMap[String(editData.Warranty)] || 'non');
+
+        // Multi-mode & Splits (Simplified for now)
+        if (editData.AdvanceCashAmount > 0 || editData.AdvanceCardAmount > 0 || editData.AdvanceUPIAmount > 0 || editData.AdvanceFinancierAmount > 0 || editData.AdvanceWalletAmount > 0) {
+            setMultiMode(true);
+            setPaymentAmounts({
+                Cash: editData.AdvanceCashAmount || '',
+                'Federal Bank Swiping': editData.AdvanceCardAmount || '',
+                'Google Pay': editData.AdvanceUPIAmount || '',
+                'Bajaj FinServ': editData.AdvanceFinancierAmount || '',
+                'Margin Free': editData.AdvanceWalletAmount || '',
+                Credit: ''
+            });
+        }
+
+    }, [editData]);
 
     const [activePicker, setActivePicker] = useState(null); // 'brand' | 'model' | 'color' | 'collect' | 'status' | 'complaint'
     const [pickerSearch, setPickerSearch] = useState('');
@@ -1962,54 +2070,12 @@ const ServiceForm = ({ onBack }) => {
 
 /* ─── Main Component: Job Entry List ─────────────────────── */
 const JobEntry = () => {
-    const navigate = useNavigate();
     const [view, setView] = useState('list');
-    const [showFilter, setShowFilter] = useState(false);
-    const today = new Date().toISOString().split('T')[0];
-    const [fromDate, setFromDate] = useState(today);
-    const [toDate, setToDate] = useState(today);
-    const [internalTypeId, setInternalTypeId] = useState(0);
-    const [filterPhone, setFilterPhone] = useState('');
-    const [filterName, setFilterName] = useState('');
-    const [filterImei, setFilterImei] = useState('');
-    const [filterBill, setFilterBill] = useState('');
-    
-    const [filterPhoneResults, setFilterPhoneResults] = useState([]);
-    const [filterPhoneDropdown, setFilterPhoneDropdown] = useState(false);
+    const [editData, setEditData] = useState(null);
 
-    const [filterNameResults, setFilterNameResults] = useState([]);
-    const [filterNameDropdown, setFilterNameDropdown] = useState(false);
-
-    const [filterImeiResults, setFilterImeiResults] = useState([]);
-    const [filterImeiDropdown, setFilterImeiDropdown] = useState(false);
-
-    const [filterBillResults, setFilterBillResults] = useState([]);
-    const [filterBillDropdown, setFilterBillDropdown] = useState(false);
-
-    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
-    const statusDropdownRef = useRef(null);
-
-    // Close status dropdown on outside click
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
-                setStatusDropdownOpen(false);
-            }
-        };
-        if (statusDropdownOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [statusDropdownOpen]);
-
-    const fetchAutoFillInfo = async (query, searchField, setResults, setDropdown) => {
-        if (!query.trim()) {
-            setResults([]);
-            setDropdown(false);
-            return;
-        }
+    const handleItemClick = async (item) => {
+        const internalId = item.InternalServiceID || item.ServiceID;
+        if (!internalId) return;
 
         try {
             const licenseKey = localStorage.getItem("licenseKey") || "ILT_LIC_9988056";
@@ -2017,85 +2083,8 @@ const JobEntry = () => {
             const pin = localStorage.getItem("pin") || "2255";
             const internalUserId = localStorage.getItem("internalUserId") || "41";
 
-            const branchName = localStorage.getItem("branchId") || "";
-            const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
-            const branchObj = branchDetails.find(b => b.branch_id === branchName);
-            const branchId = branchObj ? branchObj.internal_branch_id : "2";
-
-            const url = `/api2025/InPackService.asmx/loadAutoFill?SearchFrom=service&SearchField=${searchField}&InternalBranchID=${branchId}&InternalUserID=${internalUserId}&PageNo=1&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&Query=${encodeURIComponent(query)}`;
-
-            const res = await fetch(url);
-            const text = await res.text();
-
-            let jsonStr = '';
-            try {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, 'text/xml');
-                const stringEl = xmlDoc.getElementsByTagName('string')[0];
-                if (stringEl && stringEl.textContent) {
-                    jsonStr = stringEl.textContent;
-                } else {
-                    const m = text.match(/\{[\s\S]*\}/);
-                    if (m) jsonStr = m[0];
-                    else jsonStr = text;
-                }
-            } catch (e) {
-                jsonStr = text;
-            }
-
-            if (jsonStr) {
-                try {
-                    const data = JSON.parse(jsonStr);
-                    const results = data[searchField] || [];
-                    
-                    const mapped = results.map(item => ({
-                        value: item.value || '',
-                        id: item.InternalID || ''
-                    })).filter(i => i.value && i.value.toLowerCase().includes(query.toLowerCase()));
-
-                    setResults(mapped);
-                    setDropdown(mapped.length > 0);
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    setResults([]);
-                    setDropdown(false);
-                }
-            }
-        } catch (err) {
-            console.error('AutoFill error:', err);
-            setResults([]);
-            setDropdown(false);
-        }
-    };
-
-    const [serviceList, setServiceList] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const STATUS_OPTIONS = [
-        { id: 0, label: 'All' },
-        { id: 1, label: 'Not Alloted' },
-        { id: 2, label: 'Not Completed' },
-        { id: 3, label: 'Not Delivered' },
-        { id: 4, label: 'Delivered' },
-        { id: 5, label: 'Alloted But Not Completed' },
-        { id: 6, label: 'Completed But Not Delivered' },
-    ];
-
-    const fetchServiceData = async () => {
-        setIsLoading(true);
-        try {
-            const licenseKey = localStorage.getItem("licenseKey") || "ILT_LIC_9988056";
-            const imei = localStorage.getItem("imei") || "ILTUKAInpackPro1";
-            const pin = localStorage.getItem("pin") || "2255";
-            const internalUserId = localStorage.getItem("internalUserId") || "41";
-
-            const branchName = localStorage.getItem("branchId") || "";
-            const branchDetails = JSON.parse(localStorage.getItem("branch_details") || "[]");
-            const branchObj = branchDetails.find(b => b.branch_id === branchName);
-            const branchId = branchObj ? branchObj.internal_branch_id : "2";
-
-            const url = `/api2025/InPackService.asmx/loadRptServiceDetails?InternalBranchID=${branchId}&FromDate=${fromDate}&ToDate=${toDate}&PageNo=1&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalTypeID=${internalTypeId}&ServiceID=${encodeURIComponent(filterBill)}&SerialNo=${encodeURIComponent(filterImei)}&Name=${encodeURIComponent(filterName)}&PhoneNo=${encodeURIComponent(filterPhone)}`;
-
+            const url = `/api2025/InPackService.asmx/getJobEntryDetails?InternalServiceID=${internalId}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}`;
+            
             const res = await fetch(url);
             const text = await res.text();
 
@@ -2112,316 +2101,49 @@ const JobEntry = () => {
 
             if (jsonStr) {
                 const data = JSON.parse(jsonStr);
-                const results = data.services || data.Table || data.data || [];
-                setServiceList(Array.isArray(results) ? results : []);
+                // The API structure from getJobEntryDetails is data.service[0]
+                const record = (data.service && data.service[0]) ? data.service[0] : 
+                               (Array.isArray(data) ? data[0] : (data.Table ? data.Table[0] : (data.data ? data.data[0] : data)));
+                if (record) {
+                    setEditData(record);
+                    setView('form');
+                }
             }
         } catch (err) {
-            console.error('loadRptServiceDetails error:', err);
-            setServiceList([]);
-        } finally {
-            setIsLoading(false);
+            console.error('getJobEntryDetails error:', err);
         }
     };
 
-    useEffect(() => {
-        if (view === 'list') {
-            fetchServiceData();
-        }
-    }, [view]);
+    const STATUS_OPTIONS = [
+        { id: 0, label: 'All' },
+        { id: 1, label: 'Not Alloted' },
+        { id: 2, label: 'Not Completed' },
+        { id: 3, label: 'Not Delivered' },
+        { id: 4, label: 'Delivered' },
+        { id: 5, label: 'Alloted But Not Completed' },
+        { id: 6, label: 'Completed But Not Delivered' },
+    ];
 
     if (view === 'form') {
-        return <ServiceForm onBack={() => setView('list')} />;
+        return <ServiceForm 
+            editData={editData} 
+            onBack={() => {
+                setView('list');
+                setEditData(null);
+            }} 
+        />;
     }
 
     return (
-        <div className="je-page">
-            {/* Header */}
-            <div className="je-header">
-                <button className="je-back-btn" onClick={() => navigate('/welcome')}>
-                    <i className="fa-solid fa-arrow-left"></i>
-                </button>
-                <h1 className="je-title">Service List</h1>
-                <div className="je-header-actions">
-                    <button className="je-icon-btn" onClick={() => setShowFilter(true)}>
-                        <i className="fa-solid fa-bars-staggered"></i>
-                    </button>
-                    <button className="je-icon-btn">
-                        <i className="fa-solid fa-download"></i>
-                    </button>
-                </div>
-            </div>
-
-            {/* List / Empty State */}
-            {isLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, height: '60vh' }}>
-                    <i className="fa-solid fa-spinner fa-spin fa-2x" style={{ color: '#0d9488' }}></i>
-                    <p style={{ marginTop: '16px', color: '#64748b' }}>Loading services...</p>
-                </div>
-            ) : serviceList.length > 0 ? (
-                <div className="je-list-container" style={{ padding: '0 20px', marginTop: '20px', paddingBottom: '100px', overflowY: 'auto', flex: 1 }}>
-                    {serviceList.map((service, idx) => (
-                        <div key={idx} className="je-card" style={{ marginBottom: '16px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                <strong>{service.job_no || service.ServiceID || service.ServiceEngineerName || 'N/A'}</strong>
-                                <span style={{ color: '#64748b', fontSize: '13px' }}>{service.Date || service.JobReceivedDate || ''}</span>
-                            </div>
-                            <div style={{ color: '#475569', fontSize: '14px', lineHeight: '1.5' }}>
-                                <div><strong>Customer:</strong> {service.CustomerName || service.Name || 'N/A'}</div>
-                                <div><strong>Phone:</strong> {service.Mobile || service.PhoneNo || 'N/A'}</div>
-                                <div><strong>Status:</strong> {service.Status || service.DeviceState || 'N/A'}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-            <div className="je-empty-state">
-                <div className="je-empty-illustration">
-                    {/* Inline SVG — woman with "No Data Found" speech bubble */}
-                    <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Warm circle background */}
-                        <circle cx="130" cy="130" r="110" fill="#fdf6ee" />
-                        {/* Speech bubble */}
-                        <rect x="60" y="42" width="140" height="44" rx="12" fill="#0d9488" />
-                        <polygon points="105,86 120,86 112,98" fill="#0d9488" />
-                        <text x="130" y="70" textAnchor="middle" fontSize="13" fontWeight="700" fill="white">No Data Found</text>
-                        {/* Body */}
-                        <ellipse cx="130" cy="210" rx="42" ry="14" fill="#e2c9a8" opacity="0.5" />
-                        {/* Shirt */}
-                        <path d="M95 175 Q100 155 130 152 Q160 155 165 175 L168 220 H92 Z" fill="#0d9488" opacity="0.85" />
-                        {/* Arms */}
-                        <path d="M95 175 Q78 178 75 192" stroke="#f5c89a" strokeWidth="14" strokeLinecap="round" fill="none" />
-                        <path d="M165 175 Q182 178 185 192" stroke="#f5c89a" strokeWidth="14" strokeLinecap="round" fill="none" />
-                        {/* Neck */}
-                        <rect x="121" y="138" width="18" height="18" rx="4" fill="#f5c89a" />
-                        {/* Head */}
-                        <circle cx="130" cy="122" r="32" fill="#f5c89a" />
-                        {/* Eyes */}
-                        <ellipse cx="120" cy="120" rx="4" ry="5" fill="#2d1a0e" />
-                        <ellipse cx="140" cy="120" rx="4" ry="5" fill="#2d1a0e" />
-                        {/* Smile */}
-                        <path d="M120 133 Q130 140 140 133" stroke="#2d1a0e" strokeWidth="2" fill="none" strokeLinecap="round" />
-                        {/* Hair */}
-                        <path d="M100 108 Q102 80 130 76 Q158 80 160 108 Q154 90 130 88 Q106 90 100 108Z" fill="#1a1a2e" />
-                        <path d="M100 108 Q96 130 98 155 Q106 162 108 155 Q110 130 112 118Z" fill="#1a1a2e" />
-                        <path d="M160 108 Q164 130 162 155 Q154 162 152 155 Q150 130 148 118Z" fill="#1a1a2e" />
-                        {/* Badge / ID card on shirt */}
-                        <rect x="123" y="165" width="14" height="18" rx="3" fill="white" opacity="0.9" />
-                        <circle cx="130" cy="169" r="3" fill="#fbbf24" />
-                        <rect x="125" y="175" width="10" height="2" rx="1" fill="#94a3b8" />
-                        <rect x="125" y="179" width="7" height="2" rx="1" fill="#94a3b8" />
-                    </svg>
-                </div>
-                <p className="je-empty-text">Filter to see data</p>
-            </div>
-            )}
-
-            {/* FAB */}
-            <button className="je-fab" onClick={() => setView('form')}>
-                <i className="fa-solid fa-plus"></i>
-            </button>
-
-            {/* ── Filter Modal ─────────────────────────────── */}
-            {showFilter && (
-                <div className="je-modal-overlay je-bottom" onClick={() => setShowFilter(false)}>
-                    <div className="je-filter-modal" onClick={e => e.stopPropagation()}>
-                        <div className="je-modal-header">
-                            <h2 className="je-modal-title">Service List Statement</h2>
-                            <button className="je-modal-close" onClick={() => setShowFilter(false)}>
-                                <i className="fa-regular fa-circle-xmark"></i>
-                            </button>
-                        </div>
-
-                        {/* Date Range */}
-                        <div className="je-filter-date-row">
-                            <div className="je-filter-date-field">
-                                <label className="je-filter-date-label">From Date</label>
-                                <div className="je-filter-date-inner">
-                                    <i className="fa-regular fa-calendar je-field-icon"></i>
-                                    <span className="je-filter-divider"></span>
-                                    <input
-                                        type="date"
-                                        className="je-filter-date-input"
-                                        value={fromDate}
-                                        onChange={e => setFromDate(e.target.value)}
-                                        onClick={(e) => e.target.showPicker?.()}
-                                    />
-                                </div>
-                            </div>
-                            <div className="je-filter-date-field">
-                                <label className="je-filter-date-label">To Date</label>
-                                <div className="je-filter-date-inner">
-                                    <input
-                                        type="date"
-                                        className="je-filter-date-input"
-                                        value={toDate}
-                                        onChange={e => setToDate(e.target.value)}
-                                        onClick={(e) => e.target.showPicker?.()}
-                                    />
-                                    <span className="je-filter-divider"></span>
-                                    <i className="fa-regular fa-calendar je-field-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Filter Type Dropdown (UPI Style) */}
-                        <div className="je-filter-select-wrap" ref={statusDropdownRef}>
-                            <i className="fa-solid fa-filter je-field-icon"></i>
-                            <div 
-                                className="je-split-custom-select"
-                                onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-                            >
-                                <span className="je-split-custom-value" style={{ fontSize: '14px' }}>
-                                    {STATUS_OPTIONS.find(opt => opt.id === internalTypeId)?.label || 'All'}
-                                </span>
-                                <i className={`fa-solid fa-chevron-down je-split-custom-chevron ${statusDropdownOpen ? 'open' : ''}`} style={{ fontSize: '12px' }}></i>
-                                
-                                {statusDropdownOpen && (
-                                    <div className="je-split-custom-options" style={{ left: 0, width: '100%', top: 'calc(100% + 8px)' }}>
-                                        {STATUS_OPTIONS.map(opt => (
-                                            <div 
-                                                key={opt.id}
-                                                className={`je-split-custom-option ${internalTypeId === opt.id ? 'active' : ''}`}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setInternalTypeId(opt.id);
-                                                    setStatusDropdownOpen(false);
-                                                }}
-                                            >
-                                                {opt.label}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Search Fields */}
-                        <div className="je-filter-fields">
-                            <div className="je-filter-field" style={{ position: 'relative' }}>
-                                <input 
-                                    className="je-input" 
-                                    placeholder="Customer Phone number" 
-                                    value={filterPhone} 
-                                    autoComplete="off"
-                                    onChange={e => {
-                                        setFilterPhone(e.target.value);
-                                        fetchAutoFillInfo(e.target.value, 'PhoneNo', setFilterPhoneResults, setFilterPhoneDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterPhoneResults.length > 0) setFilterPhoneDropdown(true); }}
-                                    onBlur={() => setTimeout(() => setFilterPhoneDropdown(false), 150)}
-                                />
-                                {filterPhone && <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setFilterPhone(''); setFilterPhoneResults([]); setFilterPhoneDropdown(false); }}><i className="fa-solid fa-xmark"></i></button>}
-                                {filterPhoneDropdown && filterPhoneResults.length > 0 && (
-                                    <div style={{
-                                        position: 'absolute', top: '100%', left: 0, right: 0,
-                                        background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', borderRadius: '8px',
-                                        zIndex: 50, maxHeight: '200px', overflowY: 'auto', marginTop: '4px',
-                                        display: 'flex', flexDirection: 'column'
-                                    }}>
-                                        {filterPhoneResults.map((r, i) => (
-                                            <div key={i} onMouseDown={e => { e.preventDefault(); setFilterPhone(r.value); setFilterPhoneDropdown(false); }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'} style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{r.value}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="je-filter-field" style={{ position: 'relative' }}>
-                                <input 
-                                    className="je-input" 
-                                    placeholder="Customer Name" 
-                                    value={filterName} 
-                                    autoComplete="off"
-                                    onChange={e => {
-                                        setFilterName(e.target.value);
-                                        fetchAutoFillInfo(e.target.value, 'Name', setFilterNameResults, setFilterNameDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterNameResults.length > 0) setFilterNameDropdown(true); }}
-                                    onBlur={() => setTimeout(() => setFilterNameDropdown(false), 150)}
-                                />
-                                {filterName && <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setFilterName(''); setFilterNameResults([]); setFilterNameDropdown(false); }}><i className="fa-solid fa-xmark"></i></button>}
-                                {filterNameDropdown && filterNameResults.length > 0 && (
-                                    <div style={{
-                                        position: 'absolute', top: '100%', left: 0, right: 0,
-                                        background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', borderRadius: '8px',
-                                        zIndex: 50, maxHeight: '200px', overflowY: 'auto', marginTop: '4px',
-                                        display: 'flex', flexDirection: 'column'
-                                    }}>
-                                        {filterNameResults.map((r, i) => (
-                                            <div key={i} onMouseDown={e => { e.preventDefault(); setFilterName(r.value); setFilterNameDropdown(false); }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'} style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{r.value}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="je-filter-field" style={{ position: 'relative' }}>
-                                <input 
-                                    className="je-input" 
-                                    placeholder="IMEI Number" 
-                                    value={filterImei} 
-                                    autoComplete="off"
-                                    onChange={e => {
-                                        setFilterImei(e.target.value);
-                                        fetchAutoFillInfo(e.target.value, 'imei', setFilterImeiResults, setFilterImeiDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterImeiResults.length > 0) setFilterImeiDropdown(true); }}
-                                    onBlur={() => setTimeout(() => setFilterImeiDropdown(false), 150)}
-                                />
-                                {filterImei && <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setFilterImei(''); setFilterImeiResults([]); setFilterImeiDropdown(false); }}><i className="fa-solid fa-xmark"></i></button>}
-                                {filterImeiDropdown && filterImeiResults.length > 0 && (
-                                    <div style={{
-                                        position: 'absolute', top: '100%', left: 0, right: 0,
-                                        background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', borderRadius: '8px',
-                                        zIndex: 50, maxHeight: '200px', overflowY: 'auto', marginTop: '4px',
-                                        display: 'flex', flexDirection: 'column'
-                                    }}>
-                                        {filterImeiResults.map((r, i) => (
-                                            <div key={i} onMouseDown={e => { e.preventDefault(); setFilterImei(r.value); setFilterImeiDropdown(false); }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'} style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{r.value}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="je-filter-field" style={{ position: 'relative' }}>
-                                <input 
-                                    className="je-input" 
-                                    placeholder="Bill Number" 
-                                    value={filterBill} 
-                                    autoComplete="off"
-                                    onChange={e => {
-                                        setFilterBill(e.target.value);
-                                        fetchAutoFillInfo(e.target.value, 'ServiceID', setFilterBillResults, setFilterBillDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterBillResults.length > 0) setFilterBillDropdown(true); }}
-                                    onBlur={() => setTimeout(() => setFilterBillDropdown(false), 150)}
-                                />
-                                {filterBill && <button className="je-modal-x" onMouseDown={e => { e.preventDefault(); setFilterBill(''); setFilterBillResults([]); setFilterBillDropdown(false); }}><i className="fa-solid fa-xmark"></i></button>}
-                                {filterBillDropdown && filterBillResults.length > 0 && (
-                                    <div style={{
-                                        position: 'absolute', top: '100%', left: 0, right: 0,
-                                        background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', borderRadius: '8px',
-                                        zIndex: 50, maxHeight: '200px', overflowY: 'auto', marginTop: '4px',
-                                        display: 'flex', flexDirection: 'column'
-                                    }}>
-                                        {filterBillResults.map((r, i) => (
-                                            <div key={i} onMouseDown={e => { e.preventDefault(); setFilterBill(r.value); setFilterBillDropdown(false); }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'} style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                                <span style={{ fontWeight: '600', color: '#1e293b' }}>{r.value}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <button className="je-modal-save-btn" onClick={() => { fetchServiceData(); setShowFilter(false); }}>
-                            Filter
-                        </button>
-                    </div>
-                </div>
-            )}
-        </div>
+        <ServiceList 
+            title="Service List"
+            statusOptions={STATUS_OPTIONS}
+            onAddNew={() => {
+                setEditData(null);
+                setView('form');
+            }}
+            onItemClick={handleItemClick}
+        />
     );
 };
 

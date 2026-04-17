@@ -4,7 +4,7 @@
 .je-page,
 .je-form-page {
     min-height: 100vh;
-    background: #f0fdfa;
+    background: #f4f6f8; /* Soft light gray to match list page */
     font-family: 'Inter', sans-serif;
     display: flex;
     flex-direction: column;
@@ -262,15 +262,14 @@
     box-shadow: inset 0 0 0 3px white;
 }
 
-/* ─── Cards ──────────────────────────────────────────────── */
+/* ─── Cards (Now just transparent wrappers) ─────────────── */
 .je-card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e8f5f4;
-    overflow: hidden;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    overflow: visible;
 }
-
 
 
 /* ─── Input Rows ─────────────────────────────────────────── */
@@ -278,112 +277,73 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 12px;
-    /* Slightly tighter padding to prevent line collisions */
-    min-height: 46px;
-    transition: background 0.15s;
+    padding: 0 16px;
+    min-height: 48px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
     position: relative;
+    width: 100%;
 }
 
 .je-input-row:focus-within {
-    background: transparent;
-    /* Keep grid background visible */
+    border-color: #0d9488;
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.1);
 }
 
 .je-unified-grid-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
-    background: white;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: transparent;
     width: 100%;
 }
 
 .je-v-line {
-    grid-column: 2;
-    background: #f1f5f9;
-    width: 100%;
-    height: 100%;
+    display: none; /* Removed interior divider */
 }
 
 .je-grid-left-item {
     grid-column: 1;
     min-width: 0;
-    overflow: hidden;
 }
 
 .je-grid-right-item {
-    grid-column: 3;
+    grid-column: 2;
     min-width: 0;
-    overflow: hidden;
 }
 
 .je-grid-full-width {
-    grid-column: span 3;
+    grid-column: 1 / -1;
+    min-width: 0;
 }
 
-/* Compact Grid for Mobile (< 480px) */
-@media (max-width: 480px) {
+/* Compact Grid for Mobile */
+@media (max-width: 599px) {
+    .je-unified-grid-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .je-grid-right-item {
+        grid-column: 1;
+    }
 
     .je-input-row,
     .je-terms-field {
-        padding: 0 8px;
-        /* Tighter padding */
-        gap: 6px;
-        /* Smaller gaps */
-        min-height: 42px;
-    }
-
-    .je-field-icon,
-    .je-field-icon-right,
-    .je-terms-fi,
-    .je-terms-rupee,
-    .je-modal-x {
-        width: 18px !important;
-        /* Scaled down icons */
-        height: 18px !important;
-        font-size: 11px !important;
-    }
-
-    .je-input,
-    .je-terms-native-input,
-    .je-terms-label {
-        font-size: 11.5px !important;
-        /* Smaller text */
-    }
-}
-
-/* Ultra-Compact Grid for Tiny Mobile (< 380px) */
-@media (max-width: 380px) {
-
-    .je-input-row,
-    .je-terms-field {
-        padding: 0 4px;
-        /* Ultra tight */
-        gap: 4px;
-    }
-
-    .je-field-icon,
-    .je-field-icon-right,
-    .je-terms-fi,
-    .je-terms-rupee,
-    .je-modal-x {
-        width: 16px !important;
-        height: 16px !important;
+        padding: 0 12px;
+        gap: 8px;
+        min-height: 48px; /* Tapping area size */
     }
 }
 
 .je-border-top {
-    border-top: 1px solid #f1f5f9;
-}
-
-/* Ensure right-side items have top borders when stacked on mobile */
-@media (max-width: 599px) {
-    .je-grid-right-item:not(.je-border-top) {
-        border-top: 1px solid #f1f5f9;
-    }
+    border-top: none;
 }
 
 .je-border-right {
-    border-right: 1px solid #f1f5f9;
+    border-right: none;
 }
 
 .je-field-icon {
@@ -423,7 +383,7 @@
     outline: none;
     background: transparent;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 700; /* Bold text typed by user */
     color: #1e293b;
     font-family: 'Inter', sans-serif;
     min-width: 0;
@@ -432,6 +392,7 @@
 
 .je-input::placeholder {
     color: #94a3b8;
+    font-weight: 500; /* Match original non-bold style for the placeholder */
 }
 
 /* Date input specific */
@@ -2425,3 +2386,92 @@
     align-items: center;
     justify-content: center;
 }
+
+/* ────────────────────────────────────────────────────────── */
+/* ─── FLAT UI RESTYLING OVERRIDES TO MATCH MODAL ─────────── */
+/* ────────────────────────────────────────────────────────── */
+
+/* Sections */
+.je-section-title {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px !important;
+}
+
+/* Save / Action Buttons */
+.je-full-save-btn, .je-modal-save-btn, .je-terms-save-btn, .je-brand-done-btn {
+    background: #0d9488 !important; /* Solid teal */
+    box-shadow: none !important;
+    border-radius: 8px !important;
+    transition: background 0.2s !important;
+    color: white !important;
+    border: none !important;
+}
+.je-full-save-btn:hover, .je-modal-save-btn:hover, .je-terms-save-btn:hover, .je-brand-done-btn:hover {
+    background: #0f766e !important;
+}
+
+/* Cancel Button */
+.je-brand-cancel-btn {
+    box-shadow: none !important;
+    border-radius: 8px !important;
+}
+
+/* FAB */
+.je-fab {
+    background: #0d9488 !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3) !important;
+}
+
+/* Radio Pills */
+.je-radio-group, .je-warranty-pills {
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+    background: #f9fafb !important;
+}
+
+/* Terms Card */
+.je-terms-card, .je-split-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Split Method Pills */
+.je-split-pill, .je-split-pill--active {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+
+.je-terms-field, .je-terms-toggle-bar, .je-terms-input-wrap, .je-split-amount-wrap {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    min-height: 48px !important;
+}
+
+/* Focus States */
+.je-input-row:focus-within, .je-terms-field:focus-within, .je-terms-input-wrap:focus-within, .je-split-amount-wrap:focus-within {
+    border-color: #0d9488 !important;
+    background: #ffffff !important;
+}
+
+/* Inputs & Text */
+.je-input, .je-terms-native-input, .je-split-amt {
+    font-size: 14px !important;
+    color: #1e293b !important;
+    font-weight: 500 !important;
+}
+
+/* Modals */
+.je-modal, .je-brand-picker {
+    border-radius: 16px 16px 0 0 !important;
+}
