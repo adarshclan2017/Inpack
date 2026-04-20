@@ -2,12 +2,22 @@ import React, { useState, useEffect } from 'react';
 
 /* ── Grid Styles — always 2 columns at every screen size ── */
 const gridStyles = `
-  /* Reset all inputs — remove browser double-layer */
-  input, textarea {
-    -webkit-appearance: none;
-    appearance: none;
+  /* Override Bootstrap + browser defaults — remove all double-layer */
+  input, textarea, select {
+    -webkit-appearance: none !important;
+    appearance: none !important;
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  /* Kill Bootstrap's form-control styles */
+  .jsf-row input,
+  .jsf-row textarea {
+    border: none !important;
     box-shadow: none !important;
     background: transparent !important;
   }
@@ -27,15 +37,10 @@ const gridStyles = `
     align-items: stretch;
     gap: 12px;
   }
-  /* Tighten gap on very small screens but keep 2-col */
   @media (max-width: 480px) {
     .jsf-grid-2,
     .jsf-grid-actions {
       gap: 8px;
-    }
-    .jsf-grid-2 input,
-    .jsf-grid-actions button {
-      font-size: 12px !important;
     }
   }
 `;
@@ -82,13 +87,13 @@ const JobStatusForm = ({ data, onBack }) => {
 
     /* ── Shared Inline Styles ── */
     const S = {
-        page:    { minHeight: '100vh', background: '#f8fafc', margin: 0, width: '100%', fontFamily: "'Inter', sans-serif" },
+        page:    { minHeight: '100vh', background: '#f8fafc', margin: 0, width: '100%', maxWidth: '100vw', overflowX: 'hidden', fontFamily: "'Inter', sans-serif" },
         header:  { background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', display: 'flex', alignItems: 'center', padding: '0 20px', height: '64px', position: 'sticky', top: 0, zIndex: 50, boxShadow: '0 4px 20px rgba(16,185,129,0.25)' },
         backBtn: { background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '12px', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', transition: 'background 0.2s' },
         body:    { maxWidth: '800px', margin: '0 auto', width: '100%', padding: '24px 16px 48px', boxSizing: 'border-box' },
         card:    { background: 'white', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)', border: '1px solid #f1f5f9', marginBottom: '24px' },
         row:     { display: 'flex', alignItems: 'center', background: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', minHeight: '54px', padding: '0 16px' },
-        input:   { flex: 1, border: 'none', background: 'transparent', outline: 'none', boxShadow: 'none', fontSize: '14px', color: '#1e293b', fontWeight: '600', fontFamily: 'inherit', WebkitAppearance: 'none', appearance: 'none' },
+        input:   { flex: 1, border: 'none', background: 'transparent', outline: 'none', boxShadow: 'none', fontSize: '14px', color: '#1e293b', fontWeight: '600', fontFamily: 'inherit', WebkitAppearance: 'none', appearance: 'none', padding: 0, margin: 0, width: '100%', minWidth: 0 },
         col:     { display: 'flex', flexDirection: 'column', gap: '14px' },
         sLabel:  { fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', marginTop: 0 },
     };
