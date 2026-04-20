@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 /* ── Grid Styles — always 2 columns at every screen size ── */
 const gridStyles = `
+  /* Reset all inputs — remove browser double-layer */
+  input, textarea {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
   .jsf-grid-2 {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -18,7 +27,7 @@ const gridStyles = `
     align-items: stretch;
     gap: 12px;
   }
-  /* Tighten padding on smaller screens but keep 2-col */
+  /* Tighten gap on very small screens but keep 2-col */
   @media (max-width: 480px) {
     .jsf-grid-2,
     .jsf-grid-actions {
@@ -54,20 +63,22 @@ const JobStatusForm = ({ data, onBack }) => {
     const fmt     = (d) => d || '';
     const dateFmt = currentTime.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
     const timeFmt = currentTime.toLocaleTimeString('en-US');
+    const wMap    = { '1': 'Warranty', '2': 'Out of warranty', '3': 'Non warranty' };
 
-    const jobId       = data?.job_no || data?.ServiceID || '';
-    const complaint   = data?.LookUPComplaint || data?.Complaint || '';
-    const brand       = data?.LookUpPhoneDetails || data?.PhoneDetails || '';
-    const model       = data?.LookUPModel || data?.Model || '';
-    const color       = data?.LookUPColour || data?.Colour || '';
-    const status      = data?.Status || data?.DeviceState || '';
-    const wMap        = { '1': 'Warranty', '2': 'Out of warranty', '3': 'Non warranty' };
-    const warranty    = data?.Warranty ? wMap[String(data.Warranty)] || '' : '';
-    const slNo        = data?.IMEI || '';
-    const receivedOn  = fmt(data?.JobReceivedDate || data?.BillDate || data?.Date);
-    const assignedOn  = fmt(data?.DueDate || data?.ReturnedDate);
-    const remarks     = data?.Remarks || '';
-    const serviceCharge = data?.EstimateAmount || data?.EstimatedAmount || '';
+    // Editable state for all form fields
+    const [jobId,         setJobId]         = useState(data?.job_no || data?.ServiceID || '');
+    const [complaint,     setComplaint]     = useState(data?.LookUPComplaint || data?.Complaint || '');
+    const [brand,         setBrand]         = useState(data?.LookUpPhoneDetails || data?.PhoneDetails || '');
+    const [model,         setModel]         = useState(data?.LookUPModel || data?.Model || '');
+    const [color,         setColor]         = useState(data?.LookUPColour || data?.Colour || '');
+    const [status,        setStatus]        = useState(data?.Status || data?.DeviceState || '');
+    const [warranty,      setWarranty]      = useState(data?.Warranty ? wMap[String(data.Warranty)] || '' : '');
+    const [slNo,          setSlNo]          = useState(data?.IMEI || '');
+    const [receivedOn,    setReceivedOn]    = useState(fmt(data?.JobReceivedDate || data?.BillDate || data?.Date));
+    const [assignedOn,    setAssignedOn]    = useState(fmt(data?.DueDate || data?.ReturnedDate));
+    const [remarks,       setRemarks]       = useState(data?.Remarks || '');
+    const [serviceCharge, setServiceCharge] = useState(data?.EstimateAmount || data?.EstimatedAmount || '');
+    const [updateStatus,  setUpdateStatus]  = useState('');
 
     /* ── Shared Inline Styles ── */
     const S = {
@@ -77,17 +88,22 @@ const JobStatusForm = ({ data, onBack }) => {
         body:    { maxWidth: '800px', margin: '0 auto', width: '100%', padding: '24px 16px 48px', boxSizing: 'border-box' },
         card:    { background: 'white', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)', border: '1px solid #f1f5f9', marginBottom: '24px' },
         row:     { display: 'flex', alignItems: 'center', background: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0', minHeight: '54px', padding: '0 16px' },
-        input:   { flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '14px', color: '#1e293b', fontWeight: '600', fontFamily: 'inherit' },
+        input:   { flex: 1, border: 'none', background: 'transparent', outline: 'none', boxShadow: 'none', fontSize: '14px', color: '#1e293b', fontWeight: '600', fontFamily: 'inherit', WebkitAppearance: 'none', appearance: 'none' },
         col:     { display: 'flex', flexDirection: 'column', gap: '14px' },
         sLabel:  { fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '16px', marginTop: 0 },
     };
 
     /* ── Input Row Helper ── */
-    const Field = ({ icon, iconColor, value, placeholder, readOnly = true, small = false }) => (
+    const Field = ({ icon, iconColor, value, onChange, placeholder, small = false }) => (
         <div style={S.row}>
             <i className={`fa-solid ${icon}`} style={{ color: iconColor, fontSize: '14px', marginRight: '12px', flexShrink: 0 }}></i>
-            <input value={value} readOnly={readOnly} placeholder={placeholder}
-                style={{ ...S.input, fontSize: small ? '13px' : '14px' }} />
+            <input
+                value={value}
+                onChange={onChange ? (e) => onChange(e.target.value) : undefined}
+                readOnly={!onChange}
+                placeholder={placeholder}
+                style={{ ...S.input, fontSize: small ? '13px' : '14px', cursor: onChange ? 'text' : 'default' }}
+            />
         </div>
     );
 
@@ -224,7 +240,7 @@ const JobStatusForm = ({ data, onBack }) => {
                 {/* Search Job */}
                 <div style={{ ...S.row, background: 'white', marginBottom: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                     <i className="fa-solid fa-magnifying-glass" style={{ color: '#94a3b8', fontSize: '15px', marginRight: '12px' }}></i>
-                    <input value={jobId} readOnly style={{ ...S.input, fontSize: '15px' }} />
+                    <input value={jobId} onChange={(e) => setJobId(e.target.value)} placeholder="Search Job" style={{ ...S.input, fontSize: '15px' }} />
                 </div>
 
                 {/* ── Product Details Card ── */}
@@ -232,30 +248,30 @@ const JobStatusForm = ({ data, onBack }) => {
                 <div style={S.card}>
                     <div style={S.col}>
                         {/* Complaint — always full width */}
-                        <Field icon="fa-triangle-exclamation" iconColor="#f97316" value={complaint} placeholder="Complaint" />
+                        <Field icon="fa-triangle-exclamation" iconColor="#f97316" value={complaint} onChange={setComplaint} placeholder="Complaint" />
 
                         {/* Brand | Model */}
                         <div className="jsf-grid-2">
-                            <Field icon="fa-tag"                   iconColor="#3b82f6" value={brand}     placeholder="Brand" />
-                            <Field icon="fa-mobile-screen-button"  iconColor="#10b981" value={model}     placeholder="Model" />
+                            <Field icon="fa-tag"                  iconColor="#3b82f6" value={brand}     onChange={setBrand}     placeholder="Brand" />
+                            <Field icon="fa-mobile-screen-button" iconColor="#10b981" value={model}     onChange={setModel}     placeholder="Model" />
                         </div>
 
                         {/* Color | Status */}
                         <div className="jsf-grid-2">
-                            <Field icon="fa-palette"    iconColor="#a855f7" value={color}    placeholder="Color" />
-                            <Field icon="fa-circle-info" iconColor="#f97316" value={status}  placeholder="Status" />
+                            <Field icon="fa-palette"    iconColor="#a855f7" value={color}   onChange={setColor}   placeholder="Color" />
+                            <Field icon="fa-circle-info" iconColor="#f97316" value={status} onChange={setStatus} placeholder="Status" />
                         </div>
 
                         {/* Warranty | Sl.No */}
                         <div className="jsf-grid-2">
-                            <Field icon="fa-list-ul" iconColor="#0ea5e9" value={warranty} placeholder="Warranty" />
-                            <Field icon="fa-hashtag" iconColor="#64748b" value={slNo}     placeholder="Sl.No" />
+                            <Field icon="fa-list-ul" iconColor="#0ea5e9" value={warranty} onChange={setWarranty} placeholder="Warranty" />
+                            <Field icon="fa-hashtag" iconColor="#64748b" value={slNo}     onChange={setSlNo}     placeholder="Sl.No" />
                         </div>
 
                         {/* Received On | Assigned On */}
                         <div className="jsf-grid-2">
-                            <Field icon="fa-calendar-check" iconColor="#10b981" value={receivedOn} placeholder="Received On" small />
-                            <Field icon="fa-calendar-days"  iconColor="#3b82f6" value={assignedOn} placeholder="Assigned On" small />
+                            <Field icon="fa-calendar-check" iconColor="#10b981" value={receivedOn} onChange={setReceivedOn} placeholder="Received On" small />
+                            <Field icon="fa-calendar-days"  iconColor="#3b82f6" value={assignedOn} onChange={setAssignedOn} placeholder="Assigned On" small />
                         </div>
                     </div>
                 </div>
@@ -265,7 +281,7 @@ const JobStatusForm = ({ data, onBack }) => {
                 <div style={S.card}>
                     <div style={S.col}>
 
-                        {/* Date pill + Status — collapses on mobile */}
+                        {/* Date pill + Status */}
                         <div className="jsf-grid-2">
                             {/* Teal Date-Time Pill */}
                             <div style={{ background: 'linear-gradient(135deg, #0f766e 0%, #059669 100%)', borderRadius: '14px', padding: '12px 18px', display: 'flex', flexDirection: 'column', gap: '6px', boxShadow: '0 4px 14px rgba(15,118,110,0.3)' }}>
@@ -281,23 +297,38 @@ const JobStatusForm = ({ data, onBack }) => {
                             {/* Update Status */}
                             <div style={S.row}>
                                 <i className="fa-solid fa-signal" style={{ color: '#10b981', fontSize: '15px', marginRight: '12px', flexShrink: 0 }}></i>
-                                <input placeholder="Update Status" style={{ ...S.input, fontWeight: '500' }} />
+                                <input
+                                    value={updateStatus}
+                                    onChange={(e) => setUpdateStatus(e.target.value)}
+                                    placeholder="Update Status"
+                                    style={{ ...S.input, fontWeight: '500' }}
+                                />
                             </div>
                         </div>
 
                         {/* Remarks — full width */}
                         <div style={{ ...S.row, alignItems: 'flex-start', minHeight: '80px', padding: '14px 16px' }}>
                             <i className="fa-solid fa-pencil" style={{ color: '#a855f7', fontSize: '15px', marginRight: '12px', marginTop: '2px', flexShrink: 0 }}></i>
-                            <textarea placeholder="Remarks" defaultValue={remarks} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', resize: 'none', height: '60px', fontSize: '15px', color: '#1e293b', fontFamily: 'inherit' }}></textarea>
+                            <textarea
+                                value={remarks}
+                                onChange={(e) => setRemarks(e.target.value)}
+                                placeholder="Remarks"
+                                style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', resize: 'none', height: '60px', fontSize: '15px', color: '#1e293b', fontFamily: 'inherit' }}
+                            ></textarea>
                         </div>
 
                         {/* Service Charge | Spare Amount */}
                         <div className="jsf-grid-2">
                             <div style={S.row}>
                                 <i className="fa-solid fa-indian-rupee-sign" style={{ color: '#10b981', fontSize: '15px', marginRight: '12px', flexShrink: 0 }}></i>
-                                <div>
-                                    <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Service Charge</div>
-                                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#1e293b' }}>₹ {serviceCharge}</div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Service Charge</div>
+                                    <input
+                                        value={serviceCharge}
+                                        onChange={(e) => setServiceCharge(e.target.value)}
+                                        placeholder="0.00"
+                                        style={{ ...S.input, fontSize: '15px', fontWeight: '800' }}
+                                    />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', background: '#fff5f5', borderRadius: '14px', border: '1px solid #fecaca', minHeight: '54px', padding: '0 16px' }}>
