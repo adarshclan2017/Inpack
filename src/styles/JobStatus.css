@@ -1,0 +1,371 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.js-page {
+  background: #fdfdfd;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+}
+
+.js-header {
+  background: #10b981; /* Green theme */
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  position: relative;
+  height: 64px;
+}
+
+.js-back-btn {
+  background: white;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.js-back-btn:hover {
+  transform: translateY(-1px);
+}
+
+.js-title {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+  margin-right: 32px; /* Offset for back btn */
+}
+
+/* Base Form Container */
+.js-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Desktop Split Layout */
+@media (min-width: 800px) {
+  .js-body.js-desktop-split {
+    max-width: 1000px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px;
+  }
+  
+  .js-left-col {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .js-right-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 24px;
+  }
+  
+  .js-mt-10 {
+    margin-top: 0 !important; /* reset margin on desktop */
+  }
+}
+
+/* Legend Field Wrapper */
+.js-field-wrapper {
+  position: relative;
+  border: 1px solid #b2bdc2;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  min-height: 48px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.js-mt-10 {
+  margin-top: 10px;
+}
+
+.js-field-label {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  background: white;
+  padding: 0 4px;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.js-field-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.js-field-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  background: transparent;
+  font-family: inherit;
+}
+
+.js-input-large {
+  font-size: 15px;
+}
+
+/* Cards */
+.js-card {
+  border: 1px solid #10b981;
+  border-radius: 16px;
+  padding: 16px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.08); /* Green shadow */
+}
+
+.js-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Mid Row */
+.js-mid-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.js-datetime-pill {
+  background: #047857; /* Darker green */
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.25);
+  min-width: 160px;
+}
+
+.js-datetime-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.js-red-icon { color: #fca5a5; font-size: 16px; }
+.js-white-icon { color: white; font-size: 16px; }
+
+.js-status-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.js-status-input-wrapper {
+  width: 100%;
+  border-radius: 12px;
+  height: 100%;
+}
+
+.js-remarks-wrapper {
+  min-height: 60px;
+}
+
+.js-spare-amount {
+  text-align: right;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 4px;
+}
+
+.js-spare-amount span {
+  color: #ef4444;
+}
+
+/* Bottom Actions */
+.js-bottom-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.js-action-row {
+  display: flex;
+  gap: 16px;
+}
+
+.js-action-btn {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  flex: 1;
+}
+
+.js-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.js-action-btn:active {
+  transform: scale(0.98);
+}
+
+.js-action-icon {
+  color: #10b981;
+  font-size: 18px;
+}
+
+.js-save-btn {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.js-save-btn:hover {
+  background: #059669;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.js-save-icon {
+  color: white;
+  font-size: 18px;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 599px) {
+  .js-body {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .js-card {
+    padding: 12px;
+    gap: 12px;
+    border-radius: 12px;
+  }
+
+  .js-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .js-field-wrapper {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .js-field-input {
+    font-size: 13px;
+  }
+
+  /* Date-time pill full width on mobile */
+  .js-datetime-pill {
+    width: 100%;
+    min-width: unset;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+
+  .js-datetime-row {
+    font-size: 14px;
+  }
+
+  /* Stack action buttons vertically on mobile */
+  .js-action-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .js-action-btn {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  /* Mid row (date pill + status) stacks on mobile */
+  .js-mid-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .js-status-pill {
+    width: 100%;
+  }
+
+  .js-bottom-actions {
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .js-header {
+    padding: 12px 16px;
+    height: 56px;
+  }
+
+  .js-title {
+    font-size: 16px;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 600px) and (max-width: 799px) {
+  .js-body {
+    padding: 16px 20px;
+  }
+
+  .js-datetime-pill {
+    min-width: 140px;
+  }
+}
+
