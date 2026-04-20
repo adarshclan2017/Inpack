@@ -1705,8 +1705,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
 
             {/* ── Customer Details Modal ──────────────────────── */}
             {showCustomerModal && (
-                <div className="je-modal-overlay" onClick={() => setShowCustomerModal(false)}>
-                    <div className="je-modal" onClick={e => e.stopPropagation()}>
+                <div className="je-modal-overlay je-bottom" onClick={() => setShowCustomerModal(false)}>
+                    <div className="je-filter-modal" onClick={e => e.stopPropagation()}>
                         <div className="je-modal-header">
                             <h2 className="je-modal-title">Customer Details</h2>
                             <button className="je-modal-close" onClick={() => setShowCustomerModal(false)}>
@@ -1847,13 +1847,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-solid fa-location-dot je-field-icon"></i>
                                 <input className="je-input" placeholder="Address" value={custAddress || ''} onChange={e => setCustAddress(e.target.value)} />
-                            </div>
-                            <div className="je-modal-field je-border-top">
-                                <i className="fa-regular fa-id-card je-field-icon"></i>
-                                <input className="je-input" placeholder="Enter GST" value={custGst} onChange={e => setCustGst(e.target.value)} />
-                                <span className="je-modal-divider"></span>
-                                <button className="je-modal-download"><i className="fa-solid fa-download"></i></button>
-                            </div>
+                             </div>
                             {/* Route — searchable autocomplete */}
                             <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: routeDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-route je-field-icon"></i>
@@ -2052,6 +2046,13 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                         }
                                     </div>
                                 )}
+                            </div>
+                            {/* GST */}
+                            <div className="je-modal-field je-border-top">
+                                <i className="fa-regular fa-id-card je-field-icon"></i>
+                                <input className="je-input" placeholder="Enter GST" value={custGst} onChange={e => setCustGst(e.target.value)} />
+                                <span className="je-modal-divider"></span>
+                                <button className="je-modal-download"><i className="fa-solid fa-download"></i></button>
                             </div>
                         </div>
 

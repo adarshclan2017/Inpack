@@ -326,6 +326,7 @@
         gap: 12px;
     }
     
+    .je-grid-left-item,
     .je-grid-right-item {
         grid-column: 1;
     }
