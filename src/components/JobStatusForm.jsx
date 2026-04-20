@@ -43,6 +43,171 @@ const gridStyles = `
       gap: 8px;
     }
   }
+
+  /* ── Status Picker Popup ── */
+  .jsf-picker-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .jsf-picker-modal {
+    background: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    padding: 0 0 20px 0;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.2);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .jsf-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 20px 10px 20px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .jsf-picker-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #10b981;
+    margin: 0;
+  }
+  .jsf-picker-close {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid #94a3b8;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+  .jsf-picker-search-wrap {
+    padding: 0 16px 12px 16px;
+    flex-shrink: 0;
+  }
+  .jsf-picker-search-field {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0 14px;
+    min-height: 46px;
+    gap: 10px;
+  }
+  .jsf-picker-search-input {
+    flex: 1;
+    font-size: 14px;
+    color: #1e293b;
+    font-family: inherit;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .jsf-picker-add-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #10b981;
+    font-size: 18px;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+  }
+  .jsf-picker-save-btn {
+    background: #10b981;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .jsf-picker-save-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .jsf-picker-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px 16px 16px 16px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .jsf-picker-chip {
+    background: #f1f5f9;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .jsf-picker-chip:hover {
+    border-color: #10b981;
+    color: #10b981;
+    background: #ecfdf5;
+  }
+  .jsf-picker-chip.active {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+  }
+  .jsf-picker-empty {
+    color: #94a3b8;
+    font-size: 14px;
+    padding: 12px 0;
+    width: 100%;
+    text-align: center;
+  }
+  .jsf-picker-actions {
+    padding: 8px 16px 0 16px;
+    flex-shrink: 0;
+  }
+  .jsf-picker-cancel {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    font-size: 15px;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .jsf-picker-cancel:hover {
+    border-color: #10b981;
+    color: #10b981;
+  }
 `;
 
 const JobStatusForm = ({ data, onBack }) => {
@@ -84,6 +249,125 @@ const JobStatusForm = ({ data, onBack }) => {
     const [remarks,       setRemarks]       = useState(data?.Remarks || '');
     const [serviceCharge, setServiceCharge] = useState(data?.EstimateAmount || data?.EstimatedAmount || '');
     const [updateStatus,  setUpdateStatus]  = useState('');
+    const [updateStatusId, setUpdateStatusId] = useState('');
+
+    // ── Status Picker State ──────────────────────────────────
+    const [showStatusPicker, setShowStatusPicker]   = useState(false);
+    const [statusOptions,    setStatusOptions]       = useState([]);
+    const [extraStatusOpts,  setExtraStatusOpts]     = useState([]);
+    const [statusSearch,     setStatusSearch]        = useState('');
+    const [showAddStatus,    setShowAddStatus]       = useState(false);
+    const [newStatusInput,   setNewStatusInput]      = useState('');
+    const [statusLoading,    setStatusLoading]       = useState(false);
+
+    // Fetch DeviceState lookup on mount
+    useEffect(() => {
+        const fetchLookup = async () => {
+            setStatusLoading(true);
+            try {
+                const licenseKey     = localStorage.getItem('licenseKey')     || 'ILT_LIC_9988056';
+                const imei           = localStorage.getItem('imei')           || 'ILTUKAInpackPro1';
+                const pin            = localStorage.getItem('pin')            || '2255';
+                const internalUserId = localStorage.getItem('internalUserId') || '41';
+
+                const url = `/api2025/InPackService.asmx/loadLookup?InternalUserID=${internalUserId}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}`;
+                const res  = await fetch(url);
+                const text = await res.text();
+
+                const parser   = new DOMParser();
+                const xmlDoc   = parser.parseFromString(text, 'text/xml');
+                const stringEl = xmlDoc.getElementsByTagName('string')[0];
+                let jsonStr    = '';
+                if (stringEl && stringEl.textContent) {
+                    jsonStr = stringEl.textContent;
+                } else {
+                    const m = text.match(/\{[\s\S]*\}/);
+                    if (m) jsonStr = m[0];
+                }
+
+                if (jsonStr) {
+                    const d = JSON.parse(jsonStr);
+                    const opts = (d.DeviceState || [])
+                        .map(item => ({
+                            id:    String(item.internal_lookup_id || ''),
+                            label: String(item.lookup_data || '')
+                        }))
+                        .filter(i => i.label);
+                    setStatusOptions(opts);
+                }
+            } catch (err) {
+                console.error('loadLookup error (JobStatusForm):', err);
+            } finally {
+                setStatusLoading(false);
+            }
+        };
+        fetchLookup();
+    }, []);
+
+    const openStatusPicker = () => {
+        setStatusSearch('');
+        setShowAddStatus(false);
+        setNewStatusInput('');
+        setShowStatusPicker(true);
+    };
+
+    const closeStatusPicker = () => {
+        setShowStatusPicker(false);
+        setStatusSearch('');
+        setShowAddStatus(false);
+        setNewStatusInput('');
+    };
+
+    const handleStatusSelect = (opt) => {
+        setUpdateStatus(opt.label);
+        setUpdateStatusId(opt.id);
+        closeStatusPicker();
+    };
+
+    const handleAddNewStatus = async () => {
+        const v = newStatusInput.trim();
+        if (!v) return;
+        try {
+            const licenseKey     = localStorage.getItem('licenseKey')     || 'ILT_LIC_9988056';
+            const imei           = localStorage.getItem('imei')           || 'ILTUKAInpackPro1';
+            const pin            = localStorage.getItem('pin')            || '2255';
+            const internalUserId = localStorage.getItem('internalUserId') || '41';
+
+            const url = `/api2025/InPackService.asmx/saveLookupDetails?InternalLookupID=0&LookupFrom=DeviceState&LookupData=${encodeURIComponent(v)}&InternalUserID=${internalUserId}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}`;
+            const res  = await fetch(url);
+            const text = await res.text();
+
+            const parser   = new DOMParser();
+            const xmlDoc   = parser.parseFromString(text, 'text/xml');
+            const stringEl = xmlDoc.getElementsByTagName('string')[0];
+            let newId = '0';
+            if (stringEl && stringEl.textContent) {
+                try {
+                    const d = JSON.parse(stringEl.textContent);
+                    newId = String(d.internal_lookup_id || '0');
+                } catch {
+                    const possible = stringEl.textContent.trim();
+                    if (!isNaN(possible)) newId = possible;
+                }
+            }
+            const newObj = { id: newId, label: v };
+            setExtraStatusOpts(prev => [...prev, newObj]);
+            setUpdateStatus(v);
+            setUpdateStatusId(newId);
+            closeStatusPicker();
+        } catch (err) {
+            console.error('saveLookupDetails error:', err);
+            const newObj = { id: '0', label: v };
+            setExtraStatusOpts(prev => [...prev, newObj]);
+            setUpdateStatus(v);
+            setUpdateStatusId('0');
+            closeStatusPicker();
+        }
+    };
+
+    const allStatusOptions = [...statusOptions, ...extraStatusOpts].filter(o =>
+        o.label.toLowerCase().includes(statusSearch.toLowerCase())
+    );
 
     /* ── Shared Inline Styles ── */
     const S = {
@@ -192,6 +476,76 @@ const JobStatusForm = ({ data, onBack }) => {
         <div style={S.page}>
             <style>{gridStyles}</style>
 
+            {/* ── Status Picker Popup ── */}
+            {showStatusPicker && (
+                <div className="jsf-picker-overlay" onClick={closeStatusPicker}>
+                    <div className="jsf-picker-modal" onClick={e => e.stopPropagation()}>
+
+                        <div className="jsf-picker-header">
+                            <h2 className="jsf-picker-title">Update Status</h2>
+                            <button className="jsf-picker-close" onClick={closeStatusPicker}>
+                                <i className="fa-solid fa-xmark" style={{ color: '#64748b', fontSize: '14px' }}></i>
+                            </button>
+                        </div>
+
+                        <div className="jsf-picker-search-wrap">
+                            <div className="jsf-picker-search-field">
+                                <i className={`fa-solid ${showAddStatus ? 'fa-plus' : 'fa-magnifying-glass'}`} style={{ color: '#94a3b8', fontSize: '13px' }}></i>
+                                <input
+                                    className="jsf-picker-search-input"
+                                    placeholder={showAddStatus ? 'Enter new status…' : 'Search status…'}
+                                    value={showAddStatus ? newStatusInput : statusSearch}
+                                    onChange={e => showAddStatus ? setNewStatusInput(e.target.value) : setStatusSearch(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && showAddStatus && handleAddNewStatus()}
+                                    autoFocus
+                                />
+                                {showAddStatus ? (
+                                    <button
+                                        className="jsf-picker-save-btn"
+                                        onClick={handleAddNewStatus}
+                                        disabled={!newStatusInput.trim()}
+                                    >
+                                        <i className="fa-solid fa-check"></i> Save
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="jsf-picker-add-btn"
+                                        onClick={() => { setShowAddStatus(true); setNewStatusInput(statusSearch); }}
+                                        title="Add new status"
+                                    >
+                                        <i className="fa-solid fa-circle-plus"></i>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="jsf-picker-grid">
+                            {statusLoading ? (
+                                <p className="jsf-picker-empty">
+                                    <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: 6 }}></i> Loading…
+                                </p>
+                            ) : allStatusOptions.length > 0 ? allStatusOptions.map((opt, i) => (
+                                <button
+                                    key={i}
+                                    className={`jsf-picker-chip${updateStatus === opt.label ? ' active' : ''}`}
+                                    onClick={() => handleStatusSelect(opt)}
+                                >
+                                    {opt.label}
+                                </button>
+                            )) : (
+                                <p className="jsf-picker-empty">No options found</p>
+                            )}
+                        </div>
+
+                        <div className="jsf-picker-actions">
+                            <button className="jsf-picker-cancel" onClick={closeStatusPicker}>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Customer Info Modal */}
             {showCustomerInfo && (
                 <div onClick={() => setShowCustomerInfo(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
@@ -282,11 +636,11 @@ const JobStatusForm = ({ data, onBack }) => {
                 </div>
 
                 {/* ── Status & Remarks Card ── */}
-                <h2 style={S.sLabel}>Status & Remarks</h2>
+                <h2 style={S.sLabel}>Status &amp; Remarks</h2>
                 <div style={S.card}>
                     <div style={S.col}>
 
-                        {/* Date pill + Status */}
+                        {/* Date pill + Update Status picker trigger */}
                         <div className="jsf-grid-2">
                             {/* Teal Date-Time Pill */}
                             <div style={{ background: 'linear-gradient(135deg, #0f766e 0%, #059669 100%)', borderRadius: '14px', padding: '12px 18px', display: 'flex', flexDirection: 'column', gap: '6px', boxShadow: '0 4px 14px rgba(15,118,110,0.3)' }}>
@@ -299,15 +653,35 @@ const JobStatusForm = ({ data, onBack }) => {
                                     <span style={{ color: 'rgba(255,255,255,0.85)', fontWeight: '600', fontSize: '13px' }}>{timeFmt}</span>
                                 </div>
                             </div>
-                            {/* Update Status */}
-                            <div style={S.row}>
+
+                            {/* Update Status — double-click to open picker */}
+                            <div
+                                style={{ ...S.row, cursor: 'text' }}
+                                onDoubleClick={openStatusPicker}
+                                title="Double-click to pick a status"
+                            >
                                 <i className="fa-solid fa-signal" style={{ color: '#10b981', fontSize: '15px', marginRight: '12px', flexShrink: 0 }}></i>
-                                <input
-                                    value={updateStatus}
-                                    onChange={(e) => setUpdateStatus(e.target.value)}
-                                    placeholder="Update Status"
-                                    style={{ ...S.input, fontWeight: '500' }}
-                                />
+                                <span style={{
+                                    flex: 1,
+                                    fontSize: '14px',
+                                    fontWeight: updateStatus ? '600' : '400',
+                                    color: updateStatus ? '#1e293b' : '#94a3b8',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    {updateStatus || 'Update Status'}
+                                </span>
+                                {updateStatus ? (
+                                    <button
+                                        onClick={e => { e.stopPropagation(); setUpdateStatus(''); setUpdateStatusId(''); }}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        <i className="fa-solid fa-xmark" style={{ color: '#94a3b8', fontSize: '13px' }}></i>
+                                    </button>
+                                ) : (
+                                    <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '11px' }}></i>
+                                )}
                             </div>
                         </div>
 
