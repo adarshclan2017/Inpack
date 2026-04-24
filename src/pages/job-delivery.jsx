@@ -87,7 +87,6 @@ const JobDelivery = () => {
                 title="Job Delivery"
                 statusOptions={STATUS_OPTIONS}
                 defaultStatusId={3}
-                onItemClick={handleItemClick}
             />
         </>
     );
