@@ -223,7 +223,7 @@ const SpareDropdown = ({ open, results, loading, hasMore, onSelect, onLoadMore, 
 
     const getLabel = (item) => {
         if (field === 'serial') return item.serial_no || item.ss_batch_no || '—';
-        if (field === 'pid')    return item.product_id || '—';
+        if (field === 'pid') return item.product_id || '—';
         return item.product_name || '—'; // 'name' is default
     };
 
@@ -281,7 +281,10 @@ const JobStatusForm = ({ data, onBack }) => {
     const [batchType, setBatchType] = useState('non'); // 'single', 'multi', 'non'
     const [spareInternalBatchId, setSpareInternalBatchId] = useState('');
     const [addedItems, setAddedItems] = useState([]);
-    const [spareAmount, setSpareAmount] = useState(0);
+    // Pre-fill spare amount from saved SpareConsumptionAmount or ActualAmount
+    const [spareAmount, setSpareAmount] = useState(
+        Number(data?.SpareConsumptionAmount || data?.ActualAmount || 0)
+    );
 
     // ── Picker State (Serial / Product Name / Product ID) ────────
     const [serialSearch, setSerialSearch] = useState('');
@@ -324,19 +327,20 @@ const JobStatusForm = ({ data, onBack }) => {
 
     // Editable state for all form fields
     const [jobId, setJobId] = useState(data?.job_no || data?.ServiceID || '');
-    const [complaint, setComplaint] = useState(data?.LookUPComplaint || data?.Complaint || '');
+    const [complaint, setComplaint] = useState(data?.LookUPComplaint || data?.PhoneComplaint || data?.Complaint || '');
     const [brand, setBrand] = useState(data?.LookUpPhoneDetails || data?.PhoneDetails || '');
-    const [model, setModel] = useState(data?.LookUPModel || data?.Model || '');
-    const [color, setColor] = useState(data?.LookUPColour || data?.Colour || '');
+    const [model, setModel] = useState(data?.LookUPModel || data?.PhoneModel || data?.Model || '');
+    const [color, setColor] = useState(data?.LookUPColour || data?.PhoneColour || data?.Colour || '');
     const [status, setStatus] = useState(data?.Status || data?.DeviceState || '');
     const [warranty, setWarranty] = useState(data?.Warranty ? wMap[String(data.Warranty)] || '' : '');
     const [slNo, setSlNo] = useState(data?.IMEI || '');
     const [receivedOn, setReceivedOn] = useState(fmt(data?.JobReceivedDate || data?.BillDate || data?.Date));
     const [assignedOn, setAssignedOn] = useState(fmt(data?.DueDate || data?.ReturnedDate));
-    const [remarks, setRemarks] = useState(data?.Remarks || '');
+    const [remarks, setRemarks] = useState(data?.JobRemarks || data?.Remarks || '');
     const [serviceCharge, setServiceCharge] = useState(data?.EstimateAmount || data?.EstimatedAmount || '');
-    const [updateStatus, setUpdateStatus] = useState('');
-    const [updateStatusId, setUpdateStatusId] = useState('');
+    // Pre-fill the previously saved completion status
+    const [updateStatus, setUpdateStatus] = useState(data?.LUQuickStatus || '');
+    const [updateStatusId, setUpdateStatusId] = useState(data?.InternalQuickStatusID ? String(data.InternalQuickStatusID) : '');
 
     // ── Status Picker State ──────────────────────────────────
     const [showStatusPicker, setShowStatusPicker] = useState(false);
@@ -538,12 +542,12 @@ const JobStatusForm = ({ data, onBack }) => {
         setSpareInternalBatchId(item.internal_batch_id || item.InternalBatchID || '');
         setSpareRate(item.ss_retailRate || item.r_price || item.p_price || '');
         setSpareStock(item.p_currentstock || item.ss_quantity || '0');
-        
+
         // Determine Batch Type
         const allowBatchIdx = String(item.allowbatch || '0');
         const serialNum = item.serial_no || item.ss_batch_no || '';
         const imeiPerUnit = String(item.p_imei_perunit || '');
-        
+
         let type = 'non';
         if (allowBatchIdx === '1') {
             // Usually if it has a unique serial/IMEI per unit, it is a "Single Batch"
@@ -619,10 +623,6 @@ const JobStatusForm = ({ data, onBack }) => {
     };
 
     const handleSave = async () => {
-        if (!updateStatusId) {
-            alert('Please select a status first (double-click the status field).');
-            return;
-        }
 
         setIsSaving(true);
         try {
@@ -640,6 +640,7 @@ const JobStatusForm = ({ data, onBack }) => {
                 serviceid: String(jobId),
                 completedDate: currentTime.toISOString().split('T')[0], // YYYY-MM-DD
                 internalquickstatusid: String(updateStatusId),
+                internalquickstatus: "0",
                 actualamount: Number(spareAmount || 0).toFixed(2),
                 jobremarks: remarks,
                 internaluserid: String(internalUserId),
@@ -655,7 +656,7 @@ const JobStatusForm = ({ data, onBack }) => {
 
             // Reverting to GET as POST caused a 500 error, which suggests the server isn't configured for JSON POSTs
             const url = `/api2025/InPackService.asmx/saveJobDoneDetails?JobDetails=${encodeURIComponent(JSON.stringify(jobDetailsObj))}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}`;
-            
+
             console.log('Full Request URL:', url);
 
             const response = await fetch(url);
@@ -666,10 +667,10 @@ const JobStatusForm = ({ data, onBack }) => {
             const stringEl = xmlDoc.getElementsByTagName('string')[0];
             let responseData = null;
             let jsonStr = stringEl?.textContent || '';
-            
+
             // Check for xsi:nil="true"
             const isNil = stringEl?.getAttribute('xsi:nil') === 'true';
-            
+
             if (!jsonStr && !isNil) {
                 const m = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
                 if (m) jsonStr = m[0];
@@ -677,9 +678,11 @@ const JobStatusForm = ({ data, onBack }) => {
 
             if (jsonStr) {
                 try {
-                    responseData = JSON.parse(jsonStr);
+                    // Sanitize JSON string: remove control characters that break JSON.parse
+                    const sanitizedJson = jsonStr.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+                    responseData = JSON.parse(sanitizedJson);
                     console.log('Save Job Done Response:', responseData);
-                    
+
                     if (responseData.success || responseData.status === "1" || responseData.Success === "True") {
                         showMsg('Job Details Saved Successfully!', 'success');
                         setTimeout(() => { if (onBack) onBack(); }, 1500);
@@ -712,10 +715,10 @@ const JobStatusForm = ({ data, onBack }) => {
 
     const handleAddSpare = () => {
         if (!spareProductName || spareQty <= 0) return;
-        
+
         // Check for duplicates
-        const existing = addedItems.findIndex(item => 
-            item.internalProductId === spareInternalProductId && 
+        const existing = addedItems.findIndex(item =>
+            item.internalProductId === spareInternalProductId &&
             item.internalBatchId === spareInternalBatchId &&
             item.serial === spareSerial
         );
@@ -744,7 +747,7 @@ const JobStatusForm = ({ data, onBack }) => {
             };
             setAddedItems(prev => [...prev, newItem]);
         }
-        
+
         setNameSearch(''); setPidSearch(''); setSerialSearch('');
         setSpareProductName(''); setSpareProductId(''); setSpareSerial('');
         setSpareQty(0); setSpareRate(''); setSpareStock('--'); setBatchType('non');
@@ -890,7 +893,7 @@ const JobStatusForm = ({ data, onBack }) => {
                             <input placeholder="Rate" value={spareRate} onChange={(e) => setSpareRate(e.target.value)} style={{ ...S.input, fontSize: '15px' }} />
                             {spareRate ? <button onClick={() => setSpareRate('')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><i className="fa-solid fa-xmark" style={{ color: '#94a3b8' }}></i></button> : <i className="fa-solid fa-xmark" style={{ color: '#cbd5e1' }}></i>}
                         </div>
-                        <button 
+                        <button
                             onClick={handleAddSpare}
                             disabled={!spareProductName || spareQty <= 0}
                             style={{ flex: 1, minWidth: '150px', background: (!spareProductName || spareQty <= 0) ? '#cbd5e1' : '#10b981', color: 'white', border: 'none', borderRadius: '14px', fontSize: '16px', fontWeight: '700', cursor: (!spareProductName || spareQty <= 0) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: (!spareProductName || spareQty <= 0) ? 'none' : '0 4px 14px rgba(16,185,129,0.4)', minHeight: '54px' }}>
@@ -925,7 +928,7 @@ const JobStatusForm = ({ data, onBack }) => {
                                     <div style={{ textAlign: 'right', paddingRight: '40px' }}>
                                         <div style={{ fontSize: '14px', fontWeight: '800', color: '#10b981' }}>₹{item.total.toFixed(2)}</div>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => handleRemoveItem(idx)}
                                         style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '8px' }}>
                                         <i className="fa-solid fa-trash-can"></i>
@@ -940,15 +943,15 @@ const JobStatusForm = ({ data, onBack }) => {
                     </>
                 )}
 
-                <button 
+                <button
                     onClick={handleCheckout}
                     disabled={addedItems.length === 0}
-                    style={{ 
-                        width: '100%', padding: '18px', fontSize: '18px', fontWeight: '700', color: 'white', 
-                        background: addedItems.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-                        borderRadius: '16px', border: 'none', cursor: addedItems.length === 0 ? 'not-allowed' : 'pointer', 
-                        boxShadow: addedItems.length === 0 ? 'none' : '0 6px 20px rgba(16,185,129,0.3)', 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' 
+                    style={{
+                        width: '100%', padding: '18px', fontSize: '18px', fontWeight: '700', color: 'white',
+                        background: addedItems.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        borderRadius: '16px', border: 'none', cursor: addedItems.length === 0 ? 'not-allowed' : 'pointer',
+                        boxShadow: addedItems.length === 0 ? 'none' : '0 6px 20px rgba(16,185,129,0.3)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px'
                     }}>
                     Checkout {addedItems.length > 0 ? `(${addedItems.length} ${addedItems.length > 1 ? 'Items' : 'Item'})` : ''}
                 </button>
@@ -1139,11 +1142,11 @@ const JobStatusForm = ({ data, onBack }) => {
                                 </div>
                             </div>
 
-                            {/* Update Status — double-click to open picker */}
+                            {/* Update Status — click to open picker */}
                             <div
-                                style={{ ...S.row, cursor: 'text' }}
-                                onDoubleClick={openStatusPicker}
-                                title="Double-click to pick a status"
+                                style={{ ...S.row, cursor: 'pointer' }}
+                                onClick={openStatusPicker}
+                                title="Click to pick a status"
                             >
                                 <i className="fa-solid fa-signal" style={{ color: '#10b981', fontSize: '15px', marginRight: '12px', flexShrink: 0 }}></i>
                                 <span style={{

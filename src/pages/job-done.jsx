@@ -31,7 +31,7 @@ const JobDone = () => {
             const internalUserId = localStorage.getItem('internalUserId') || '41';
 
             const url = `/api2025/InPackService.asmx/getJobEntryDetails?InternalServiceID=${internalId}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}`;
-            
+
             const res = await fetch(url);
             const text = await res.text();
 
@@ -48,8 +48,8 @@ const JobDone = () => {
 
             if (jsonStr) {
                 const data = JSON.parse(jsonStr);
-                const record = (data.service && data.service[0]) ? data.service[0] : 
-                               (Array.isArray(data) ? data[0] : (data.Table ? data.Table[0] : (data.data ? data.data[0] : data)));
+                const record = (data.service && data.service[0]) ? data.service[0] :
+                    (Array.isArray(data) ? data[0] : (data.Table ? data.Table[0] : (data.data ? data.data[0] : data)));
                 if (record) {
                     setSelectedJob(record);
                 } else {
@@ -83,7 +83,7 @@ const JobDone = () => {
                     <span style={{ fontWeight: '600', color: '#1e293b' }}>Fetching Details...</span>
                 </div>
             )}
-            <ServiceList 
+            <ServiceList
                 title="Service List"
                 statusOptions={STATUS_OPTIONS}
                 defaultStatusId={0}

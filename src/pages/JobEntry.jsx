@@ -71,7 +71,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
     // ── Helper: Format Date for <input type="date"> ────────
     const formatForDateInput = (dateStr) => {
         if (!dateStr) return '';
-        
+
         try {
             // Case 1: DD-MM-YYYY (e.g. 17-04-2026)
             if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
@@ -83,12 +83,12 @@ const ServiceForm = ({ onBack, editData = null }) => {
             const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
             const cleanStr = dateStr.replace(/\s+/g, ' ').trim();
             const parts = cleanStr.split(' ');
-            
+
             if (parts.length >= 3) {
                 const mIdx = months.indexOf(parts[0].substring(0, 3).toLowerCase());
                 const day = parseInt(parts[1], 10);
                 const year = parseInt(parts[2], 10);
-                
+
                 if (mIdx !== -1 && !isNaN(day) && !isNaN(year)) {
                     const d = new Date(year, mIdx, day);
                     if (!isNaN(d.getTime())) {
@@ -261,13 +261,13 @@ const ServiceForm = ({ onBack, editData = null }) => {
         setColor(editData.LookUPColour || editData.Colour || '');
         setColorId(String(editData.InternalColourID || '0'));
         setCollect(editData.Accessory || '');
-        
+
         // Status & Complaint
         setStatus(editData.Status || 'New Job');
-        setStatusId(String(editData.InternalStatusID || '0')); 
+        setStatusId(String(editData.InternalStatusID || '0'));
         setComplaint(editData.LookUPComplaint || editData.Complaint || '');
         setComplaintId(String(editData.InternalComplaintID || '0'));
-        
+
         // Technician
         setTechnician(editData.ServiceEngineerName || '');
         setTechnicianId(String(editData.InternalEngineerID || '0'));
@@ -930,7 +930,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                 InternalLocationID: String(internalBranchId),
                 BillDate: jobReceived || new Date().toISOString().slice(0, 10),
                 Warranty: String(warrantyMap[warranty] || 1),
-                QuickService: String(serviceTypeMap[serviceType] || 2),
+                QuickService: "0",
+                internalquickstatusid: "0",
                 DueDate: expectedDate || new Date().toISOString().slice(0, 10),
                 Name: custName || "Walk-in Customer",
                 Address1: custAddress || "",
@@ -963,6 +964,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                 InternalUserID: internalUserId,
                 RecMod: "N",
                 RecFlag: "0",
+
                 InternalSeriesID: "0",
                 GenerateNo: "TRUE",
                 Pattern: "",
@@ -974,6 +976,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
             console.log('Saving Job Entry Details:', details);
 
             const url = `/api2025/InPackService.asmx/saveJobEntryDetails?JobEntryDetails=${encodeURIComponent(JSON.stringify(details))}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}`;
+
+            console.log('Full Request URL:', url);
 
             const res = await fetch(url);
             const text = await res.text();
@@ -1847,7 +1851,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-solid fa-location-dot je-field-icon"></i>
                                 <input className="je-input" placeholder="Address" value={custAddress || ''} onChange={e => setCustAddress(e.target.value)} />
-                             </div>
+                            </div>
                             {/* Route — searchable autocomplete */}
                             <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: routeDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-route je-field-icon"></i>
@@ -2085,7 +2089,7 @@ const JobEntry = () => {
             const internalUserId = localStorage.getItem("internalUserId") || "41";
 
             const url = `/api2025/InPackService.asmx/getJobEntryDetails?InternalServiceID=${internalId}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}`;
-            
+
             const res = await fetch(url);
             const text = await res.text();
 
@@ -2103,8 +2107,8 @@ const JobEntry = () => {
             if (jsonStr) {
                 const data = JSON.parse(jsonStr);
                 // The API structure from getJobEntryDetails is data.service[0]
-                const record = (data.service && data.service[0]) ? data.service[0] : 
-                               (Array.isArray(data) ? data[0] : (data.Table ? data.Table[0] : (data.data ? data.data[0] : data)));
+                const record = (data.service && data.service[0]) ? data.service[0] :
+                    (Array.isArray(data) ? data[0] : (data.Table ? data.Table[0] : (data.data ? data.data[0] : data)));
                 if (record) {
                     setEditData(record);
                     setView('form');
@@ -2126,17 +2130,17 @@ const JobEntry = () => {
     ];
 
     if (view === 'form') {
-        return <ServiceForm 
-            editData={editData} 
+        return <ServiceForm
+            editData={editData}
             onBack={() => {
                 setView('list');
                 setEditData(null);
-            }} 
+            }}
         />;
     }
 
     return (
-        <ServiceList 
+        <ServiceList
             title="Service List"
             statusOptions={STATUS_OPTIONS}
             onAddNew={() => {

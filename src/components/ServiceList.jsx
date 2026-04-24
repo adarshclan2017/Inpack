@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ServiceList.css';
 
-const ServiceList = ({ 
-    title = "Service List", 
-    statusOptions = [], 
+const ServiceList = ({
+    title = "Service List",
+    statusOptions = [],
     defaultStatusId = 0,
     onAddNew = null,
     onBack = null,
@@ -99,7 +99,7 @@ const ServiceList = ({
                 try {
                     const data = JSON.parse(jsonStr);
                     const results = data[searchField] || [];
-                    
+
                     const mapped = results.map(item => ({
                         value: item.value || '',
                         id: item.InternalID || ''
@@ -118,7 +118,22 @@ const ServiceList = ({
         }
     };
 
-    const fetchServiceData = async () => {
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    useEffect(() => {
+        // Reset list when filters change
+        setPage(1);
+        setServiceList([]);
+        setHasMore(true);
+    }, [fromDate, toDate, internalTypeId, filterBill, filterImei, filterName, filterPhone]);
+
+    useEffect(() => {
+        fetchServiceData(page);
+    }, [page, fromDate, toDate, internalTypeId, filterBill, filterImei, filterName, filterPhone]);
+
+    const fetchServiceData = async (pageNum = 1) => {
+        if (isLoading) return;
         setIsLoading(true);
         try {
             const licenseKey = localStorage.getItem("licenseKey") || "ILT_LIC_9988056";
@@ -131,7 +146,10 @@ const ServiceList = ({
             const branchObj = branchDetails.find(b => b.branch_id === branchName);
             const branchId = branchObj ? branchObj.internal_branch_id : "2";
 
-            const url = `/api2025/InPackService.asmx/loadRptServiceDetails?InternalBranchID=${branchId}&FromDate=${fromDate}&ToDate=${toDate}&PageNo=1&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalTypeID=${internalTypeId}&ServiceID=${encodeURIComponent(filterBill)}&SerialNo=${encodeURIComponent(filterImei)}&Name=${encodeURIComponent(filterName)}&PhoneNo=${encodeURIComponent(filterPhone)}`;
+            // Universal Fix: Always use InternalTypeID=0 to see all job entries
+            const url = `/api2025/InPackService.asmx/loadRptServiceDetails?InternalBranchID=${branchId}&FromDate=${fromDate}&ToDate=${toDate}&PageNo=${pageNum}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalTypeID=0&InternalStatusID=${internalTypeId}&ServiceID=${encodeURIComponent(filterBill)}&SerialNo=${encodeURIComponent(filterImei)}&Name=${encodeURIComponent(filterName)}&PhoneNo=${encodeURIComponent(filterPhone)}`;
+            
+            console.log(`ServiceList Fetch (Page ${pageNum}):`, url);
 
             const res = await fetch(url);
             const text = await res.text();
@@ -148,17 +166,47 @@ const ServiceList = ({
             }
 
             if (jsonStr) {
-                const data = JSON.parse(jsonStr);
+                // Sanitize JSON string: remove control characters that break JSON.parse
+                const sanitizedJson = jsonStr.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+                const data = JSON.parse(sanitizedJson);
                 const results = data.services || data.Table || data.data || [];
-                setServiceList(Array.isArray(results) ? results : []);
+                
+                if (Array.isArray(results)) {
+                    if (results.length === 0) {
+                        setHasMore(false);
+                    } else {
+                        setServiceList(prev => pageNum === 1 ? results : [...prev, ...results]);
+                        if (results.length < 10) setHasMore(false); // Default page size is usually 10
+                    }
+                } else {
+                    setHasMore(false);
+                }
+            } else {
+                if (pageNum === 1) setServiceList([]);
+                setHasMore(false);
             }
         } catch (err) {
             console.error('loadRptServiceDetails error:', err);
-            setServiceList([]);
+            if (pageNum === 1) setServiceList([]);
         } finally {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        const onWindowScroll = () => {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            const clientHeight = window.innerHeight;
+
+            if (scrollHeight - scrollTop <= clientHeight + 100 && !isLoading && hasMore) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener('scroll', onWindowScroll);
+        return () => window.removeEventListener('scroll', onWindowScroll);
+    }, [isLoading, hasMore]);
 
     const getStatusConfig = (status) => {
         const s = (status || '').toLowerCase();
@@ -169,10 +217,6 @@ const ServiceList = ({
         if (s.includes('not complete')) return { color: '#b45309', bg: '#fef3c7', border: '#fde68a' }; // Amber
         return { color: '#4b5563', bg: '#f3f4f6', border: '#e5e7eb' }; // Gray
     };
-
-    useEffect(() => {
-        fetchServiceData();
-    }, []);
 
     const handleBack = () => {
         if (onBack) onBack();
@@ -196,21 +240,16 @@ const ServiceList = ({
                 </div>
             </div>
 
-            {isLoading ? (
-                <div className="sl-loading">
-                    <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
-                    <p>Loading services...</p>
-                </div>
-            ) : serviceList.length > 0 ? (
+            {serviceList.length > 0 && (
                 <div className="sl-list-container">
                     {serviceList.map((service, idx) => {
                         const config = getStatusConfig(service.Status || service.DeviceState);
                         const cardStyle = { '--status-color': config.color, '--status-bg': config.bg, '--status-border': config.border };
-                        
+
                         return (
-                            <div 
-                                key={idx} 
-                                className="sl-card" 
+                            <div
+                                key={idx}
+                                className="sl-card"
                                 onClick={() => onItemClick && onItemClick(service)}
                                 style={{ ...cardStyle, cursor: onItemClick ? 'pointer' : 'default' }}
                             >
@@ -230,7 +269,7 @@ const ServiceList = ({
                                             <span>{service.Mobile || service.PhoneNo || 'N/A'}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="sl-status-badge">
                                         {service.Status || service.DeviceState || 'N/A'}
                                     </div>
@@ -239,7 +278,16 @@ const ServiceList = ({
                         );
                     })}
                 </div>
-            ) : (
+            )}
+
+            {isLoading && (
+                <div className="sl-loading-bottom" style={{ padding: '20px', textAlign: 'center', color: '#0d9488' }}>
+                    <i className="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p style={{ marginTop: '8px', fontSize: '14px' }}>Loading more jobs...</p>
+                </div>
+            )}
+
+            {!isLoading && serviceList.length === 0 && (
                 <div className="sl-empty-state">
                     <div className="sl-empty-illustration">
                         <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -317,7 +365,7 @@ const ServiceList = ({
                         {statusOptions.length > 0 && (
                             <div className="sl-filter-select-wrap" ref={statusDropdownRef}>
                                 <i className="fa-solid fa-filter"></i>
-                                <div 
+                                <div
                                     className="sl-custom-select"
                                     onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
                                 >
@@ -325,11 +373,11 @@ const ServiceList = ({
                                         {statusOptions.find(opt => opt.id === internalTypeId)?.label || 'All'}
                                     </span>
                                     <i className={`fa-solid fa-chevron-down ${statusDropdownOpen ? 'open' : ''}`}></i>
-                                    
+
                                     {statusDropdownOpen && (
                                         <div className="sl-custom-options">
                                             {statusOptions.map(opt => (
-                                                <div 
+                                                <div
                                                     key={opt.id}
                                                     className={`sl-custom-option ${internalTypeId === opt.id ? 'active' : ''}`}
                                                     onClick={(e) => {
@@ -350,14 +398,14 @@ const ServiceList = ({
                         <div className="sl-filter-fields">
                             {/* Phone */}
                             <div className="sl-filter-field">
-                                <input 
-                                    placeholder="Customer Phone number" 
-                                    value={filterPhone} 
+                                <input
+                                    placeholder="Customer Phone number"
+                                    value={filterPhone}
                                     onChange={e => {
                                         setFilterPhone(e.target.value);
                                         fetchAutoFillInfo(e.target.value, 'PhoneNo', setFilterPhoneResults, setFilterPhoneDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterPhoneResults.length > 0) setFilterPhoneDropdown(true); }}
+                                    }}
+                                    onFocus={() => { if (filterPhoneResults.length > 0) setFilterPhoneDropdown(true); }}
                                     onBlur={() => setTimeout(() => setFilterPhoneDropdown(false), 150)}
                                 />
                                 {filterPhone && <i className="fa-solid fa-xmark sl-clear" onClick={() => { setFilterPhone(''); setFilterPhoneResults([]); }}></i>}
@@ -371,14 +419,14 @@ const ServiceList = ({
                             </div>
                             {/* Name */}
                             <div className="sl-filter-field">
-                                <input 
-                                    placeholder="Customer Name" 
-                                    value={filterName} 
+                                <input
+                                    placeholder="Customer Name"
+                                    value={filterName}
                                     onChange={e => {
                                         setFilterName(e.target.value);
                                         fetchAutoFillInfo(e.target.value, 'Name', setFilterNameResults, setFilterNameDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterNameResults.length > 0) setFilterNameDropdown(true); }}
+                                    }}
+                                    onFocus={() => { if (filterNameResults.length > 0) setFilterNameDropdown(true); }}
                                     onBlur={() => setTimeout(() => setFilterNameDropdown(false), 150)}
                                 />
                                 {filterName && <i className="fa-solid fa-xmark sl-clear" onClick={() => { setFilterName(''); setFilterNameResults([]); }}></i>}
@@ -392,14 +440,14 @@ const ServiceList = ({
                             </div>
                             {/* IMEI */}
                             <div className="sl-filter-field">
-                                <input 
-                                    placeholder="IMEI Number" 
-                                    value={filterImei} 
+                                <input
+                                    placeholder="IMEI Number"
+                                    value={filterImei}
                                     onChange={e => {
                                         setFilterImei(e.target.value);
                                         fetchAutoFillInfo(e.target.value, 'imei', setFilterImeiResults, setFilterImeiDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterImeiResults.length > 0) setFilterImeiDropdown(true); }}
+                                    }}
+                                    onFocus={() => { if (filterImeiResults.length > 0) setFilterImeiDropdown(true); }}
                                     onBlur={() => setTimeout(() => setFilterImeiDropdown(false), 150)}
                                 />
                                 {filterImei && <i className="fa-solid fa-xmark sl-clear" onClick={() => { setFilterImei(''); setFilterImeiResults([]); }}></i>}
@@ -413,14 +461,14 @@ const ServiceList = ({
                             </div>
                             {/* Bill */}
                             <div className="sl-filter-field">
-                                <input 
-                                    placeholder="Bill Number" 
-                                    value={filterBill} 
+                                <input
+                                    placeholder="Bill Number"
+                                    value={filterBill}
                                     onChange={e => {
                                         setFilterBill(e.target.value);
                                         fetchAutoFillInfo(e.target.value, 'ServiceID', setFilterBillResults, setFilterBillDropdown);
-                                    }} 
-                                    onFocus={() => { if(filterBillResults.length > 0) setFilterBillDropdown(true); }}
+                                    }}
+                                    onFocus={() => { if (filterBillResults.length > 0) setFilterBillDropdown(true); }}
                                     onBlur={() => setTimeout(() => setFilterBillDropdown(false), 150)}
                                 />
                                 {filterBill && <i className="fa-solid fa-xmark sl-clear" onClick={() => { setFilterBill(''); setFilterBillResults([]); }}></i>}
@@ -434,7 +482,13 @@ const ServiceList = ({
                             </div>
                         </div>
 
-                        <button className="sl-submit-btn" onClick={() => { fetchServiceData(); setIsFilterOpen(false); }}>
+                        <button className="sl-submit-btn" onClick={() => { 
+                            setPage(1);
+                            setServiceList([]);
+                            setHasMore(true);
+                            fetchServiceData(1); 
+                            setIsFilterOpen(false); 
+                        }}>
                             Filter
                         </button>
                     </div>
