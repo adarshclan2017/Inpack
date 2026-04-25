@@ -2120,7 +2120,7 @@ const JobEntry = () => {
     };
 
     const STATUS_OPTIONS = [
-        { id: 0, label: 'All' },
+        { id: 0, label: 'All Statuses' },
         { id: 1, label: 'Not Alloted' },
         { id: 2, label: 'Not Completed' },
         { id: 3, label: 'Not Delivered' },

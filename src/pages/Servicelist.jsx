@@ -13,7 +13,7 @@ const Servicelist = () => {
     ];
 
     return (
-        <ServiceList 
+        <ServiceList
             title="Service List"
             statusOptions={STATUS_OPTIONS}
             defaultStatusId={0}

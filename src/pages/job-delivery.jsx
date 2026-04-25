@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import ServiceList from '../components/ServiceList';
-import JobStatusForm from '../components/JobStatusForm';
 
 const JobDelivery = () => {
-    const [selectedJob, setSelectedJob] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const STATUS_OPTIONS = [
@@ -15,60 +13,6 @@ const JobDelivery = () => {
         { id: 5, label: 'Alloted But Not Completed' },
         { id: 6, label: 'Completed But Not Delivered' },
     ];
-
-    const handleItemClick = async (item) => {
-        const internalId = item.InternalServiceID || item.ServiceID || item.internal_service_id;
-        if (!internalId) {
-            setSelectedJob(item);
-            return;
-        }
-
-        setIsLoading(true);
-        try {
-            const licenseKey = localStorage.getItem('licenseKey') || 'ILT_LIC_9988056';
-            const imei = localStorage.getItem('imei') || 'ILTUKAInpackPro1';
-            const pin = localStorage.getItem('pin') || '2255';
-            const internalUserId = localStorage.getItem('internalUserId') || '41';
-
-            const url = `/api2025/InPackService.asmx/getJobEntryDetails?InternalServiceID=${internalId}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}`;
-
-            const res = await fetch(url);
-            const text = await res.text();
-
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(text, 'text/xml');
-            const stringEl = xmlDoc.getElementsByTagName('string')[0];
-            let jsonStr = '';
-            if (stringEl && stringEl.textContent) {
-                jsonStr = stringEl.textContent;
-            } else {
-                const m = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-                if (m) jsonStr = m[0];
-            }
-
-            if (jsonStr) {
-                const data = JSON.parse(jsonStr);
-                const record = (data.service && data.service[0]) ? data.service[0] :
-                    (Array.isArray(data) ? data[0] : (data.Table ? data.Table[0] : (data.data ? data.data[0] : data)));
-                if (record) {
-                    setSelectedJob(record);
-                } else {
-                    setSelectedJob(item);
-                }
-            } else {
-                setSelectedJob(item);
-            }
-        } catch (err) {
-            console.error('getJobEntryDetails error:', err);
-            setSelectedJob(item);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    if (selectedJob) {
-        return <JobStatusForm data={selectedJob} onBack={() => setSelectedJob(null)} />;
-    }
 
     return (
         <>

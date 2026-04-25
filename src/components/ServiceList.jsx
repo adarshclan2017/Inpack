@@ -21,7 +21,7 @@ const ServiceList = ({
     const [toDate, setToDate] = useState(getTodayDate());
 
     // Filter Logic
-    const [internalTypeId, setInternalTypeId] = useState(defaultStatusId);
+    const [internalStatusId, setInternalStatusId] = useState(defaultStatusId);
     const [filterPhone, setFilterPhone] = useState('');
     const [filterName, setFilterName] = useState('');
     const [filterImei, setFilterImei] = useState('');
@@ -126,11 +126,11 @@ const ServiceList = ({
         setPage(1);
         setServiceList([]);
         setHasMore(true);
-    }, [fromDate, toDate, internalTypeId, filterBill, filterImei, filterName, filterPhone]);
+    }, [fromDate, toDate, internalStatusId, filterBill, filterImei, filterName, filterPhone]);
 
     useEffect(() => {
         fetchServiceData(page);
-    }, [page, fromDate, toDate, internalTypeId, filterBill, filterImei, filterName, filterPhone]);
+    }, [page, fromDate, toDate, internalStatusId, filterBill, filterImei, filterName, filterPhone]);
 
     const fetchServiceData = async (pageNum = 1) => {
         if (isLoading) return;
@@ -146,9 +146,9 @@ const ServiceList = ({
             const branchObj = branchDetails.find(b => b.branch_id === branchName);
             const branchId = branchObj ? branchObj.internal_branch_id : "2";
 
-            // Universal Fix: Always use InternalTypeID=0 to see all job entries
-            const url = `/api2025/InPackService.asmx/loadRptServiceDetails?InternalBranchID=${branchId}&FromDate=${fromDate}&ToDate=${toDate}&PageNo=${pageNum}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalTypeID=0&InternalStatusID=${internalTypeId}&ServiceID=${encodeURIComponent(filterBill)}&SerialNo=${encodeURIComponent(filterImei)}&Name=${encodeURIComponent(filterName)}&PhoneNo=${encodeURIComponent(filterPhone)}`;
-            
+            // Universal Fix: Sync InternalTypeID with internalStatusId as requested
+            const url = `/api2025/InPackService.asmx/loadRptServiceDetails?InternalBranchID=${branchId}&FromDate=${fromDate}&ToDate=${toDate}&PageNo=${pageNum}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalTypeID=${internalStatusId}&InternalStatusID=${internalStatusId}&ServiceID=${encodeURIComponent(filterBill)}&SerialNo=${encodeURIComponent(filterImei)}&Name=${encodeURIComponent(filterName)}&PhoneNo=${encodeURIComponent(filterPhone)}`;
+
             console.log(`ServiceList Fetch (Page ${pageNum}):`, url);
 
             const res = await fetch(url);
@@ -170,7 +170,7 @@ const ServiceList = ({
                 const sanitizedJson = jsonStr.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
                 const data = JSON.parse(sanitizedJson);
                 const results = data.services || data.Table || data.data || [];
-                
+
                 if (Array.isArray(results)) {
                     if (results.length === 0) {
                         setHasMore(false);
@@ -370,7 +370,7 @@ const ServiceList = ({
                                     onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
                                 >
                                     <span>
-                                        {statusOptions.find(opt => opt.id === internalTypeId)?.label || 'All'}
+                                        {statusOptions.find(opt => opt.id === internalStatusId)?.label || 'All Statuses'}
                                     </span>
                                     <i className={`fa-solid fa-chevron-down ${statusDropdownOpen ? 'open' : ''}`}></i>
 
@@ -379,10 +379,10 @@ const ServiceList = ({
                                             {statusOptions.map(opt => (
                                                 <div
                                                     key={opt.id}
-                                                    className={`sl-custom-option ${internalTypeId === opt.id ? 'active' : ''}`}
+                                                    className={`sl-custom-option ${internalStatusId === opt.id ? 'active' : ''}`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setInternalTypeId(opt.id);
+                                                        setInternalStatusId(opt.id);
                                                         setStatusDropdownOpen(false);
                                                     }}
                                                 >
@@ -482,12 +482,12 @@ const ServiceList = ({
                             </div>
                         </div>
 
-                        <button className="sl-submit-btn" onClick={() => { 
+                        <button className="sl-submit-btn" onClick={() => {
                             setPage(1);
                             setServiceList([]);
                             setHasMore(true);
-                            fetchServiceData(1); 
-                            setIsFilterOpen(false); 
+                            fetchServiceData(1);
+                            setIsFilterOpen(false);
                         }}>
                             Filter
                         </button>
