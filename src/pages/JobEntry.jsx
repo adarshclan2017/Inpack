@@ -5,7 +5,11 @@ import '../styles/JobEntry.css';
 
 /* ─── Sub-component: Service Form ───────────────────────── */
 const ServiceForm = ({ onBack, editData = null }) => {
-    const [serviceType, setServiceType] = useState('backend');
+    // Lazy init: runs on first mount with editData already passed as prop
+    const [serviceType, setServiceType] = useState(() => {
+        const qs = Number(editData?.QuickService);  // coerce string "3" → 3
+        return { 1: 'quick', 2: 'backend', 3: 'field' }[qs] || 'backend';
+    });
     const [phone, setPhone] = useState('');
     const [brand, setBrand] = useState('');
     const [brandId, setBrandId] = useState('');
@@ -282,9 +286,11 @@ const ServiceForm = ({ onBack, editData = null }) => {
         setEstimatedAmount(editData.EstimateAmount || editData.EstimatedAmount || '');
         setAdvanceReceived(editData.AdvanceAmount || editData.AdvanceReceived || '');
 
-        // Mappings
-        const serviceTypeReverseMap = { '1': 'quick', '2': 'backend', '3': 'field' };
-        setServiceType(serviceTypeReverseMap[String(editData.QuickService)] || 'backend');
+        // QuickService: 1=quics, 2=backend, 3=field  (coerce to Number to handle string values)
+        const qs = Number(editData.QuickService);
+        console.log('[QuickService from API]', editData.QuickService, '→ Number:', qs);
+        const serviceTypeReverseMap = { 1: 'quics', 2: 'backend', 3: 'field' };
+        setServiceType(serviceTypeReverseMap[qs] || 'backend');
 
         const warrantyReverseMap = { '1': 'warranty', '2': 'out', '3': 'non' };
         setWarranty(warrantyReverseMap[String(editData.Warranty)] || 'non');
@@ -1035,17 +1041,21 @@ const ServiceForm = ({ onBack, editData = null }) => {
                     <div className="je-section">
                         <h2 className="je-section-title">Service Type</h2>
                         <div className="je-radio-group">
-                            {['quick', 'backend', 'field'].map(type => (
-                                <label key={type} className={`je-radio-pill ${serviceType === type ? 'active' : ''}`}>
+                            {[
+                                { value: 'quick', label: 'Quick' },
+                                { value: 'backend', label: 'Backend' },
+                                { value: 'field', label: 'Field' },
+                            ].map(({ value, label }) => (
+                                <label key={value} className={`je-radio-pill ${serviceType === value ? 'active' : ''}`}>
                                     <input
                                         type="radio"
                                         name="serviceType"
-                                        value={type}
-                                        checked={serviceType === type}
-                                        onChange={() => setServiceType(type)}
+                                        value={value}
+                                        checked={serviceType === value}
+                                        onChange={() => setServiceType(value)}
                                     />
                                     <span className="je-radio-dot"></span>
-                                    <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
+                                    <span>{label}</span>
                                 </label>
                             ))}
                         </div>
@@ -1058,6 +1068,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-input-row" style={{ position: 'relative' }} ref={phoneContainerRef}>
                                 <i className="fa-solid fa-phone je-field-icon"></i>
                                 <input
+                                    id="je-customer-phone"
+                                    name="customerPhone"
                                     type="tel"
                                     className="je-input"
                                     placeholder="Customer Phone number"
@@ -1143,6 +1155,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-input-row je-grid-left-item">
                                     <i className="fa-solid fa-tag je-field-icon"></i>
                                     <input
+                                        id="je-brand"
+                                        name="brand"
                                         className="je-input"
                                         placeholder="Brand"
                                         value={brand || ''}
@@ -1163,6 +1177,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-input-row je-grid-right-item">
                                     <i className="fa-solid fa-mobile-screen-button je-field-icon"></i>
                                     <input
+                                        id="je-model"
+                                        name="model"
                                         className="je-input"
                                         placeholder="Model"
                                         value={model || ''}
@@ -1184,6 +1200,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-input-row je-grid-left-item je-border-top">
                                     <i className="fa-solid fa-palette je-field-icon"></i>
                                     <input
+                                        id="je-color"
+                                        name="color"
                                         className="je-input"
                                         placeholder="Color"
                                         value={color || ''}
@@ -1204,6 +1222,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-input-row je-grid-right-item je-border-top">
                                     <i className="fa-solid fa-box je-field-icon"></i>
                                     <input
+                                        id="je-collect"
+                                        name="collect"
                                         className="je-input"
                                         placeholder="Collect"
                                         value={collect || ''}
@@ -1225,6 +1245,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-input-row je-grid-left-item je-border-top">
                                     <i className="fa-solid fa-circle-info je-field-icon"></i>
                                     <input
+                                        id="je-status"
+                                        name="status"
                                         className="je-input"
                                         placeholder="Status"
                                         value={status || ''}
@@ -1245,6 +1267,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-input-row je-grid-right-item je-border-top">
                                     <i className="fa-solid fa-triangle-exclamation je-field-icon"></i>
                                     <input
+                                        id="je-complaint"
+                                        name="complaint"
                                         className="je-input"
                                         placeholder="Complaint"
                                         value={complaint || ''}
@@ -1280,13 +1304,13 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 {/* Row 5: Serials */}
                                 <div className="je-input-row je-grid-left-item je-border-top">
                                     <i className="fa-solid fa-table-cells-large je-field-icon"></i>
-                                    <input className="je-input" placeholder="Serial number" value={serial1} onChange={e => setSerial1(e.target.value)} />
+                                    <input id="je-serial1" name="serial1" className="je-input" placeholder="Serial number" value={serial1} onChange={e => setSerial1(e.target.value)} />
                                     <i className="fa-solid fa-qrcode je-field-icon-right"></i>
                                 </div>
                                 <div className="je-v-line je-border-top"></div>
                                 <div className="je-input-row je-grid-right-item je-border-top">
                                     <i className="fa-solid fa-table-cells-large je-field-icon"></i>
-                                    <input className="je-input" placeholder="Serial number" value={serial2} onChange={e => setSerial2(e.target.value)} />
+                                    <input id="je-serial2" name="serial2" className="je-input" placeholder="Serial number" value={serial2} onChange={e => setSerial2(e.target.value)} />
                                     <i className="fa-solid fa-qrcode je-field-icon-right"></i>
                                 </div>
 
@@ -1294,6 +1318,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-grid-full-width je-input-row je-border-top" style={{ position: 'relative' }} ref={technicianContainerRef}>
                                     <i className="fa-solid fa-user-gear je-field-icon"></i>
                                     <input
+                                        id="je-technician"
+                                        name="technician"
                                         className="je-input"
                                         placeholder="Technician"
                                         value={technician}
@@ -1394,6 +1420,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                     <div className="je-terms-input-wrap">
                                         <i className="fa-regular fa-calendar je-terms-fi"></i>
                                         <input
+                                            id="je-expected-date"
+                                            name="expectedDate"
                                             type="date"
                                             className="je-terms-native-input"
                                             value={expectedDate}
@@ -1408,6 +1436,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                     <div className="je-terms-input-wrap">
                                         <i className="fa-regular fa-calendar je-terms-fi"></i>
                                         <input
+                                            id="je-job-received"
+                                            name="jobReceived"
                                             type="date"
                                             className="je-terms-native-input"
                                             value={jobReceived || new Date().toISOString().slice(0, 10)}
@@ -1423,6 +1453,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
                                         <input
+                                            id="je-estimated-amount"
+                                            name="estimatedAmount"
                                             className="je-terms-native-input"
                                             placeholder="0.00"
                                             type="number"
@@ -1437,6 +1469,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                     <div className="je-terms-input-wrap">
                                         <span className="je-terms-rupee">₹</span>
                                         <input
+                                            id="je-advance-received"
+                                            name="advanceReceived"
                                             className="je-terms-native-input"
                                             placeholder="0.00"
                                             type="number"
@@ -1452,7 +1486,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                 <div className="je-terms-toggle-bar">
                                     <span className="je-terms-toggle-label">Multi mode payment splits</span>
                                     <label className="je-toggle-switch">
-                                        <input type="checkbox" checked={multiMode} onChange={e => setMultiMode(e.target.checked)} />
+                                        <input id="je-multi-mode" name="multiMode" type="checkbox" checked={multiMode} onChange={e => setMultiMode(e.target.checked)} />
                                         <span className="je-toggle-track"><span className="je-toggle-thumb"></span></span>
                                     </label>
                                 </div>
@@ -1518,6 +1552,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                             {/* RIGHT: amount + X */}
                                             <div className="je-split-pill je-split-pill--amount">
                                                 <input
+                                                    id={`je-split-amt-${split.id}`}
+                                                    name={`splitAmount_${split.method.replace(/\s+/g, '_')}`}
                                                     className="je-split-amt"
                                                     placeholder="0.00"
                                                     type="number"
@@ -1542,10 +1578,13 @@ const ServiceForm = ({ onBack, editData = null }) => {
                                             <div className="je-split-card-num-row">
                                                 <i className="fa-regular fa-credit-card je-split-card-num-icon"></i>
                                                 <input
+                                                    id="je-credit-card-num"
+                                                    name="creditCardNumber"
                                                     className="je-split-card-num-input"
                                                     placeholder="XXXX  XXXX  XXXX  XXXX"
                                                     type="text"
                                                     maxLength={19}
+                                                    autoComplete="cc-number"
                                                     onChange={(e) => {
                                                         let v = e.target.value.replace(/\D/g, '');
                                                         v = v.replace(/(.{4})/g, '$1 ').trim();
@@ -1565,7 +1604,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                     <div className="je-signature-section">
                         <div className="je-toggle-row je-center-toggle">
                             <label className="je-toggle-switch">
-                                <input type="checkbox" checked={showSignature} onChange={e => setShowSignature(e.target.checked)} />
+                                <input id="je-show-signature" name="showSignature" type="checkbox" checked={showSignature} onChange={e => setShowSignature(e.target.checked)} />
                                 <span className="je-toggle-track">
                                     <span className="je-toggle-thumb"></span>
                                 </span>
@@ -1644,6 +1683,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-picker-search-field">
                                 <i className={`fa-solid ${showAddItem ? 'fa-plus' : 'fa-magnifying-glass'} je-picker-search-icon`}></i>
                                 <input
+                                    id="je-picker-search"
+                                    name="pickerSearch"
                                     className="je-picker-search-input"
                                     placeholder={showAddItem ? `Enter new ${FIELD_LABELS[activePicker]?.toLowerCase()}...` : `Search ${FIELD_LABELS[activePicker]?.toLowerCase()}...`}
                                     value={showAddItem ? newItemInput : pickerSearch}
@@ -1722,6 +1763,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-modal-field" style={{ position: 'relative', zIndex: searchResults.length > 0 ? 100 : 1 }}>
                                 <i className="fa-regular fa-user je-field-icon"></i>
                                 <input
+                                    id="je-cust-name"
+                                    name="custName"
                                     className="je-input"
                                     placeholder="Customer Name"
                                     value={custName || ''}
@@ -1785,6 +1828,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-modal-field je-border-top" style={{ position: 'relative' }} ref={modalPhoneContainerRef}>
                                 <i className="fa-solid fa-phone je-field-icon"></i>
                                 <input
+                                    id="je-cust-phone"
+                                    name="custPhone"
                                     type="tel"
                                     className="je-input"
                                     placeholder="Customer Phone number"
@@ -1850,12 +1895,14 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             </div>
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-solid fa-location-dot je-field-icon"></i>
-                                <input className="je-input" placeholder="Address" value={custAddress || ''} onChange={e => setCustAddress(e.target.value)} />
+                                <input id="je-cust-address" name="custAddress" className="je-input" placeholder="Address" value={custAddress || ''} onChange={e => setCustAddress(e.target.value)} />
                             </div>
                             {/* Route — searchable autocomplete */}
                             <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: routeDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-route je-field-icon"></i>
                                 <input
+                                    id="je-cust-route"
+                                    name="custRoute"
                                     className="je-input"
                                     placeholder="Select Route"
                                     value={custRoute}
@@ -1923,6 +1970,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: classDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-layer-group je-field-icon"></i>
                                 <input
+                                    id="je-cust-class"
+                                    name="custClass"
                                     className="je-input"
                                     placeholder="Select Class"
                                     value={custClass}
@@ -1990,6 +2039,8 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             <div className="je-modal-field je-border-top" style={{ position: 'relative', zIndex: stateDropdownOpen ? 100 : 1 }}>
                                 <i className="fa-solid fa-map je-field-icon"></i>
                                 <input
+                                    id="je-cust-state"
+                                    name="custState"
                                     className="je-input"
                                     placeholder="Select state"
                                     value={custState}
@@ -2054,7 +2105,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                             {/* GST */}
                             <div className="je-modal-field je-border-top">
                                 <i className="fa-regular fa-id-card je-field-icon"></i>
-                                <input className="je-input" placeholder="Enter GST" value={custGst} onChange={e => setCustGst(e.target.value)} />
+                                <input id="je-cust-gst" name="custGst" className="je-input" placeholder="Enter GST" value={custGst} onChange={e => setCustGst(e.target.value)} />
                                 <span className="je-modal-divider"></span>
                                 <button className="je-modal-download"><i className="fa-solid fa-download"></i></button>
                             </div>
@@ -2120,7 +2171,7 @@ const JobEntry = () => {
     };
 
     const STATUS_OPTIONS = [
-        { id: 0, label: 'All Statuses' },
+        { id: 0, label: 'All ' },
         { id: 1, label: 'Not Alloted' },
         { id: 2, label: 'Not Completed' },
         { id: 3, label: 'Not Delivered' },

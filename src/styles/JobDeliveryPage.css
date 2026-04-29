@@ -1,0 +1,86 @@
+/* ============================================================
+   JobDeliveryPage.css — Desktop Split Panel Layout
+   ============================================================ */
+
+/* ── Desktop split wrapper ───────────────────────────── */
+.jdp-layout {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: #f0fdf4;
+    position: relative;
+}
+
+/* ── Left panel (ServiceList) ────────────────────────── */
+.jdp-left {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    transition: flex 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.jdp-left--narrow {
+    flex: 0 0 42%;
+    max-width: 42%;
+    border-right: 2px solid #bbf7d0;
+    box-shadow: 4px 0 18px rgba(22,163,74,0.08);
+}
+
+/* Responsive: on small screens, hide list when form is open */
+@media (max-width: 768px) {
+    .jdp-left--narrow {
+        display: none;
+    }
+    .jdp-right {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ── Right panel (JobDeliveryForm) ───────────────────── */
+.jdp-right {
+    flex: 0 0 58%;
+    max-width: 58%;
+    overflow: hidden;
+    animation: jdp-slide-in 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes jdp-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ── Loading overlay ─────────────────────────────────── */
+.jdp-loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.jdp-loading-overlay span {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Clickable card highlight (green tint on hover) ── */
+/* Target ServiceList cards when inside jdp-left */
+.jdp-left .sl-card:hover {
+    border-left: 3px solid #22c55e !important;
+    box-shadow: 0 4px 16px rgba(34,197,94,0.14) !important;
+}

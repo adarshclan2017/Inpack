@@ -146,7 +146,7 @@ const ServiceList = ({
             const branchObj = branchDetails.find(b => b.branch_id === branchName);
             const branchId = branchObj ? branchObj.internal_branch_id : "2";
 
-            // Universal Fix: Sync InternalTypeID with internalStatusId as requested
+            // InternalTypeID syncs with internalStatusId — when the dropdown changes, both update together
             const url = `/api2025/InPackService.asmx/loadRptServiceDetails?InternalBranchID=${branchId}&FromDate=${fromDate}&ToDate=${toDate}&PageNo=${pageNum}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&InternalUserID=${internalUserId}&InternalTypeID=${internalStatusId}&InternalStatusID=${internalStatusId}&ServiceID=${encodeURIComponent(filterBill)}&SerialNo=${encodeURIComponent(filterImei)}&Name=${encodeURIComponent(filterName)}&PhoneNo=${encodeURIComponent(filterPhone)}`;
 
             console.log(`ServiceList Fetch (Page ${pageNum}):`, url);
