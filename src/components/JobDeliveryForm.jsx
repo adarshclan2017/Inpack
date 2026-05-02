@@ -241,7 +241,7 @@ const JobDeliveryForm = ({ data, onBack, onSaveSuccess }) => {
                         <i className="fa-solid fa-circle-info"></i>
                         Service Information
                     </div>
-                    <div className="jdf-fields-grid">
+                    <div className="jdf-fields-grid jdf-grid-2-persist">
                         {/* Row 1: Bill Date + Allotment Date */}
                         <div className="jdf-field-group">
                             <label className="jdf-field-label">Job Received On</label>
@@ -349,7 +349,7 @@ const JobDeliveryForm = ({ data, onBack, onSaveSuccess }) => {
                         Job Delivery
                     </div>
 
-                    <div className="jdf-fields-grid">
+                    <div className="jdf-fields-grid jdf-grid-2-persist">
                         <div className="jdf-field-group">
                             <label className="jdf-field-label">Delivered On</label>
                             <div className="jdf-field-input jdf-editable">

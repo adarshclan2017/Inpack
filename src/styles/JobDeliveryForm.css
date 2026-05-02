@@ -755,15 +755,21 @@
     /* Grid - Persist 2 columns for specific pairs */
     .jdf-grid-2-persist {
         grid-template-columns: 1fr 1fr !important;
-        gap: 10px !important;
+        gap: 8px !important;
     }
     
     .jdf-grid-2-persist .jdf-field-input {
         padding: 8px 8px;
         font-size: 12px;
+        gap: 6px !important;
+        min-height: 38px;
+    }
+    .jdf-grid-2-persist .jdf-field-input i {
+        font-size: 12px;
     }
     .jdf-grid-2-persist .jdf-field-label {
-        font-size: 10px;
+        font-size: 9.5px;
+        margin-bottom: 2px;
     }
 }
 
