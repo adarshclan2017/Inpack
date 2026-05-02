@@ -740,7 +740,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
 
         setPhoneError(''); // Clear error on new search
 
-        if (!query || query.length < 3) {
+        if (!query || query.length < 2) {
             setPhoneSearchResults([]);
             return;
         }
@@ -769,7 +769,7 @@ const ServiceForm = ({ onBack, editData = null }) => {
                 const results = data.contactno || data.customers || data.Table || (Array.isArray(data) ? data : []);
                 setPhoneSearchResults(results);
 
-                if (results.length === 0 && query.length > 2) {
+                if (results.length === 0 && query.length > 1) {
                     setPhoneError('No matches found.');
                 }
             } else {

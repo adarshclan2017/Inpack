@@ -42,6 +42,7 @@
     background: var(--jdf-gray-50);
     font-family: 'Inter', sans-serif;
     color: var(--jdf-gray-800);
+    overflow-x: hidden;
 }
 
 /* ── Header ──────────────────────────────────────────── */
@@ -259,6 +260,8 @@
     flex-direction: column;
     gap: 5px;
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .jdf-field-label {
@@ -282,7 +285,9 @@
     transition: var(--jdf-transition);
     font-size: 14px;
     color: var(--jdf-gray-700);
-    font-weight: 500;
+    font-weight: 600;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .jdf-field-input i {
@@ -318,10 +323,11 @@
     outline: none;
     flex: 1;
     font-size: 14px;
-    font-weight: 500;
-    color: var(--jdf-gray-700);
+    font-weight: 600;
+    color: var(--jdf-gray-800);
     font-family: 'Inter', sans-serif;
     min-width: 0;
+    width: 100%;
 }
 .jdf-field-input input::placeholder {
     color: var(--jdf-gray-400);
@@ -522,6 +528,7 @@
     font-weight: 600;
     color: #334155;
     min-width: 0;
+    width: 100%;
     padding: 0; margin: 0;
     font-family: 'Inter', sans-serif;
     -moz-appearance: textfield;
@@ -646,3 +653,128 @@
     color: #b91c1c;
 }
 .jdf-save-msg--error i { color: #ef4444; }
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS  –  Phones & Tablets
+   ════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+    /* Header */
+    .jdf-header {
+        padding: 14px 16px 12px;
+        gap: 12px;
+    }
+    .jdf-back-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+    .jdf-title-label {
+        font-size: 16px;
+    }
+    .jdf-job-badge {
+        font-size: 11px;
+        padding: 1px 8px;
+    }
+    .jdf-customer-name {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+
+    /* Scroll area */
+    .jdf-scroll {
+        padding: 12px 12px 30px;
+        gap: 12px;
+    }
+
+    /* Sections */
+    .jdf-section {
+        padding: 14px 12px 12px;
+        border-radius: 12px;
+    }
+    .jdf-section-title {
+        font-size: 14px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+
+    /* Grid - Collapse to 1 column */
+    .jdf-fields-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .jdf-field-label {
+        font-size: 10.5px;
+    }
+    .jdf-field-input {
+        padding: 8px 10px;
+        min-height: 40px;
+        font-size: 13px;
+    }
+
+    /* Payment Splits */
+    .jdf-split-row {
+        gap: 8px;
+    }
+    .jdf-split-pill {
+        height: 44px;
+    }
+    .jdf-split-pill--method {
+        flex: 5;
+    }
+    .jdf-split-pill--amount {
+        flex: 3;
+    }
+    .jdf-split-amt {
+        font-size: 14px;
+    }
+    .jdf-split-custom-value {
+        font-size: 12px;
+    }
+    .jdf-split-custom-options {
+        left: -38px;
+        width: calc(100% + 46px);
+    }
+    
+    .jdf-total-row {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    .jdf-total-amount {
+        font-size: 15px;
+    }
+
+    /* Save Button */
+    .jdf-save-btn {
+        padding: 13px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    /* Grid - Persist 2 columns for specific pairs */
+    .jdf-grid-2-persist {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+    
+    .jdf-grid-2-persist .jdf-field-input {
+        padding: 8px 8px;
+        font-size: 12px;
+    }
+    .jdf-grid-2-persist .jdf-field-label {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .jdf-split-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .jdf-split-pill--method,
+    .jdf-split-pill--amount {
+        flex: none;
+        width: 100%;
+    }
+}

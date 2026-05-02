@@ -495,7 +495,7 @@ const JobStatusForm = ({ data, onBack }) => {
     );
 
     /* ── Shared loadSerialNo fetch ── */
-    const fetchSpareItems = useCallback(async (search, page, setLoading, setResults, setHasMore, append = false) => {
+    const fetchSpareItems = useCallback(async (search, page, setLoading, setResults, setHasMore, endpoint = 'loadSerialNo', searchParam = 'SerialNo', append = false) => {
         setLoading(true);
         try {
             const licenseKey = localStorage.getItem('licenseKey') || 'ILT_LIC_9988056';
@@ -504,7 +504,7 @@ const JobStatusForm = ({ data, onBack }) => {
             const branchId = localStorage.getItem('internalBranchID') || '2';
             const locationId = localStorage.getItem('internallocationid') || '2';
 
-            const url = `/api2025/InPackService.asmx/loadSerialNo?SerialNo=${encodeURIComponent(search || '0')}&INTERNALPRODUCTID=0&InternalBranchID=${branchId}&PageNo=${page}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&internallocationid=${locationId}`;
+            const url = `/api2025/InPackService.asmx/${endpoint}?${searchParam}=${encodeURIComponent(search || '0')}&INTERNALPRODUCTID=0&InternalBranchID=${branchId}&PageNo=${page}&LicenseKey=${licenseKey}&IMEI=${imei}&PIN=${pin}&internallocationid=${locationId}`;
             const res = await fetch(url);
             const text = await res.text();
 
@@ -516,7 +516,7 @@ const JobStatusForm = ({ data, onBack }) => {
 
             if (jsonStr) {
                 const parsed = JSON.parse(jsonStr);
-                const rows = Array.isArray(parsed) ? parsed : (parsed.Table || parsed.data || Object.values(parsed).find(v => Array.isArray(v)) || []);
+                const rows = Array.isArray(parsed) ? parsed : (parsed.productid || parsed.Table || parsed.data || Object.values(parsed).find(v => Array.isArray(v)) || []);
                 setHasMore(rows.length >= 10);
                 setResults(prev => append ? [...prev, ...rows] : rows);
             } else {
@@ -524,7 +524,7 @@ const JobStatusForm = ({ data, onBack }) => {
                 setHasMore(false);
             }
         } catch (err) {
-            console.error('loadSerialNo error:', err);
+            console.error(`${endpoint} error:`, err);
             if (!append) setResults([]);
             setHasMore(false);
         } finally {
@@ -576,16 +576,16 @@ const JobStatusForm = ({ data, onBack }) => {
         setSerialSearch(val); setSerialPage(1); setSerialResults([]); setSerialOpen(true);
         setNameOpen(false); setPidOpen(false);
         clearTimeout(serialDebounceRef.current);
-        serialDebounceRef.current = setTimeout(() => fetchSpareItems(val, 1, setSerialLoading, setSerialResults, setSerialHasMore, false), 350);
+        serialDebounceRef.current = setTimeout(() => fetchSpareItems(val, 1, setSerialLoading, setSerialResults, setSerialHasMore, 'loadSerialNo', 'SerialNo', false), 350);
     };
     const handleSerialFocus = () => {
         setSerialOpen(true); setNameOpen(false); setPidOpen(false);
-        if (serialResults.length === 0 && !serialLoading) fetchSpareItems(serialSearch, 1, setSerialLoading, setSerialResults, setSerialHasMore, false);
+        if (serialResults.length === 0 && !serialLoading) fetchSpareItems(serialSearch, 1, setSerialLoading, setSerialResults, setSerialHasMore, 'loadSerialNo', 'SerialNo', false);
     };
     const handleSerialSelect = (item) => { applySpareSelection(item, true); closeAllPickers(); };
     const handleSerialLoadMore = () => {
         const next = serialPage + 1; setSerialPage(next);
-        fetchSpareItems(serialSearch, next, setSerialLoading, setSerialResults, setSerialHasMore, true);
+        fetchSpareItems(serialSearch, next, setSerialLoading, setSerialResults, setSerialHasMore, 'loadSerialNo', 'SerialNo', true);
     };
 
     /* ── Product Name picker handlers ── */
@@ -593,16 +593,16 @@ const JobStatusForm = ({ data, onBack }) => {
         setNameSearch(val); setNamePage(1); setNameResults([]); setNameOpen(true);
         setSerialOpen(false); setPidOpen(false);
         clearTimeout(nameDebounceRef.current);
-        nameDebounceRef.current = setTimeout(() => fetchSpareItems(val, 1, setNameLoading, setNameResults, setNameHasMore, false), 350);
+        nameDebounceRef.current = setTimeout(() => fetchSpareItems(val, 1, setNameLoading, setNameResults, setNameHasMore, 'loadProductName', 'ProductName', false), 350);
     };
     const handleNameFocus = () => {
         setNameOpen(true); setSerialOpen(false); setPidOpen(false);
-        if (nameResults.length === 0 && !nameLoading) fetchSpareItems(nameSearch, 1, setNameLoading, setNameResults, setNameHasMore, false);
+        if (nameResults.length === 0 && !nameLoading) fetchSpareItems(nameSearch, 1, setNameLoading, setNameResults, setNameHasMore, 'loadProductName', 'ProductName', false);
     };
     const handleNameSelect = (item) => { applySpareSelection(item, false); closeAllPickers(); };
     const handleNameLoadMore = () => {
         const next = namePage + 1; setNamePage(next);
-        fetchSpareItems(nameSearch, next, setNameLoading, setNameResults, setNameHasMore, true);
+        fetchSpareItems(nameSearch, next, setNameLoading, setNameResults, setNameHasMore, 'loadProductName', 'ProductName', true);
     };
 
     /* ── Product ID picker handlers ── */
@@ -610,16 +610,16 @@ const JobStatusForm = ({ data, onBack }) => {
         setPidSearch(val); setPidPage(1); setPidResults([]); setPidOpen(true);
         setSerialOpen(false); setNameOpen(false);
         clearTimeout(pidDebounceRef.current);
-        pidDebounceRef.current = setTimeout(() => fetchSpareItems(val, 1, setPidLoading, setPidResults, setPidHasMore, false), 350);
+        pidDebounceRef.current = setTimeout(() => fetchSpareItems(val, 1, setPidLoading, setPidResults, setPidHasMore, 'loadProductId', 'ProductID', false), 350);
     };
     const handlePidFocus = () => {
         setPidOpen(true); setSerialOpen(false); setNameOpen(false);
-        if (pidResults.length === 0 && !pidLoading) fetchSpareItems(pidSearch, 1, setPidLoading, setPidResults, setPidHasMore, false);
+        if (pidResults.length === 0 && !pidLoading) fetchSpareItems(pidSearch, 1, setPidLoading, setPidResults, setPidHasMore, 'loadProductId', 'ProductID', false);
     };
     const handlePidSelect = (item) => { applySpareSelection(item, false); closeAllPickers(); };
     const handlePidLoadMore = () => {
         const next = pidPage + 1; setPidPage(next);
-        fetchSpareItems(pidSearch, next, setPidLoading, setPidResults, setPidHasMore, true);
+        fetchSpareItems(pidSearch, next, setPidLoading, setPidResults, setPidHasMore, 'loadProductId', 'ProductID', true);
     };
 
     const handleSave = async () => {
